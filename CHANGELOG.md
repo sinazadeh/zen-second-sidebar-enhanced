@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-09-27
+
 ### Fixed
 
 - In Zen, a floating web panel no longer lets the page behind it show through
