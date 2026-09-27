@@ -7,6 +7,7 @@ import {
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
+import { KeyedTimeouts } from "../utils/keyed_timeouts.mjs";
 import { Logger } from "../utils/logger.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -29,12 +30,10 @@ export class WebPanelsController {
   /**@type {number?} */
   #saveStateTimer = null;
   #settingsSavesSuspended = false;
-  /**@type {number?} */
-  #urlTimeout = null;
-  /**@type {number?} */
-  #selectorTimeout = null;
-  /**@type {number?} */
-  #faviconURLTimeout = null;
+  // Per panel, so editing one panel can't cancel another's pending update.
+  #urlTimeouts = new KeyedTimeouts();
+  #selectorTimeouts = new KeyedTimeouts();
+  #faviconURLTimeouts = new KeyedTimeouts();
 
   constructor() {
     /**@type {Map<string, WebPanelController>} */
@@ -174,12 +173,15 @@ export class WebPanelsController {
         const oldUrl = webPanelController.getURL();
         webPanelController.setURL(url);
 
-        clearTimeout(this.#urlTimeout);
-        this.#urlTimeout = setTimeout(() => {
-          if (!webPanelController.isUnloaded() && oldUrl !== url) {
-            webPanelController.go(url);
-          }
-        }, timeout);
+        this.#urlTimeouts.set(
+          webPanelController.getUUID(),
+          () => {
+            if (!webPanelController.isUnloaded() && oldUrl !== url) {
+              webPanelController.go(url);
+            }
+          },
+          timeout,
+        );
       },
     );
 
@@ -195,10 +197,11 @@ export class WebPanelsController {
       (webPanelController, { dynamicFavicon, faviconURL, timeout }) => {
         webPanelController.setFaviconURL(dynamicFavicon, faviconURL);
 
-        clearTimeout(this.#faviconURLTimeout);
-        this.#faviconURLTimeout = setTimeout(() => {
-          webPanelController.updateFavicon();
-        }, timeout);
+        this.#faviconURLTimeouts.set(
+          webPanelController.getUUID(),
+          () => webPanelController.updateFavicon(),
+          timeout,
+        );
       },
     );
 
@@ -223,14 +226,17 @@ export class WebPanelsController {
         const oldSelector = webPanelController.getSelector();
         webPanelController.setSelector(selector);
 
-        // Separate from #urlTimeout so editing the selector right after the
+        // Separate from #urlTimeouts so editing the selector right after the
         // URL doesn't cancel the pending navigation to the new URL.
-        clearTimeout(this.#selectorTimeout);
-        this.#selectorTimeout = setTimeout(() => {
-          if (!webPanelController.isUnloaded() && oldSelector !== selector) {
-            webPanelController.reload();
-          }
-        }, timeout);
+        this.#selectorTimeouts.set(
+          webPanelController.getUUID(),
+          () => {
+            if (!webPanelController.isUnloaded() && oldSelector !== selector) {
+              webPanelController.reload();
+            }
+          },
+          timeout,
+        );
       },
     );
 
@@ -664,6 +670,9 @@ export class WebPanelsController {
    */
   delete(uuid) {
     this.webPanelControllers.delete(uuid);
+    this.#urlTimeouts.clear(uuid);
+    this.#selectorTimeouts.clear(uuid);
+    this.#faviconURLTimeouts.clear(uuid);
     if (this.lastOpenedWebPanelUUID === uuid) {
       this.lastOpenedWebPanelUUID = null;
     }
