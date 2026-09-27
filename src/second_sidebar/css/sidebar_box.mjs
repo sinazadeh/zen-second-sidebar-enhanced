@@ -142,6 +142,18 @@ export const SIDEBAR_BOX_CSS = `
       max-height: 100%;
     }
 
+    #sb2-box[pinned="false"],
+    #sb2-geometry-hint {
+      background: var(--sb2-zen-floating-surface);
+
+      /* Zen's acrylic option: blur what's behind instead, as Zen does for its
+         floating sidebar. */
+      @media -moz-pref("zen.theme.acrylic-elements") {
+        background: transparent;
+        backdrop-filter: blur(42px) saturate(110%) brightness(0.25);
+      }
+    }
+
     #sb2-toolbar {
       background: var(--sb2-zen-toolbar-surface);
       min-height: var(--zen-toolbar-height, 38px);
@@ -149,7 +161,6 @@ export const SIDEBAR_BOX_CSS = `
     }
 
     #sb2-geometry-hint {
-      background: var(--sb2-zen-surface);
       border: var(--sb2-zen-border);
       border-radius: var(--sb2-zen-radius);
       box-shadow: var(--sb2-zen-shadow);
