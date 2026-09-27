@@ -102,3 +102,7 @@ The Browser Console (`Ctrl+Shift+J` / `Cmd+Shift+J`) logs the sidebar's startup 
 - **It stopped working after installing Sine on another profile:** Sine and fx-autoconfig each replace a single bootstrap file shared by every profile of the same browser installation, so setting up one of them can turn off the other for all profiles. Use the same loader on every profile of that installation (for example, install Second Sidebar through Sine here too).
 - **A warning says a patch "no longer applies":** a browser update changed Firefox code this script adjusts, and the related feature may misbehave. Please [open an issue](https://github.com/sinazadeh/zen-second-sidebar-enhanced/issues/new?template=bug_report.yml) with the warning and your browser version.
 - **Settings popups are cut off at the bottom of the screen:** on Wayland, popups open towards whichever side of the sidebar button (or right-click) has more room, and scroll to fit. Firefox keeps popups on screen by itself elsewhere, so this is automatic only on Wayland; set `second-sidebar.fit-popups-to-window` to `true` in `about:config` to turn it on anyway, or `false` to turn it off. If the Save button is still out of reach, please report it with your OS and window manager.
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, checks, patch-target verification and the browser scenarios to exercise before opening a pull request.

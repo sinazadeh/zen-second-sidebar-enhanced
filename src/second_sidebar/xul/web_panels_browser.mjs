@@ -10,7 +10,7 @@ import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { Style } from "./base/style.mjs";
 import { UrlbarInputPatcher } from "../patchers/urlbar_input_patcher.mjs";
 import { WEB_PANEL_FINDBAR_CSS } from "../css/findbar.mjs";
-import { BROWSER_CONTAINER_SELECTORS } from "../utils/browser_layout.mjs";
+import { findBrowserContainerElement } from "../utils/browser_layout.mjs";
 import { markZenWindowUnsynced } from "../utils/zen.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelState } from "../settings/web_panel_state.mjs"; // eslint-disable-line no-unused-vars
@@ -243,9 +243,7 @@ export class WebPanelsBrowser extends Browser {
     windowRoot.appendChild(style);
 
     // Fix nova styles for inner window
-    const bContainer = BROWSER_CONTAINER_SELECTORS.map((selector) =>
-      windowRoot.querySelector(selector),
-    ).find(Boolean);
+    const bContainer = findBrowserContainerElement(windowRoot);
     if (bContainer) bContainer.setProperty("padding", "0px");
     windowRoot
       .querySelector("#zen-appcontent-wrapper")
