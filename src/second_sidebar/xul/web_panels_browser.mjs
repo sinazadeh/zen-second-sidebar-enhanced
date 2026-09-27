@@ -27,6 +27,12 @@ const WEBAUTHN_PROMPT_EVENT = "webauthn-prompt";
 
 const FIRST_TAB_INDEX = 0;
 
+// The panels' window normally starts in well under a second. If it hasn't
+// after INIT_SLOW_AFTER_MS, waitInitialization reports it and polls slower.
+const INIT_POLL_MS = 10;
+const INIT_SLOW_AFTER_MS = 30000;
+const INIT_SLOW_POLL_MS = 1000;
+
 // Commands for the browser window rather than the page. Run in the panels'
 // hidden window, they'd act on it instead of the one the user sees: Zen
 // opens its new-tab address bar there, where it can't be seen, and
@@ -41,6 +47,10 @@ const MAIN_WINDOW_COMMANDS = new Set([
 ]);
 
 export class WebPanelsBrowser extends Browser {
+  /** @type {Set<string>} topics this is registered for with the observer service */
+  #observedTopics = new Set();
+  #reportedSlowInit = false;
+
   constructor() {
     super({
       id: `sb2-web-panels-browser_${crypto.randomUUID()}`,
@@ -68,14 +78,46 @@ export class WebPanelsBrowser extends Browser {
       return;
     }
     console.log("Initializing web panels browser...");
-    ObserversWrapper.addObserver(this, BEFORE_SHOW_EVENT);
-    ObserversWrapper.addObserver(this, INITIALIZED_EVENT);
-    ObserversWrapper.addObserver(this, WEBAUTHN_PROMPT_EVENT);
+    this.#observe(BEFORE_SHOW_EVENT);
+    this.#observe(INITIALIZED_EVENT);
+    this.#observe(WEBAUTHN_PROMPT_EVENT);
+    // The observer service outlives this window: without this, a closed
+    // window's web panels browser would stay registered (and in memory) and
+    // keep being called for every WebAuthn prompt.
+    window.addEventListener("unload", () => this.#unobserveAll(), {
+      once: true,
+    });
     this.addEventListener(DOM_WINDOW_CREATED_EVENT, (event) => {
       markZenWindowUnsynced(event.target?.defaultView ?? event.target);
     });
     markZenWindowUnsynced(this.element.contentWindow);
     this.setAttribute("src", AppConstantsWrapper.BROWSER_CHROME_URL);
+  }
+
+  /**
+   * @param {string} topic
+   */
+  #observe(topic) {
+    if (this.#observedTopics.has(topic)) {
+      return;
+    }
+    ObserversWrapper.addObserver(this, topic);
+    this.#observedTopics.add(topic);
+  }
+
+  /**
+   * @param {string} topic
+   */
+  #unobserve(topic) {
+    if (this.#observedTopics.delete(topic)) {
+      ObserversWrapper.removeObserver(this, topic);
+    }
+  }
+
+  #unobserveAll() {
+    for (const topic of [...this.#observedTopics]) {
+      this.#unobserve(topic);
+    }
   }
 
   /**
@@ -96,11 +138,11 @@ export class WebPanelsBrowser extends Browser {
     console.log(`${this.window.name}: got event ${topic}`);
     if (topic === BEFORE_SHOW_EVENT) {
       markZenWindowUnsynced(subj);
-      ObserversWrapper.removeObserver(this, BEFORE_SHOW_EVENT);
+      this.#unobserve(BEFORE_SHOW_EVENT);
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
       markZenWindowUnsynced(subj);
-      ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
+      this.#unobserve(INITIALIZED_EVENT);
       this.#hackSessionStore();
       this.#hackCloseWindowCommand();
       this.initialized = true;
@@ -430,24 +472,29 @@ export class WebPanelsBrowser extends Browser {
   }
 
   /**
+   * Calls `callback` once the panels' window has started (see observe). If
+   * that takes longer than INIT_SLOW_AFTER_MS, reports it once and keeps
+   * checking every INIT_SLOW_POLL_MS rather than every INIT_POLL_MS for as
+   * long as this window is open.
    *
    * @param {function():void} callback
    */
   waitInitialization(callback) {
-    this.waitUntil(() => this.initialized, callback);
-  }
-
-  /**
-   *
-   * @param {function():boolean} condition
-   * @param {function():void} callback
-   * @param {number} timeout
-   */
-  waitUntil(condition, callback, timeout = 10) {
-    if (!condition()) {
-      setTimeout(() => this.waitUntil(condition, callback, timeout), timeout);
-    } else {
-      callback();
-    }
+    const start = Date.now();
+    const check = () => {
+      if (this.initialized) {
+        callback();
+        return;
+      }
+      const slow = Date.now() - start >= INIT_SLOW_AFTER_MS;
+      if (slow && !this.#reportedSlowInit) {
+        this.#reportedSlowInit = true;
+        console.error(
+          `Second Sidebar: the web panels window hasn't finished starting after ${INIT_SLOW_AFTER_MS / 1000} s; web panels can't open until it does.`,
+        );
+      }
+      setTimeout(check, slow ? INIT_SLOW_POLL_MS : INIT_POLL_MS);
+    };
+    check();
   }
 }

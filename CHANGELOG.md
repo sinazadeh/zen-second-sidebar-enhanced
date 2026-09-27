@@ -6,6 +6,22 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-27
+
+### Fixed
+
+- A web panel's CSS selector containing quotes (such as
+  `div[data-x='a b']`) now works. The selector is also passed to the page as
+  plain text, so a selector in an imported settings file can no longer run
+  its own code on the panel's website.
+- Editing a second web panel's URL, icon or selector right after the first no
+  longer cancels the first panel's update.
+- Closing a browser window no longer keeps part of it in memory, still being
+  called for every passkey (WebAuthn) prompt.
+- If the web panels' window fails to start, the Browser Console now says so
+  after 30 seconds, instead of the sidebar silently checking 100 times a
+  second for as long as the window is open.
+
 ## [1.3.0] - 2026-09-26
 
 ### Added

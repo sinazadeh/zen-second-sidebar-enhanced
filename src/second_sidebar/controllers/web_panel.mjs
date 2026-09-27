@@ -12,6 +12,7 @@ import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelState } from "../settings/web_panel_state.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs"; // eslint-disable-line no-unused-vars
+import { buildSelectorScript } from "../utils/selector_script.mjs";
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 import { parseNotifications } from "../utils/string.mjs";
 import { safeCall } from "../utils/errors.mjs";
@@ -89,35 +90,7 @@ export class WebPanelController {
     if (!this.getSelectorEnabled() || selector === "") {
       return;
     }
-    const script = `javascript:(() => {
-      var toDelete = [];
-      var e = document.querySelector('${selector}');
-      e.style.margin = 0;
-      while (e.nodeName != "BODY") {
-        for (var c of e.parentElement.children) {
-          if (!["STYLE", "SCRIPT"].includes(c.nodeName) && c !== e) {
-            toDelete.push({ parent: e.parentElement, child: c });
-          }
-        }
-        e.style.overflow = "visible";
-        e.style.minWidth = "0px";
-        e.style.minHeight = "0px";
-        e.style.gridGap = "0px";
-        e = e.parentElement;
-        e.style.padding = 0;
-        e.style.margin = 0;
-        e.style.transform = "none";
-      }
-      toDelete.forEach((e) => {
-        e.parent.removeChild(e.child);
-      });
-      const body = document.querySelector("body");
-      body.style.overflow = "hidden";
-      body.style.minWidth = "0px";
-      body.style.minHeight = "0px";
-      window.scrollTo(0, 0);
-    })()`;
-    this.#tab.linkedBrowser.go(script);
+    this.#tab.linkedBrowser.go(buildSelectorScript(selector));
   }
 
   /**
