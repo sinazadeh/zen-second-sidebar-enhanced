@@ -1,6 +1,7 @@
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
 import { BrowserCommandsWrapper } from "../wrappers/browser_commands.mjs";
+import { BrowserWindowTrackerWrapper } from "../wrappers/browser_window_tracker.mjs";
 import { Logger } from "../utils/logger.mjs";
 import { ObserversWrapper } from "../wrappers/observers.mjs";
 import { PopupNotificationsPatcher } from "../patchers/popup_notifications_patcher.mjs";
@@ -196,6 +197,15 @@ export class WebPanelsBrowser extends Browser {
 
   initWindow() {
     markZenWindowUnsynced(this.window.raw);
+    // Firefox tracks every browser window, this hidden one included, to pick
+    // the one that links from other apps (and restored tabs) open in. Tracked
+    // after the main window, this one would be picked: the link would open
+    // here, out of sight, and selecting its tab would close the sidebar.
+    if (!BrowserWindowTrackerWrapper.untrack(this.window)) {
+      console.warn(
+        "Second Sidebar: can't stop links opened from other apps from going to the hidden web panels window",
+      );
+    }
     const windowRoot = new XULElement({
       element: this.window.document.documentElement,
     });

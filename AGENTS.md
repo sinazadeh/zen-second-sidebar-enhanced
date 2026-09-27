@@ -262,6 +262,15 @@ exports.
   `<command>` instead: otherwise Zen opens its new-tab address bar in the
   hidden window, and reopening a closed tab can restore a panel's own tab.
   Page commands (find, reload, zoom, print) stay in the panel.
+- The panels' window is a full browser window, so Firefox's
+  `BrowserWindowTracker` registers it too (the `browser-window-domcontentloaded`
+  category), after the main window. That made it the "top window" that links
+  from other apps (and other callers of `getTopWindow()`) open in, out of
+  sight. `WebPanelsBrowser#initWindow` removes it with
+  `BrowserWindowTrackerWrapper.untrack` (Firefox's `untrackForTestsOnly`, the
+  only way it offers). Selecting a tab there that isn't a web panel's closes
+  the sidebar (`WebPanelsController#setupWebPanelsBrowserListeners`), so
+  anything else that can open tabs in that window is a bug too.
 - Mods can float the find bar, stretch it over the page, or redefine
   `.browserContainer`'s grid so its `findbar` area is a side column, which
   covers half of a narrow web panel. Putting it back in that area isn't
