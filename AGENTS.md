@@ -85,6 +85,9 @@ All paths below are relative to `src/second_sidebar/`, except the entry point.
   setting, wire it in `web_panels.mjs` via `#bindSimpleSetting` (or
   `#bindGeometrySetting` for floating-geometry fields, `#bindSimpleAction`
   for no-argument actions) rather than a bespoke `listenEvent` block.
+  Debounced edit handlers keep their timers per panel (`KeyedTimeouts`,
+  `utils/keyed_timeouts.mjs`), so editing one panel can't cancel another's
+  pending update.
   Settings with real branching logic (different values calling different
   methods, debounced timeouts, reload-if-changed checks) stay hand-written
   alongside the bound ones in `#setupListeners`.
@@ -321,6 +324,18 @@ exports.
   unreachable host), the button stays blank.
 - Reuse widget readiness helpers such as `doWhenButtonReady`; CustomizableUI
   instances are not always available synchronously in every window.
+- A web panel's selector (`WebPanelController#applySelector`) runs as a
+  `javascript:` URL in the panel's page, with that website's permissions.
+  Build it with `buildSelectorScript` (`utils/selector_script.mjs`), which
+  passes the selector as a JSON string literal and percent-encodes the whole
+  script (`javascript:` URLs are percent-decoded before they run, so a `%22`
+  would otherwise end the string). Never paste a settings value into
+  page-side code: settings can come from an imported file.
+- Registrations with Firefox's global services (the observer service,
+  prefs) outlive the window that made them, so remove them on its `unload`
+  (`WebPanelsBrowser#unobserveAll`, `SidebarPrefsController#init`).
+  Listeners, timers and `ResizeObserver`s on the window's own objects go away
+  with it and need no teardown.
 - Use `controllers/events.mjs` for cross-window actions. Preserve event names,
   UUIDs, payload fields, and `isActiveWindow` behavior. Permanent panels are
   shared across windows; temporary creation is limited to the active window.
