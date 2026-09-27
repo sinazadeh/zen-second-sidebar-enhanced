@@ -55,34 +55,58 @@ const TARGETS = [
 
 /**
  * @param {string} branch
- * @returns {Promise<Array<string>>} problems found
+ * @param {{
+ *   path: string,
+ *   patch?: ((source: string) => { unmatched?: Array<string> }),
+ *   requires?: Object<string, string>,
+ * }} target
+ * @returns {Promise<Array<string>>}
  */
-async function checkBranch(branch) {
+async function checkTarget(branch, { path, patch, requires = {} }) {
+  let response;
+  try {
+    response = await fetch(`${RAW_URL}/${branch}/${path}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return [`${path}: could not fetch (${message})`];
+  }
+  if (!response.ok) {
+    return [`${path}: could not fetch (HTTP ${response.status})`];
+  }
+
+  const source = await response.text();
   const problems = [];
-  for (const { path, patch, requires = {} } of TARGETS) {
-    const response = await fetch(`${RAW_URL}/${branch}/${path}`);
-    if (!response.ok) {
-      problems.push(`${path}: could not fetch (HTTP ${response.status})`);
-      continue;
-    }
-    const source = await response.text();
-    for (const description of patch?.(source).unmatched ?? []) {
-      problems.push(`${path}: patch no longer applies: ${description}`);
-    }
-    for (const [snippet, reason] of Object.entries(requires)) {
-      if (!source.includes(snippet)) {
-        problems.push(`${path}: missing \`${snippet}\` (${reason})`);
-      }
+  for (const description of patch?.(source).unmatched ?? []) {
+    problems.push(`${path}: patch no longer applies: ${description}`);
+  }
+  for (const [snippet, reason] of Object.entries(requires)) {
+    if (!source.includes(snippet)) {
+      problems.push(`${path}: missing \`${snippet}\` (${reason})`);
     }
   }
   return problems;
 }
 
+/**
+ * @param {string} branch
+ * @returns {Promise<Array<string>>} problems found
+ */
+async function checkBranch(branch) {
+  return (
+    await Promise.all(TARGETS.map((target) => checkTarget(branch, target)))
+  ).flat();
+}
+
 const branches = process.argv.slice(2);
 const summary = [];
+const branchProblems = await Promise.all(
+  (branches.length > 0 ? branches : ["release"]).map(async (branch) => ({
+    branch,
+    problems: await checkBranch(branch),
+  })),
+);
 let failed = false;
-for (const branch of branches.length > 0 ? branches : ["release"]) {
-  const problems = await checkBranch(branch);
+for (const { branch, problems } of branchProblems) {
   failed ||= problems.length > 0;
   const heading = `Firefox ${branch}: ${problems.length === 0 ? "all patch targets OK" : `${problems.length} problem(s)`}`;
   console.log(heading);
