@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-09-27
+
 ### Fixed
 
 - Opening a link from another app (the Windows Run box, an email client,
