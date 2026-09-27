@@ -6,6 +6,15 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-09-27
+
+### Fixed
+
+- In Zen, a floating web panel no longer lets the page behind it show through
+  its toolbar with transparency themes or mods (#23). It now has the background
+  Zen gives its own floating sidebar, or, with Zen's acrylic option on, blurs
+  what's behind it the same way.
+
 ## [1.3.2] - 2026-09-27
 
 ### Fixed

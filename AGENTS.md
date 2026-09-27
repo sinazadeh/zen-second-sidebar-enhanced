@@ -306,6 +306,14 @@ exports.
   `#zen-tabbox-wrapper`. `SidebarBoxArea` (`xul/sidebar_box_area.mjs`) calculates
   dimensions relative to `#zen-tabbox-wrapper` and reserves spacing using
   `--zen-element-separation` (defaulting to 6px) and wrapper side positioning.
+- **Zen surfaces**: the sidebar and a pinned panel are deliberately
+  transparent (`--sb2-zen-surface`) so Zen's window background shows through,
+  like Zen's own sidebar. A floating panel (`#sb2-box[pinned="false"]`) and
+  the geometry hint sit over the page, so they get `--sb2-zen-floating-surface`
+  (the colour of Zen's floating compact-mode sidebar), or with
+  `zen.theme.acrylic-elements` the same backdrop blur Zen uses (issue #23).
+  Don't rely on `--zen-colors-*` alone for a surface over the page:
+  transparency themes and mods clear them.
 - **Nested panel isolation in Zen**: The embedded chrome window hosting web panels
   must be flagged with `win._zenStartupSyncFlag = "unsynced"` and
   `zen-unsynced-window="true"` during creation and startup observers. This stops

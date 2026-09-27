@@ -5,6 +5,12 @@ export const COMMON_CSS = `
     --sb2-main-padding: var(--space-small);
     --sb2-main-web-panel-buttons-position: start;
     --sb2-zen-radius: var(--zen-border-radius, var(--border-radius-medium));
+    /* Transparent on purpose: the sidebar and a pinned panel sit on Zen's own
+       window background, like Zen's sidebar does. */
+    --sb2-zen-surface: transparent;
+    /* A floating panel sits over the page, which would show through it, so it
+       gets the background Zen gives its own floating (compact mode) sidebar. */
+    --sb2-zen-floating-surface: light-dark(#e9e9e9, #131313);
     --sb2-zen-toolbar-surface: var(--zen-colors-tertiary, var(--toolbar-bgcolor));
     --sb2-zen-surface-hover: var(--zen-colors-secondary, color-mix(in srgb, currentColor 10%, transparent));
     --sb2-zen-overlay-surface: light-dark(color-mix(in oklab, white 15%, var(--zen-primary-color) 10%, transparent), color-mix(in oklab, black 15%, var(--zen-primary-color) 25%, transparent));
