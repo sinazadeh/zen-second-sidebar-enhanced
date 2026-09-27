@@ -535,6 +535,9 @@ export class WebPanelsController {
     // Revert zoom to default when it's changed
     SidebarElements.webPanelsBrowser.addZoomChangeListener((tab) => {
       const webPanelController = this.get(tab.uuid);
+      if (!webPanelController) {
+        return;
+      }
       const zoom = webPanelController.getZoom();
       if (tab.linkedBrowser.getZoom() != zoom) {
         webPanelController.setZoom(zoom);

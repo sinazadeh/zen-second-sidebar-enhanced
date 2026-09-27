@@ -6,6 +6,15 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-09-27
+
+### Fixed
+
+- Opening a link from another app (the Windows Run box, an email client,
+  another program) no longer closes the sidebar. The link went to the hidden
+  window that holds the web panels, where it couldn't be seen; it now opens in
+  the browser window.
+
 ## [1.3.1] - 2026-09-27
 
 ### Fixed
