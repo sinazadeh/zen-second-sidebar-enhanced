@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-27
+
 ### Fixed
 
 - A web panel's CSS selector containing quotes (such as
