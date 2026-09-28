@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-09-28
+
 ### Fixed
 
 - In Zen, a floating web panel's toolbar no longer shows a translucent page
