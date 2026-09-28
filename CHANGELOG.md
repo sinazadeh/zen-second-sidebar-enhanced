@@ -6,6 +6,13 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Fixed
+
+- In Zen, a floating web panel's toolbar no longer shows a translucent page
+  behind it (#23). With Zen's acrylic option (on by default), the panel now
+  has the same tint over its blur as Zen's own floating sidebar, instead of
+  the blur alone.
+
 ## [1.3.3] - 2026-09-27
 
 ### Fixed

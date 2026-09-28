@@ -146,10 +146,10 @@ export const SIDEBAR_BOX_CSS = `
     #sb2-geometry-hint {
       background: var(--sb2-zen-floating-surface);
 
-      /* Zen's acrylic option: blur what's behind instead, as Zen does for its
-         floating sidebar. */
+      /* Zen's acrylic option: a tinted blur of what's behind instead, as Zen
+         does for its floating sidebar. */
       @media -moz-pref("zen.theme.acrylic-elements") {
-        background: transparent;
+        background: var(--sb2-zen-floating-acrylic-surface);
         backdrop-filter: blur(42px) saturate(110%) brightness(0.25);
       }
     }

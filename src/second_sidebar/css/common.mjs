@@ -11,6 +11,10 @@ export const COMMON_CSS = `
     /* A floating panel sits over the page, which would show through it, so it
        gets the background Zen gives its own floating (compact mode) sidebar. */
     --sb2-zen-floating-surface: light-dark(#e9e9e9, #131313);
+    /* With Zen's acrylic option, Zen still tints the blur behind its floating
+       sidebar (its default toolbar colour at 60%). The blur alone leaves a
+       translucent page showing through. */
+    --sb2-zen-floating-acrylic-surface: light-dark(rgba(240, 240, 244, 0.6), rgba(23, 23, 26, 0.6));
     --sb2-zen-toolbar-surface: var(--zen-colors-tertiary, var(--toolbar-bgcolor));
     --sb2-zen-surface-hover: var(--zen-colors-secondary, color-mix(in srgb, currentColor 10%, transparent));
     --sb2-zen-overlay-surface: light-dark(color-mix(in oklab, white 15%, var(--zen-primary-color) 10%, transparent), color-mix(in oklab, black 15%, var(--zen-primary-color) 25%, transparent));
