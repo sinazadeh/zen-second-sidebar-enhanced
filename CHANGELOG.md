@@ -6,6 +6,12 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Changed
+
+- Every version now has a GitHub release with its notes and a zip of `src/`
+  for fx-autoconfig, and new versions are released automatically once the
+  version bump reaches `main`.
+
 ## [1.4.0] - 2026-09-29
 
 ### Added
