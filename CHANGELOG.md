@@ -6,6 +6,13 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Fixed
+
+- In Zen, with **Auto-hide sidebar** set to overlay, the page no longer runs
+  to the edge of the window on the sidebar's side, cutting off its border
+  ([#23](https://github.com/sinazadeh/zen-second-sidebar-enhanced/issues/23)).
+  It keeps the gap Zen leaves there, as when the sidebar is inline.
+
 ## [1.4.0] - 2026-09-29
 
 ### Added
