@@ -311,9 +311,13 @@ exports.
   like Zen's own sidebar. A floating panel (`#sb2-box[pinned="false"]`) and
   the geometry hint sit over the page, so they get `--sb2-zen-floating-surface`
   (the colour of Zen's floating compact-mode sidebar), or with
-  `zen.theme.acrylic-elements` the same backdrop blur Zen uses (issue #23).
-  Don't rely on `--zen-colors-*` alone for a surface over the page:
-  transparency themes and mods clear them.
+  `zen.theme.acrylic-elements` (on by default) the same backdrop blur Zen
+  uses under `--sb2-zen-floating-acrylic-surface`, the tint Zen puts over
+  that blur (issue #23). Don't drop that tint: with
+  `browser.tabs.allow_transparent_browser`, a page can be almost fully
+  transparent, leaving the blur nothing to show. Don't rely on
+  `--zen-colors-*` alone for a surface over the page: transparency themes and
+  mods clear them.
 - **Nested panel isolation in Zen**: The embedded chrome window hosting web panels
   must be flagged with `win._zenStartupSyncFlag = "unsynced"` and
   `zen-unsynced-window="true"` during creation and startup observers. This stops
