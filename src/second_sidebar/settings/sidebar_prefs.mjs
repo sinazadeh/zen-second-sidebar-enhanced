@@ -44,6 +44,7 @@ export const SIDEBAR_PREFS = [
     pref: "second-sidebar.auto-hide-behavior",
     values: ["inline", "overlay"],
   },
+  { field: "autoHideEdgeGap", pref: "second-sidebar.auto-hide-edge-gap" },
   {
     field: "sidebarWidgetHideWebPanel",
     pref: "second-sidebar.hide-web-panel-when-hidden",

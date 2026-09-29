@@ -100,6 +100,27 @@
   },
   {
     "type": "checkbox",
+    "property": "second-sidebar.auto-hide-edge-gap",
+    "label": "Keep gap at window edge (Zen, overlay)",
+    "defaultValue": true,
+    "operator": "AND",
+    "conditions": [
+      {
+        "if": {
+          "property": "second-sidebar.auto-hide",
+          "value": true
+        }
+      },
+      {
+        "if": {
+          "property": "second-sidebar.auto-hide-behavior",
+          "value": "overlay"
+        }
+      }
+    ]
+  },
+  {
+    "type": "checkbox",
     "property": "second-sidebar.hide-web-panel-when-hidden",
     "label": "Hide web panel when sidebar is hidden",
     "defaultValue": false,
