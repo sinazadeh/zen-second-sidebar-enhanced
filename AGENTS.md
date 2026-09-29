@@ -499,12 +499,20 @@ targets** (weekly, and on PRs touching patchers: runs
 1. Bump `version` in `theme.json`.
 2. Move the `[Unreleased]` notes in `CHANGELOG.md` into a new
    `## [<version>] - <date>` section.
-3. Push a matching tag: `git tag v<version> && git push origin v<version>`.
+3. Get both onto `main` (usually by merging the PR that carries them).
 
-The **Release** workflow checks the tag against `theme.json`, and publishes a
-GitHub release with that version's changelog section and a zip of `src/` for
-fx-autoconfig users. Add user-visible changes to `[Unreleased]` as you make
-them.
+The **Release** workflow runs whenever `theme.json` changes on `main` and
+publishes a GitHub release, tag `v<version>`, for every version that doesn't
+have one yet (`scripts/publish_releases.mjs`), with that version's changelog
+section and a zip of `src/` at the release's commit for fx-autoconfig users.
+There's no tag to push. A version's release commit is the first commit on
+`main`'s first-parent line with that version and its notes, with nothing left
+under `[Unreleased]` (early versions were bumped before their notes landed);
+an existing tag is kept. Deleting a release gets it published again on the
+next run, so delete its tag too, or keep the release. `node
+scripts/publish_releases.mjs --dry-run` shows what would be published; pull
+requests touching the script or workflow run that too. Add user-visible
+changes to `[Unreleased]` as you make them.
 
 ## Firefox and Zen Browser validation
 

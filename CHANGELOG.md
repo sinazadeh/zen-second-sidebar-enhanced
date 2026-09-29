@@ -1,7 +1,7 @@
 # Changelog
 
-Notable changes to this fork. Versions match `version` in `theme.json`; a
-pushed `v<version>` tag publishes a GitHub release with that version's notes
+Notable changes to this fork. Versions match `version` in `theme.json`; once
+a version reaches `main`, it's published as a GitHub release with its notes
 below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
@@ -12,6 +12,12 @@ below (see `.github/workflows/release.yml`).
   to the edge of the window on the sidebar's side, cutting off its border
   ([#23](https://github.com/sinazadeh/zen-second-sidebar-enhanced/issues/23)).
   It keeps the gap Zen leaves there, as when the sidebar is inline.
+
+### Changed
+
+- Every version now has a GitHub release with its notes and a zip of `src/`
+  for fx-autoconfig, and new versions are released automatically once the
+  version bump reaches `main`.
 
 ## [1.4.0] - 2026-09-29
 
