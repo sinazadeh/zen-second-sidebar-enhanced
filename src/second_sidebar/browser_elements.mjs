@@ -32,6 +32,12 @@ export class BrowserElements {
     });
   }
 
+  static get placesContextMenu() {
+    return new XULElement({
+      element: document.getElementById("placesContext"),
+    });
+  }
+
   static get menuApiPopup() {
     return new XULElement({
       element: document.querySelector('menupopup[menu-api="true"]'),

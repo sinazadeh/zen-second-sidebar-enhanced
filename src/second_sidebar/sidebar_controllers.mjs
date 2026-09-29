@@ -1,4 +1,5 @@
 import { ContextMenuItemsController } from "./controllers/context_menu_items.mjs";
+import { LinkClickController } from "./controllers/link_click.mjs";
 import { Shortcuts } from "./controllers/shortcuts.mjs";
 import { SidebarController } from "./controllers/sidebar.mjs";
 import { SidebarGeometry } from "./controllers/sidebar_geometry.mjs";
@@ -37,7 +38,11 @@ export class SidebarControllers {
     this.webPanelEditController = new WebPanelEditController();
     this.webPanelMoreController = new WebPanelMoreController();
     this.webPanelDeleteController = new WebPanelDeleteController();
-    if (SidebarElements.contextMenuItemsEnabled) {
+    this.linkClickController = new LinkClickController();
+    if (
+      SidebarElements.contextMenuItemsEnabled ||
+      SidebarElements.bookmarkMenuItemsEnabled
+    ) {
       this.contextMenuItemsController = new ContextMenuItemsController();
     }
   }

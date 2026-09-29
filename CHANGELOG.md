@@ -6,6 +6,18 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-29
+
+### Added
+
+- Bookmarks and History menu entries have **Open in Second Sidebar** and
+  **Preview in Second Sidebar** in their right-click menu (#27).
+- Alt+Shift+click a link or a bookmark to preview it in the second sidebar
+  (#27). **Sidebar settings → Links and bookmarks** can change this to Alt+click
+  (in Zen, only with Glance set to another key) or turn it off.
+- Settings to hide the **Open…** or **Preview… in Second Sidebar** menu items
+  (#27).
+
 ## [1.3.4] - 2026-09-28
 
 ### Fixed

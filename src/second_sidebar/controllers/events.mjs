@@ -56,6 +56,11 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED:
     "edit_sidebar_toolbar_auto_hide_animated",
   EDIT_SIDEBAR_ENABLE_BOX_HINT: "edit_sidebar_enable_box_hint",
+  EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS:
+    "edit_sidebar_show_open_in_sidebar_items",
+  EDIT_SIDEBAR_SHOW_PREVIEW_IN_SIDEBAR_ITEMS:
+    "edit_sidebar_show_preview_in_sidebar_items",
+  EDIT_SIDEBAR_LINK_CLICK_MODIFIER: "edit_sidebar_link_click_modifier",
   EDIT_SIDEBAR_PINNED_GEOMETRY: "edit_sidebar_pinned_geometry",
   EDIT_SIDEBAR_FLOATING_GEOMETRY: "edit_sidebar_floating_geometry",
   RESET_SIDEBAR_FLOATING_POSITION: "reset_sidebar_floating_position",

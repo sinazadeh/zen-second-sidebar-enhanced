@@ -357,6 +357,20 @@ exports.
   (`WebPanelsBrowser#unobserveAll`, `SidebarPrefsController#init`).
   Listeners, timers and `ResizeObserver`s on the window's own objects go away
   with it and need no teardown.
+- Modifier-clicks on page links reach `LinkClickController`
+  (`controllers/link_click.mjs`) through `patchers/content_click_hook.sys.mjs`,
+  which replaces `ClickHandlerParent.prototype.contentAreaClick` (Firefox
+  opens Shift/Ctrl-clicked links there, before its click listeners run).
+  That prototype is shared by every window, so the hook is imported with
+  `ChromeUtils.importESModule` into the shared system global: a replacement
+  made in a window's own module would turn into a dead object when that
+  window closed, breaking link clicks in every other window. Windows register
+  a handler keyed by their `window` (look it up from a browser with
+  `ownerDocument.defaultView`; `ownerGlobal` is a different object) and remove
+  it on `unload`. Bookmark and history clicks are `command` events with the
+  click's modifier keys, caught by a capturing listener on the window. Zen
+  Glance takes single-modifier clicks it's set to (Alt by default) in the
+  page, before any of this runs, hence the Alt+Shift default.
 - Use `controllers/events.mjs` for cross-window actions. Preserve event names,
   UUIDs, payload fields, and `isActiveWindow` behavior. Permanent panels are
   shared across windows; temporary creation is limited to the active window.

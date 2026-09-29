@@ -9,6 +9,8 @@
 // Keep this module free of browser globals: tests/sidebar_prefs.test.mjs
 // checks it against SidebarSettings and preferences.json in Node.
 
+import { LINK_CLICK_MODIFIERS } from "../utils/link_click.mjs";
+
 const SIZES = [
   "xxsmall",
   "xsmall",
@@ -73,6 +75,19 @@ export const SIDEBAR_PREFS = [
     pref: "second-sidebar.auto-hide-forward-button",
   },
   { field: "autoHideBackButton", pref: "second-sidebar.auto-hide-back-button" },
+  {
+    field: "showOpenInSidebarItems",
+    pref: "second-sidebar.show-open-menu-items",
+  },
+  {
+    field: "showPreviewInSidebarItems",
+    pref: "second-sidebar.show-preview-menu-items",
+  },
+  {
+    field: "linkClickModifier",
+    pref: "second-sidebar.link-click-modifier",
+    values: LINK_CLICK_MODIFIERS,
+  },
   { field: "hideSidebarAnimated", pref: "second-sidebar.animate-sidebar" },
   {
     field: "hideToolbarAnimated",

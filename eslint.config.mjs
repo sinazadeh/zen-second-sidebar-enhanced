@@ -27,6 +27,7 @@ export default [
         IOUtils: "readonly",
         NetUtil: "readonly",
         PathUtils: "readonly",
+        PlacesUtils: "readonly",
         Services: "readonly",
         SessionStore: "readonly",
         SidebarController: "readonly",

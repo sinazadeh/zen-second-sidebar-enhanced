@@ -81,6 +81,9 @@ export class SidebarMainPopupSettings extends Panel {
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
     this.enableSidebarBoxHintToggle = new Toggle();
+    this.showOpenInSidebarItemsToggle = new Toggle();
+    this.showPreviewInSidebarItemsToggle = new Toggle();
+    this.linkClickModifierMenuList = this.#createLinkClickModifierMenuList();
     this.exportSettingsButton = createSubviewButton("Export Settings...");
     this.importSettingsButton = createSubviewButton("Import Settings...");
     this.saveButton = createSaveButton();
@@ -251,6 +254,14 @@ export class SidebarMainPopupSettings extends Panel {
     return menuList;
   }
 
+  #createLinkClickModifierMenuList() {
+    const menuList = createMenuList();
+    menuList.appendItem("Off", "off");
+    menuList.appendItem("Alt+Shift", "altshift");
+    menuList.appendItem("Alt", "alt");
+    return menuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -338,6 +349,22 @@ export class SidebarMainPopupSettings extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
           ]),
+          createPopupSet("Links and bookmarks", [
+            createPopupGroup(
+              'Show "Open in Second Sidebar"',
+              this.showOpenInSidebarItemsToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              'Show "Preview in Second Sidebar"',
+              this.showPreviewInSidebarItemsToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Preview on click with",
+              this.linkClickModifierMenuList,
+            ),
+          ]),
           createPopupSet("Animations", [
             createPopupGroup("Animate sidebar", this.hideSidebarAnimatedToggle),
             new ToolbarSeparator(),
@@ -376,6 +403,9 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(string):void} callbacks.lastWebPanelShortcut
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
+   * @param {function(boolean):void} callbacks.showOpenInSidebarItems
+   * @param {function(boolean):void} callbacks.showPreviewInSidebarItems
+   * @param {function(string):void} callbacks.linkClickModifier
    */
   listenChanges({
     position,
@@ -393,6 +423,9 @@ export class SidebarMainPopupSettings extends Panel {
     lastWebPanelShortcut,
     hideSidebarAnimated,
     hideToolbarAnimated,
+    showOpenInSidebarItems,
+    showPreviewInSidebarItems,
+    linkClickModifier,
   }) {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
@@ -409,6 +442,9 @@ export class SidebarMainPopupSettings extends Panel {
     this.onLastWebPanelShortcutChange = lastWebPanelShortcut;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
+    this.onShowOpenInSidebarItemsChange = showOpenInSidebarItems;
+    this.onShowPreviewInSidebarItemsChange = showPreviewInSidebarItems;
+    this.onLinkClickModifierChange = linkClickModifier;
 
     this.positionMenuList.addEventListener("command", () =>
       position(this.positionMenuList.getValue()),
@@ -494,6 +530,17 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.hideToolbarAnimatedToggle.addEventListener("toggle", () =>
       hideToolbarAnimated(this.hideToolbarAnimatedToggle.getPressed()),
+    );
+    this.showOpenInSidebarItemsToggle.addEventListener("toggle", () =>
+      showOpenInSidebarItems(this.showOpenInSidebarItemsToggle.getPressed()),
+    );
+    this.showPreviewInSidebarItemsToggle.addEventListener("toggle", () =>
+      showPreviewInSidebarItems(
+        this.showPreviewInSidebarItemsToggle.getPressed(),
+      ),
+    );
+    this.linkClickModifierMenuList.addEventListener("command", () =>
+      linkClickModifier(this.linkClickModifierMenuList.getValue()),
     );
   }
 
@@ -590,6 +637,13 @@ export class SidebarMainPopupSettings extends Panel {
       .removeAttribute("error");
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
+    this.showOpenInSidebarItemsToggle.setPressed(
+      settings.showOpenInSidebarItems,
+    );
+    this.showPreviewInSidebarItemsToggle.setPressed(
+      settings.showPreviewInSidebarItems,
+    );
+    this.linkClickModifierMenuList.setValue(settings.linkClickModifier);
 
     this.settings = settings;
     this.editSessionActive = true;
@@ -794,6 +848,34 @@ export class SidebarMainPopupSettings extends Panel {
     ) {
       reverters.push(() =>
         this.onAutoHideToolbarAnimatedChange(this.settings.hideToolbarAnimated),
+      );
+    }
+    if (
+      this.showOpenInSidebarItemsToggle.getPressed() !==
+      this.settings.showOpenInSidebarItems
+    ) {
+      reverters.push(() =>
+        this.onShowOpenInSidebarItemsChange(
+          this.settings.showOpenInSidebarItems,
+        ),
+      );
+    }
+    if (
+      this.showPreviewInSidebarItemsToggle.getPressed() !==
+      this.settings.showPreviewInSidebarItems
+    ) {
+      reverters.push(() =>
+        this.onShowPreviewInSidebarItemsChange(
+          this.settings.showPreviewInSidebarItems,
+        ),
+      );
+    }
+    if (
+      this.linkClickModifierMenuList.getValue() !==
+      this.settings.linkClickModifier
+    ) {
+      reverters.push(() =>
+        this.onLinkClickModifierChange(this.settings.linkClickModifier),
       );
     }
 
