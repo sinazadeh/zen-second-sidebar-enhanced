@@ -1,6 +1,8 @@
 import { AfterSplitter } from "./xul/after_splitter.mjs";
 import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
 import { GeometryHint } from "./xul/geometry_hint.mjs";
+import { OpenBookmarkAsTempWebPanelMenuItem } from "./xul/open_bookmark_as_temp_web_panel.mjs";
+import { OpenBookmarkAsWebPanelMenuItem } from "./xul/open_bookmark_as_web_panel.mjs";
 import { OpenLinkAsTempWebPanelMenuItem } from "./xul/open_link_as_temp_web_panel.mjs";
 import { OpenLinkAsWebPanelMenuItem } from "./xul/open_link_as_web_panel.mjs";
 import { SearchInWebPanelMenuItem } from "./xul/search_in_web_panel.mjs";
@@ -41,6 +43,7 @@ export class SidebarElements {
 
     console.log("Context menu items creation...");
     this.#createContextMenuItems();
+    this.#createBookmarkMenuItems();
   }
 
   static #createSidebar() {
@@ -174,5 +177,35 @@ export class SidebarElements {
       contextSearchSelect,
     );
     this.contextMenuItemsEnabled = true;
+  }
+
+  static #createBookmarkMenuItems() {
+    this.bookmarkMenuItemsEnabled = false;
+    this.openBookmarkAsWebPanelMenuItem = new OpenBookmarkAsWebPanelMenuItem();
+    this.openBookmarkAsTempWebPanelMenuItem =
+      new OpenBookmarkAsTempWebPanelMenuItem();
+
+    // The context menu of the bookmarks toolbar, Bookmarks menu and History
+    // menu. Our items go last among its "Open..." items.
+    const separatorElement = document.getElementById(
+      "placesContext_openSeparator",
+    );
+    if (separatorElement?.parentElement?.id !== "placesContext") {
+      console.log(
+        "Bookmark menu items skipped because menu anchors are missing",
+      );
+      return;
+    }
+
+    const placesContext = new XULElement({
+      element: separatorElement.parentElement,
+    });
+    const separator = new XULElement({ element: separatorElement });
+    placesContext.insertBefore(this.openBookmarkAsWebPanelMenuItem, separator);
+    placesContext.insertBefore(
+      this.openBookmarkAsTempWebPanelMenuItem,
+      separator,
+    );
+    this.bookmarkMenuItemsEnabled = true;
   }
 }

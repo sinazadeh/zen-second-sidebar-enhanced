@@ -277,6 +277,43 @@
   },
   {
     "type": "separator",
+    "label": "Links and bookmarks"
+  },
+  {
+    "type": "checkbox",
+    "property": "second-sidebar.show-open-menu-items",
+    "label": "Show \"Open in Second Sidebar\" in menus",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "second-sidebar.show-preview-menu-items",
+    "label": "Show \"Preview in Second Sidebar\" in menus",
+    "defaultValue": true
+  },
+  {
+    "type": "dropdown",
+    "property": "second-sidebar.link-click-modifier",
+    "label": "Preview on click with",
+    "placeholder": false,
+    "defaultValue": "altshift",
+    "options": [
+      {
+        "value": "off",
+        "label": "Off"
+      },
+      {
+        "value": "altshift",
+        "label": "Alt+Shift"
+      },
+      {
+        "value": "alt",
+        "label": "Alt (in Zen, set Glance to another key)"
+      }
+    ]
+  },
+  {
+    "type": "separator",
     "label": "Animations"
   },
   {

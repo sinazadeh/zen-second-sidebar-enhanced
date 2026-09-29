@@ -29,6 +29,10 @@ const FIELD_EVENTS = {
   tooltipFullUrl: SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL,
   hideSidebarAnimated: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED,
   hideToolbarAnimated: SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED,
+  showOpenInSidebarItems: SidebarEvents.EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS,
+  showPreviewInSidebarItems:
+    SidebarEvents.EDIT_SIDEBAR_SHOW_PREVIEW_IN_SIDEBAR_ITEMS,
+  linkClickModifier: SidebarEvents.EDIT_SIDEBAR_LINK_CLICK_MODIFIER,
 };
 
 // Sent together in one EDIT_SIDEBAR_VISIBILITY event.

@@ -25,6 +25,9 @@ export class SidebarController {
     this.lastWebPanelShortcut = "";
     this.hideSidebarAnimated = false;
     this.hideToolbarAnimated = true;
+    this.showOpenInSidebarItems = true;
+    this.showPreviewInSidebarItems = true;
+    this.linkClickModifier = "altshift";
   }
 
   #setupListeners() {
@@ -164,6 +167,24 @@ export class SidebarController {
         this.setHideToolbarAnimated(value);
       },
     );
+
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS,
+      (event) => {
+        this.showOpenInSidebarItems = event.detail.value;
+      },
+    );
+
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_SHOW_PREVIEW_IN_SIDEBAR_ITEMS,
+      (event) => {
+        this.showPreviewInSidebarItems = event.detail.value;
+      },
+    );
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_LINK_CLICK_MODIFIER, (event) => {
+      this.linkClickModifier = event.detail.value;
+    });
   }
 
   /**
@@ -440,6 +461,9 @@ export class SidebarController {
     SidebarControllers.sidebarGeometry.setEnableSidebarBoxHint(
       settings.enableSidebarBoxHint,
     );
+    this.showOpenInSidebarItems = settings.showOpenInSidebarItems;
+    this.showPreviewInSidebarItems = settings.showPreviewInSidebarItems;
+    this.linkClickModifier = settings.linkClickModifier;
   }
 
   /**
@@ -471,6 +495,9 @@ export class SidebarController {
       hideToolbarAnimated: this.hideToolbarAnimated,
       enableSidebarBoxHint:
         SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
+      showOpenInSidebarItems: this.showOpenInSidebarItems,
+      showPreviewInSidebarItems: this.showPreviewInSidebarItems,
+      linkClickModifier: this.linkClickModifier,
     });
   }
 

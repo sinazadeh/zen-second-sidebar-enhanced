@@ -24,6 +24,9 @@ export class SidebarSettings {
    * @param {boolean} params.hideSidebarAnimated
    * @param {boolean} params.hideToolbarAnimated
    * @param {boolean} params.enableSidebarBoxHint
+   * @param {boolean} params.showOpenInSidebarItems
+   * @param {boolean} params.showPreviewInSidebarItems
+   * @param {string} params.linkClickModifier
    */
   constructor({
     position = "right",
@@ -44,6 +47,9 @@ export class SidebarSettings {
     hideSidebarAnimated = true,
     hideToolbarAnimated = true,
     enableSidebarBoxHint = false,
+    showOpenInSidebarItems = true,
+    showPreviewInSidebarItems = true,
+    linkClickModifier = "altshift",
   }) {
     this.position = position;
     this.padding = padding;
@@ -63,6 +69,9 @@ export class SidebarSettings {
     this.hideSidebarAnimated = hideSidebarAnimated;
     this.hideToolbarAnimated = hideToolbarAnimated;
     this.enableSidebarBoxHint = enableSidebarBoxHint;
+    this.showOpenInSidebarItems = showOpenInSidebarItems;
+    this.showPreviewInSidebarItems = showPreviewInSidebarItems;
+    this.linkClickModifier = linkClickModifier;
   }
 
   /**

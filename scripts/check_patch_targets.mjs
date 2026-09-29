@@ -22,7 +22,8 @@ const RAW_URL = "https://raw.githubusercontent.com/mozilla-firefox/firefox";
 /**
  * Each target is a Firefox file plus either a source patch function (see
  * patchers/source_patches.mjs) or snippets that must be present for the
- * runtime patches in patchers/urlbar_input_patcher.mjs.
+ * runtime patches in patchers/urlbar_input_patcher.mjs and
+ * patchers/content_click_hook.sys.mjs.
  */
 const TARGETS = [
   {
@@ -36,6 +37,22 @@ const TARGETS = [
   {
     path: "browser/base/content/navigator-toolbox.js",
     patch: extractToolboxEventHandlers,
+  },
+  {
+    path: "browser/actors/ClickHandlerParent.sys.mjs",
+    requires: {
+      "contentAreaClick(data) {":
+        "content_click_hook.sys.mjs replaces contentAreaClick",
+      "this.contentAreaClick(message.data);":
+        "content_click_hook.sys.mjs relies on Content:Click calling contentAreaClick",
+    },
+  },
+  {
+    path: "browser/components/DesktopActorRegistry.sys.mjs",
+    requires: {
+      '"resource:///actors/ClickHandlerParent.sys.mjs"':
+        "content_click_hook.sys.mjs loads ClickHandlerParent from this URL",
+    },
   },
   {
     path: "browser/components/urlbar/content/UrlbarInputBase.mjs",

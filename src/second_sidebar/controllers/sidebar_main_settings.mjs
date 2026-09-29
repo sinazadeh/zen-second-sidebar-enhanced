@@ -72,6 +72,16 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED, {
           value,
         }),
+      showOpenInSidebarItems: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS, {
+          value,
+        }),
+      showPreviewInSidebarItems: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_SHOW_PREVIEW_IN_SIDEBAR_ITEMS, {
+          value,
+        }),
+      linkClickModifier: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_LINK_CLICK_MODIFIER, { value }),
     });
 
     SidebarElements.sidebarMainPopupSettings.listenCancelButtonClick(() =>

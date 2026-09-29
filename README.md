@@ -7,6 +7,7 @@
 > - Web panel setting: `Reload when address changes` — reloads a web panel when the main browser's active tab is switched or navigated to a different site. For example, with a Bitwarden panel this reloads its vault view as you switch tabs, so it's always showing logins for whichever site you're currently on.
 > - Web panel setting: `Unload after inactivity` — automatically unloads a panel that's been in the background for a set time, without relying on Firefox's own background tab unloader (which isn't reliable for panels living in the hidden window that hosts them).
 > - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden) when adding a panel — see [Presets](#presets).
+> - Bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links and bookmarks](#links-and-bookmarks).
 > - Sidebar setting: `Export settings` / `Import settings` — back up or restore the sidebar and all web panel settings as a single JSON file.
 > - [Sine](https://github.com/CosmoCreeper/Sine) mod support (`theme.json`) alongside fx-autoconfig, so the script can be installed without manually copying files.
 > - Windows GPU compositing fix so web panels don't render as a blank frame when switching.
@@ -44,6 +45,14 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 ## Settings
 
 Right-click the sidebar and choose **Sidebar settings**. With Sine, the same settings are also on Sine's mod page: click the gear button of **Zen Second Sidebar Enhanced**. Changes there apply right away, like in the popup. Keyboard shortcuts and settings export/import are only in the popup.
+
+## Links and bookmarks
+
+- Right-click a link and choose **Open Link in Second Sidebar** to add it as a web panel, or **Preview Link in Second Sidebar** to open it in a temporary panel that goes away when you close it.
+- Right-click a bookmark (on the bookmarks toolbar or in the Bookmarks menu) or an entry in the History menu for the same two items: **Open in Second Sidebar** and **Preview in Second Sidebar**.
+- **Alt+Shift+click** a link or a bookmark to preview it.
+
+In **Sidebar settings**, under **Links and bookmarks**, you can hide either menu item, and change the click to plain **Alt** or turn it off. In Zen, Alt+click also opens Glance, and Glance gets it first: to preview with Alt+click, set Glance's **Trigger method** to another key in Zen's settings (**Glance**).
 
 ## Presets
 
