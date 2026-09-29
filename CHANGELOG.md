@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-29
+
 ### Added
 
 - In Zen, **Keep gap at window edge** (shown when **Auto-hide sidebar** is set
