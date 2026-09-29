@@ -509,7 +509,11 @@ The **Release** workflow runs whenever `theme.json` changes on `main` and
 publishes a GitHub release, tag `v<version>`, for every version that doesn't
 have one yet (`scripts/publish_releases.mjs`), with that version's changelog
 section and a zip of `src/` at the release's commit for fx-autoconfig users.
-There's no tag to push. A version's release commit is the first commit on
+There's no tag to push, except for a version released at an older commit
+than `main`'s (a backfill): GitHub won't let the workflow's token create a
+tag at a commit whose `.github/workflows` differ from `main`'s (HTTP 403),
+so the run publishes what it can and prints the `git tag`/`git push`
+commands for the rest. A version's release commit is the first commit on
 `main`'s first-parent line with that version and its notes, with nothing left
 under `[Unreleased]` (early versions were bumped before their notes landed);
 an existing tag is kept. Deleting a release gets it published again on the

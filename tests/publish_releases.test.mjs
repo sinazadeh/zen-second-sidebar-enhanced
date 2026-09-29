@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-const { compareVersions, extractReleaseNotes, hasReleaseNotes, planReleases } =
-  await import("../scripts/publish_releases.mjs");
+const {
+  compareVersions,
+  extractReleaseNotes,
+  formatTagCommands,
+  hasReleaseNotes,
+  planReleases,
+} = await import("../scripts/publish_releases.mjs");
 
 const CHANGELOG = `# Changelog
 
@@ -84,5 +89,15 @@ test("nothing to do once every version is released", () => {
   assert.deepEqual(
     planReleases(history, new Set(["v1.0.0", "v1.1.0", "v1.2.0"]), new Map()),
     [],
+  );
+});
+
+test("tag commands create every tag and push them in one push", () => {
+  assert.equal(
+    formatTagCommands([
+      { tag: "v1.0.0", sha: "a1" },
+      { tag: "v1.1.0", sha: "b2" },
+    ]),
+    "git tag v1.0.0 a1\ngit tag v1.1.0 b2\ngit push origin v1.0.0 v1.1.0",
   );
 });

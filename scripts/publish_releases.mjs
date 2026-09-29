@@ -125,6 +125,21 @@ export function planReleases(history, releasedTags, existingTags) {
 }
 
 /**
+ * Commands that create `releases`' tags by hand, all in one push: GitHub
+ * starts no workflows for a push of more than three tags, so the release
+ * workflow of those older commits doesn't run.
+ *
+ * @param {Array<{tag: string, sha: string}>} releases
+ * @returns {string}
+ */
+export function formatTagCommands(releases) {
+  return [
+    ...releases.map(({ tag, sha }) => `git tag ${tag} ${sha}`),
+    `git push origin ${releases.map(({ tag }) => tag).join(" ")}`,
+  ].join("\n");
+}
+
+/**
  * @param {string} command
  * @param {Array<string>} args
  * @returns {string}
@@ -133,6 +148,8 @@ function run(command, args) {
   return execFileSync(command, args, {
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
+    // Captured, so a failure's message is reported once, with the version.
+    stdio: ["ignore", "pipe", "pipe"],
   });
 }
 
@@ -261,6 +278,7 @@ function main() {
 
   const changelog = showFile("HEAD", "CHANGELOG.md") ?? "";
   const workDir = mkdtempSync(join(tmpdir(), "releases-"));
+  const failed = [];
   for (const release of plan) {
     const notes = extractReleaseNotes(changelog, release.version)
       ? "CHANGELOG notes"
@@ -269,10 +287,33 @@ function main() {
     console.log(
       `${dryRun ? "Would publish" : "Publishing"} ${release.tag} at ${release.sha.slice(0, 7)} (${notes}${existing}${release.latest ? ", latest" : ""})`,
     );
-    if (!dryRun) {
+    if (dryRun) {
+      continue;
+    }
+    // Keep going, so one version that can't be published doesn't hold back
+    // the others (the newest one included).
+    try {
       publish(release, changelog, workDir);
+    } catch (error) {
+      failed.push(release);
+      console.error(
+        `Failed to publish ${release.tag}: ${String(error.stderr || error.message).trim()}`,
+      );
     }
   }
+
+  if (failed.length === 0) {
+    return;
+  }
+  const untagged = failed.filter(({ tag }) => !tags.has(tag));
+  if (untagged.length > 0) {
+    // GitHub refuses (HTTP 403) to let the workflow's token create a tag at
+    // an older commit whose .github/workflows files differ from main's.
+    console.error(
+      `\nTo publish ${untagged.length === 1 ? "this version" : "these versions"}, push ${untagged.length === 1 ? "its tag" : "their tags"} from a clone of the repository, then run this workflow again:\n\n${formatTagCommands(untagged)}\n`,
+    );
+  }
+  process.exitCode = 1;
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
