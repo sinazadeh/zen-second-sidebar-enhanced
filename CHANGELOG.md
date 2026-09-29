@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-29
+
 ### Added
 
 - Bookmarks and History menu entries have **Open in Second Sidebar** and
