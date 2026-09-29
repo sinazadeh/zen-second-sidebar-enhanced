@@ -6,12 +6,20 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Added
+
+- In Zen, **Keep gap at window edge** (shown when **Auto-hide sidebar** is set
+  to overlay, on by default): turn it off to let the page reach the window
+  edge while the sidebar is hidden.
+
 ### Fixed
 
 - In Zen, with **Auto-hide sidebar** set to overlay, the page no longer runs
   to the edge of the window on the sidebar's side, cutting off its border
   ([#23](https://github.com/sinazadeh/zen-second-sidebar-enhanced/issues/23)).
   It keeps the gap Zen leaves there, as when the sidebar is inline.
+- In Zen, a hidden sidebar no longer leaves a faint shadow strip along the
+  window edge.
 
 ### Changed
 

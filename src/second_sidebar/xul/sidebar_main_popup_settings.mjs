@@ -59,6 +59,7 @@ export class SidebarMainPopupSettings extends Panel {
     });
     this.autoHideSidebarBehaviorMenuList =
       this.#createAutoHideSidebarBehaviorMenuList();
+    this.autoHideEdgeGapToggle = new Toggle();
     this.sidebarWidgetHideWebPanelToggle = new Toggle();
     this.sidebarWidgetShortcutInput = createInput({
       placeholder: "Click here and press keys...",
@@ -248,7 +249,9 @@ export class SidebarMainPopupSettings extends Panel {
   }
 
   #createAutoHideSidebarBehaviorMenuList() {
-    const menuList = createMenuList();
+    const menuList = createMenuList({
+      id: "sb2-main-popup-settings-auto-hide-behavior-menu-list",
+    });
     menuList.appendItem("Inline", "inline");
     menuList.appendItem("Overlay", "overlay");
     return menuList;
@@ -286,6 +289,15 @@ export class SidebarMainPopupSettings extends Panel {
               createPopupGroup(
                 "Auto-hide behavior",
                 this.autoHideSidebarBehaviorMenuList,
+              ),
+              new Div({
+                id: "sb2-main-popup-settings-edge-gap-items",
+              }).appendChildren(
+                new ToolbarSeparator(),
+                createPopupGroup(
+                  "Keep gap at window edge",
+                  this.autoHideEdgeGapToggle,
+                ),
               ),
             ),
             new Div({
@@ -400,6 +412,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(string):void} callbacks.tooltip
    * @param {function(boolean):void} callbacks.tooltipFullUrl
    * @param {function(boolean, string, boolean, string):void} callbacks.visibility
+   * @param {function(boolean):void} callbacks.autoHideEdgeGap
    * @param {function(string):void} callbacks.lastWebPanelShortcut
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
@@ -420,6 +433,7 @@ export class SidebarMainPopupSettings extends Panel {
     tooltip,
     tooltipFullUrl,
     visibility,
+    autoHideEdgeGap,
     lastWebPanelShortcut,
     hideSidebarAnimated,
     hideToolbarAnimated,
@@ -439,6 +453,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onTooltipChange = tooltip;
     this.onTooltipFullUrlChange = tooltipFullUrl;
     this.onVisibilityChange = visibility;
+    this.onAutoHideEdgeGapChange = autoHideEdgeGap;
     this.onLastWebPanelShortcutChange = lastWebPanelShortcut;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
@@ -518,6 +533,9 @@ export class SidebarMainPopupSettings extends Panel {
         this.sidebarWidgetHideWebPanelToggle.getPressed(),
         this.settings.sidebarWidgetShortcut,
       ),
+    );
+    this.autoHideEdgeGapToggle.addEventListener("toggle", () =>
+      autoHideEdgeGap(this.autoHideEdgeGapToggle.getPressed()),
     );
     this.lastWebPanelShortcutInput.addEventListener("input", () =>
       lastWebPanelShortcut(this.lastWebPanelShortcutInput.getValue()),
@@ -629,6 +647,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.sidebarWidgetHideWebPanelToggle.setPressed(
       settings.sidebarWidgetHideWebPanel,
     );
+    this.autoHideEdgeGapToggle.setPressed(settings.autoHideEdgeGap);
     this.sidebarWidgetShortcutInput
       .setValue(settings.sidebarWidgetShortcut)
       .removeAttribute("error");
@@ -821,6 +840,13 @@ export class SidebarMainPopupSettings extends Panel {
           this.settings.sidebarWidgetHideWebPanel,
           this.settings.sidebarWidgetShortcut,
         ),
+      );
+    }
+    if (
+      this.autoHideEdgeGapToggle.getPressed() !== this.settings.autoHideEdgeGap
+    ) {
+      reverters.push(() =>
+        this.onAutoHideEdgeGapChange(this.settings.autoHideEdgeGap),
       );
     }
     if (

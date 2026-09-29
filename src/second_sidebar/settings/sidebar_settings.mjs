@@ -18,6 +18,7 @@ export class SidebarSettings {
    * @param {boolean} params.tooltipFullUrl
    * @param {boolean} params.autoHideSidebar
    * @param {string} params.autoHideSidebarBehavior
+   * @param {boolean} params.autoHideEdgeGap
    * @param {boolean} params.sidebarWidgetHideWebPanel
    * @param {string} params.sidebarWidgetShortcut
    * @param {string} params.lastWebPanelShortcut
@@ -41,6 +42,7 @@ export class SidebarSettings {
     tooltipFullUrl = false,
     autoHideSidebar = false,
     autoHideSidebarBehavior = "inline",
+    autoHideEdgeGap = true,
     sidebarWidgetHideWebPanel = false,
     sidebarWidgetShortcut = "",
     lastWebPanelShortcut = "",
@@ -61,6 +63,7 @@ export class SidebarSettings {
     this.containerBorder = containerBorder;
     this.autoHideSidebar = autoHideSidebar;
     this.autoHideSidebarBehavior = autoHideSidebarBehavior;
+    this.autoHideEdgeGap = autoHideEdgeGap;
     this.sidebarWidgetHideWebPanel = sidebarWidgetHideWebPanel;
     this.sidebarWidgetShortcut = sidebarWidgetShortcut;
     this.lastWebPanelShortcut = lastWebPanelShortcut;

@@ -64,15 +64,24 @@ export const SIDEBAR_MAIN_CSS = `
 
     /* An overlay sidebar (auto-hide set to overlay) is out of the flow, so
        nothing takes the place of the gap Zen keeps at the window edge: keep
-       it as padding instead. The sidebar is positioned against the padding
-       box, so it still sits at the window edge and slides out of sight. Zen
-       drops its gap in DOM fullscreen, so this does too. */
-    &:not([inDOMFullscreen="true"]):has(#sb2-wrapper[position="right"] #sb2-main[overlay="true"]):not([zen-right-side="true"]) #zen-tabbox-wrapper {
+       it as padding instead, unless the user wants the page to reach the
+       edge (edge-gap="false", "Keep gap at window edge"). The sidebar is
+       positioned against the padding box, so it still sits at the window
+       edge and slides out of sight. Zen drops its gap in DOM fullscreen, so
+       this does too. */
+    &:not([inDOMFullscreen="true"]):has(#sb2-wrapper[position="right"] #sb2-main[overlay="true"]:not([edge-gap="false"])):not([zen-right-side="true"]) #zen-tabbox-wrapper {
       padding-right: var(--zen-element-separation, 6px);
     }
 
-    &:not([inDOMFullscreen="true"]):has(#sb2-wrapper[position="left"] #sb2-main[overlay="true"])[zen-right-side="true"] #zen-tabbox-wrapper {
+    &:not([inDOMFullscreen="true"]):has(#sb2-wrapper[position="left"] #sb2-main[overlay="true"]:not([edge-gap="false"]))[zen-right-side="true"] #zen-tabbox-wrapper {
       padding-left: var(--zen-element-separation, 6px);
+    }
+
+    /* A collapsed sidebar only slides out of the window: its shadow would
+       still paint a strip along the edge. Stop painting it once the slide-out
+       has finished, as the Nova styles do. */
+    #sb2-main[sb2-collapsed] {
+      visibility: hidden;
     }
 
     #sb2-main {

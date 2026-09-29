@@ -62,6 +62,8 @@ export class SidebarMainSettingsController {
           sidebarWidgetHideWebPanel,
           sidebarWidgetShortcut,
         }),
+      autoHideEdgeGap: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_EDGE_GAP, { value }),
       lastWebPanelShortcut: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT, {
           value,

@@ -348,4 +348,11 @@ export const POPUPS_CSS = `
       display: none;
     }
   }
+
+  /* The gap is Zen's, and only an overlay sidebar leaves it empty. */
+  :root:not(:has(#zen-tabbox-wrapper)) #sb2-main-popup-settings-edge-gap-items,
+  .sb2-popup:has(#sb2-main-popup-settings-auto-hide-behavior-menu-list:not([value="overlay"]))
+    #sb2-main-popup-settings-edge-gap-items {
+    display: none;
+  }
 `;

@@ -309,7 +309,11 @@ exports.
   With the sidebar on the window-edge side, `#zen-tabbox-wrapper` loses Zen's
   margin there and `#sb2-main`'s `margin-inline-start` keeps the gap, even
   when collapsed. An overlay sidebar (auto-hide set to overlay) is out of the
-  flow, so the wrapper gets that gap back as padding (issue #23).
+  flow, so the wrapper gets that gap back as padding (issue #23), unless the
+  **Keep gap at window edge** setting (`autoHideEdgeGap`, `edge-gap` on
+  `#sb2-main`) is off. A collapsed `#sb2-main` is only slid out of the
+  window, so `[sb2-collapsed]` hides it, or its shadow paints a strip along
+  the edge.
 - **Zen surfaces**: the sidebar and a pinned panel are deliberately
   transparent (`--sb2-zen-surface`) so Zen's window background shows through,
   like Zen's own sidebar. A floating panel (`#sb2-box[pinned="false"]`) and

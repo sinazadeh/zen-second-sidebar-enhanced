@@ -27,6 +27,7 @@ const FIELD_EVENTS = {
   containerBorder: SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER,
   tooltip: SidebarEvents.EDIT_SIDEBAR_TOOLTIP,
   tooltipFullUrl: SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL,
+  autoHideEdgeGap: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_EDGE_GAP,
   hideSidebarAnimated: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED,
   hideToolbarAnimated: SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED,
   showOpenInSidebarItems: SidebarEvents.EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS,
