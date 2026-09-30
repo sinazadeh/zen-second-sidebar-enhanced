@@ -23,7 +23,7 @@ Run the checks relevant to your changes:
 
 ```sh
 npx eslint .
-npx prettier --check "src/**/*.mjs" "tests/*.mjs" "scripts/*.mjs" "*.mjs" "*.md" "*.json" ".github/**/*.yml"
+npx prettier --check "src/**/*.mjs" "tests/*.mjs" "scripts/*.mjs" "*.mjs" "*.md" "*.json" ".github/**/*.yml" ".claude/**/*.md"
 node --test "tests/*.test.mjs"
 git diff --check
 ```
@@ -55,4 +55,8 @@ Record the browser version, operating system and scenarios you actually exercise
 - Update `README.md` when user-visible behavior or installation steps change.
 - Add tests when a change touches pure logic that can be covered in Node.
 - Mention any checks or runtime scenarios you could not verify.
-- See `AGENTS.md` for the repository's implementation conventions and sensitive areas.
+- See `AGENTS.md` for the repository's implementation conventions, and the skill it links for each area's sensitive spots.
+
+## Coding agents
+
+`AGENTS.md` is a short map for coding agents. Each area's detailed rules live in a skill under `.claude/skills/`, loaded only when a task touches that area. `.claude/agents/` has single-purpose reviewers and helpers, each on a model suited to its job, and `.claude/commands/` has workflows that combine them (`/sb2-review`, `/sb2-add-setting`, `/sb2-sync-upstream`, `/sb2-prepare-release`, `/sb2-check`). When you learn something an agent should know next time, add it to the matching skill rather than to `AGENTS.md`. `node --test` runs `scripts/lint_agent_config.mjs`, which checks the structure of all of these.

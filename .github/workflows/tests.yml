@@ -22,7 +22,8 @@ jobs:
         with:
           node-version: 22
 
-      # Pure logic only (settings, import/export, source patches); anything
-      # touching the browser still needs the manual checks in AGENTS.md.
+      # Pure logic only (settings, import/export, source patches) plus the
+      # agent-config lint; anything touching the browser still needs the
+      # manual checks in .claude/skills/sb2-browser-validation/SKILL.md.
       - name: Run tests
         run: node --test "tests/*.test.mjs"

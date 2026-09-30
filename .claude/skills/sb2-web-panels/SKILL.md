@@ -1,0 +1,68 @@
+---
+name: sb2-web-panels
+description: Web panel lifecycle and the hidden browser window whose tabs back the panels - tab creation, switching and unloading, safeCall around removeTab, Zen isolation of that window, repaints, icons, selectors and containers. Use when changing controllers/web_panel*.mjs, xul/web_panels_browser.mjs, xul/base/tab.mjs, panel icons or selectors, or anything that creates, switches, navigates or unloads panel tabs.
+---
+
+# Web panels and their window
+
+Paths are relative to `src/second_sidebar/`. How events from inside a panel
+reach the main window (keyboard shortcuts, window tracking, the find bar,
+mouse events and modifier-clicks on links) is in
+[the nested window's events](references/nested-window-events.md); read it
+before changing any of those.
+
+## The panels' window
+
+- `xul/web_panels_browser.mjs` hosts a nested chrome window whose tabs back the
+  panels. Its startup observers, SessionStore handling, close commands, popup
+  notifications, and URL-bar patches are part of the implementation.
+  Validate changes to this code in a real browser instance.
+- **Nested panel isolation in Zen**: The embedded chrome window hosting web panels
+  must be flagged with `win._zenStartupSyncFlag = "unsynced"` and
+  `zen-unsynced-window="true"` during creation and startup observers. This stops
+  Zen from treating the panel's internal window as a syncable workspace or tabbox.
+  Also ensure `#zen-appcontent-navbar-wrapper` remains hidden inside panel chrome.
+- **GPU compositing on Windows (Zen)**: Switching or showing web panels on Windows
+  under Zen can occasionally leave a blank frame. `WebPanelsBrowser.forceRepaint()`
+  briefly toggles `opacity: 0.9999` to force the compositor to paint content.
+
+## Panel tabs
+
+- Every web panel tab is created with `tab.setUndiscardable(true)`
+  (`xul/base/tab.mjs`) so Firefox's automatic memory-pressure tab unloader
+  can't silently discard one out from under `WebPanelController`'s own
+  `#tab` state - being playing-audio or selected only deprioritizes a tab
+  for that unloader, it doesn't exempt it, and that hidden window isn't
+  reliably recognized as "foreground" either. If a future Firefox/Zen build
+  drops or renames this property, `addWebPanelTab` logs a `console.warn`
+  (not gated behind `Logger.debug`) - don't silence that without addressing
+  the underlying exposure. Panels are only meant to unload through
+  `WebPanelController#unload`/`close()` (including its own
+  `unloadAfterInactivity` timer), never through Firefox's own unloader.
+- `WebPanelController#unload`/`#removeTab` wrap the actual
+  `gBrowser.removeTab()` call in `safeCall` because a Gecko-internal urlbar
+  reformat inside `permitUnload` can throw there (see the long comment in
+  `urlbar_input_patcher.mjs`); losing that wrapper reintroduces a bug where
+  a "closed" panel's tab silently stays alive in the background.
+- Preserve container identity and the existing loading/security context when
+  creating or navigating panel tabs. Account for temporary panels, unload on
+  close, reload timers, listeners, and observers when changing panel lifecycle.
+
+## Icons and selectors
+
+- Web panel icons: `fetchIconURL` (`utils/icons.mjs`) returns the first
+  candidate that actually loads as an image in the window
+  (`firstLoadableIcon`): Places' stored copy (`cached-favicon:`, only when
+  Places returned a favicon, since that protocol serves the default icon for
+  unknown ones), the favicon's own URL, Google's favicon service, then
+  `FALLBACK_ICON`. Custom icons go through
+  `WebPanelButton#setIconWithFallback`. Don't put an unverified network icon
+  URL on a button: if it fails to load (a tracker-blocked CDN, an
+  unreachable host), the button stays blank.
+- A web panel's selector (`WebPanelController#applySelector`) runs as a
+  `javascript:` URL in the panel's page, with that website's permissions.
+  Build it with `buildSelectorScript` (`utils/selector_script.mjs`), which
+  passes the selector as a JSON string literal and percent-encodes the whole
+  script (`javascript:` URLs are percent-decoded before they run, so a `%22`
+  would otherwise end the string). Never paste a settings value into
+  page-side code: settings can come from an imported file.
