@@ -5,7 +5,7 @@
 ## Automated checks
 
 - [ ] `npx eslint .`
-- [ ] `npx prettier --check "src/**/*.mjs" "tests/*.mjs" "scripts/*.mjs" "*.mjs" "*.md" "*.json" ".github/**/*.yml"`
+- [ ] `npx prettier --check "src/**/*.mjs" "tests/*.mjs" "scripts/*.mjs" "*.mjs" "*.md" "*.json" ".github/**/*.yml" ".claude/**/*.md"`
 - [ ] `node --test "tests/*.test.mjs"`
 - [ ] `git diff --check`
 - [ ] `node scripts/check_patch_targets.mjs release beta main` (if patchers changed)

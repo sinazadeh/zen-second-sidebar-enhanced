@@ -169,7 +169,7 @@ jobs:
                 "",
                 ...conflictedFiles.map((file) => `- \`${file}\``),
                 "",
-                "Known hotspots (see the *Upstream synchronization playbook* in `AGENTS.md`):",
+                "Known hotspots (see `.claude/skills/sb2-upstream-sync/SKILL.md`):",
                 "- `src/second_sidebar/controllers/sidebar_main.mjs` - uncollapse margin handling",
                 "- `src/second_sidebar/css/common.mjs` - `--sb2-zen-*` CSS variable definitions",
                 "",

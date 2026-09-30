@@ -10,7 +10,7 @@ export const EXPORT_VERSION = 1;
 /**
  * Builds the settings export file's contents: the sidebar settings and every
  * web panel's settings (not their per-panel state, e.g. lastUrl - see
- * AGENTS.md on keeping those distinct).
+ * .claude/skills/sb2-settings/SKILL.md on keeping those distinct).
  *
  * @param {SidebarSettings} sidebarSettings
  * @param {WebPanelsSettings} webPanelsSettings
