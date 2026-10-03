@@ -47,6 +47,7 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_PADDING: "edit_sidebar_padding",
   EDIT_SIDEBAR_ALLOW_WINDOW_DRAGGING: "edit_sidebar_allow_window_dragging",
   EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION: "edit_sidebar_new_web_panel_position",
+  EDIT_SIDEBAR_NEW_WEB_PANEL_SPACES: "edit_sidebar_new_web_panel_spaces",
   EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET: "edit_sidebar_floating_padding",
   EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON: "edit_sidebar_auto_hide_back_button",
   EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON:

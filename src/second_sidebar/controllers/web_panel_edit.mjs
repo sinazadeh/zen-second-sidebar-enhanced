@@ -202,6 +202,19 @@ export class WebPanelEditController {
       },
     });
 
+    // The edited panel stays in view while its spaces are changed (see
+    // WebPanelsController#applySpaces), until the popup has closed.
+    SidebarElements.webPanelPopupEdit.addEventListener(
+      "popuphidden",
+      (event) => {
+        if (event.target === SidebarElements.webPanelPopupEdit.getXUL()) {
+          setTimeout(() =>
+            SidebarControllers.webPanelsController.applySpaces(),
+          );
+        }
+      },
+    );
+
     SidebarElements.webPanelPopupEdit.listenCancelButtonClick(() =>
       this.hidePopup(),
     );

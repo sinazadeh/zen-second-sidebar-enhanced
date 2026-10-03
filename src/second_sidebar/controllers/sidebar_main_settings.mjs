@@ -32,6 +32,10 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, {
           value,
         }),
+      newWebPanelSpaces: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_SPACES, {
+          value,
+        }),
       defaultFloatingOffset: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET, {
           value,

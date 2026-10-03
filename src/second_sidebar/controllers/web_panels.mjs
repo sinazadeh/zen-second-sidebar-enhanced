@@ -40,6 +40,15 @@ export class WebPanelsController {
   #urlTimeouts = new KeyedTimeouts();
   #selectorTimeouts = new KeyedTimeouts();
   #faviconURLTimeouts = new KeyedTimeouts();
+  /**
+   * The web panel that was open in each Zen space when this window last
+   * left it, to open again on coming back (see #onSpacesChanged).
+   *
+   * @type {Map<string, string?>}
+   */
+  #openWebPanelBySpace = new Map();
+  /** @type {string?} */
+  #lastSpace = null;
   #userAgentTimeouts = new KeyedTimeouts();
 
   constructor() {
@@ -138,6 +147,7 @@ export class WebPanelsController {
         userContextId,
         temporary,
         presetSettings,
+        spaces,
         newWebPanelPosition,
         isActiveWindow,
       } = event.detail;
@@ -150,7 +160,7 @@ export class WebPanelsController {
           temporary,
           newWebPanelPosition,
           isActiveWindow,
-          presetSettings,
+          { ...presetSettings, spaces },
         );
       };
 
@@ -165,6 +175,8 @@ export class WebPanelsController {
       } else {
         const webPanelController = await create();
         if (!webPanelController) return;
+        // Made in the active window's space, which another window may not be in.
+        this.applySpaces();
         if (isActiveWindow) {
           webPanelController.switchWebPanel();
         }
@@ -635,8 +647,9 @@ export class WebPanelsController {
    * @param {boolean} temporary
    * @param {string} newWebPanelPosition
    * @param {boolean} isActiveWindow
-   * @param {import("../utils/web_panel_presets.mjs").WebPanelPresetSettings} [presetSettings]
-   *   Settings of the preset the panel was created from, if any.
+   * @param {import("../utils/web_panel_presets.mjs").WebPanelPresetSettings & {spaces?: string[]}} [settings]
+   *   Settings of the preset the panel was created from, if any, and the Zen
+   *   spaces it starts in.
    * @returns {Promise<WebPanelController?>} null if `url` is invalid
    */
   async createWebPanelController(
@@ -646,7 +659,7 @@ export class WebPanelsController {
     temporary,
     newWebPanelPosition,
     isActiveWindow,
-    { userAgent, dynamicFavicon, faviconURL, reloadOnUrlChange } = {},
+    { userAgent, dynamicFavicon, faviconURL, reloadOnUrlChange, spaces } = {},
   ) {
     try {
       NetUtilWrapper.newURI(url);
@@ -668,6 +681,7 @@ export class WebPanelsController {
         dynamicFavicon,
         faviconURL,
         reloadOnUrlChange,
+        spaces,
       },
     );
     return this.#addNewWebPanel(
@@ -787,6 +801,39 @@ export class WebPanelsController {
   }
 
   /**
+   * Applies Zen's active space, and on switching spaces, remembers the web
+   * panel open in the one left and opens the one that was open in the new
+   * one, unless a panel (in every space) is still open.
+   */
+  #onSpacesChanged() {
+    const space = ZenSpacesWrapper.activeSpace;
+    const switched = this.#lastSpace !== null && space !== this.#lastSpace;
+    if (switched) {
+      this.#openWebPanelBySpace.set(
+        this.#lastSpace,
+        this.getActive()?.getUUID() ?? null,
+      );
+    }
+    this.#lastSpace = space;
+    this.applySpaces();
+    if (switched && space !== null) {
+      // Once Zen is done switching, not in the middle of it.
+      setTimeout(() => this.#reopenWebPanelOf(space));
+    }
+  }
+
+  /**
+   * @param {string} space
+   */
+  #reopenWebPanelOf(space) {
+    if (ZenSpacesWrapper.activeSpace !== space || this.getActive()) return;
+    const webPanelController = this.get(this.#openWebPanelBySpace.get(space));
+    if (webPanelController && !webPanelController.isOutsideSpace()) {
+      webPanelController.switchWebPanel({ forceOpen: true });
+    }
+  }
+
+  /**
    * Shows the web panels for this window's active Zen space and hides the
    * others' (see isWebPanelInSpace). Without spaces, every panel shows.
    */
@@ -795,7 +842,11 @@ export class WebPanelsController {
     const existingSpaces = ZenSpacesWrapper.getSpaces().map(
       (space) => space.uuid,
     );
+    // Hiding it would leave the edit popup pointing at nothing; it's done
+    // once the popup closes (WebPanelEditController).
+    const editedUUID = SidebarElements.webPanelPopupEdit.getEditedUUID();
     for (const webPanelController of this.webPanelControllers.values()) {
+      if (webPanelController.getUUID() === editedUUID) continue;
       webPanelController.setOutsideSpace(
         !isWebPanelInSpace(
           webPanelController.getSpaces(),
@@ -887,7 +938,7 @@ export class WebPanelsController {
       // Hide web panels window after initialization
       SidebarElements.sidebarBox.hide();
       // Now, and whenever Zen's active space or spaces change.
-      ZenSpacesWrapper.listen(() => this.applySpaces());
+      ZenSpacesWrapper.listen(() => this.#onSpacesChanged());
     });
   }
 

@@ -10,6 +10,7 @@ export class SidebarSettings {
    * @param {string} params.padding
    * @param {boolean} params.allowWindowDragging
    * @param {string} params.newWebPanelPosition
+   * @param {string} params.newWebPanelSpaces "all" or "current" (Zen's spaces)
    * @param {string} params.defaultFloatingOffset
    * @param {boolean} params.autoHideBackButton
    * @param {boolean} params.autoHideForwardButton
@@ -36,6 +37,7 @@ export class SidebarSettings {
     padding = "small",
     allowWindowDragging = true,
     newWebPanelPosition = "before",
+    newWebPanelSpaces = "all",
     defaultFloatingOffset = "small",
     autoHideBackButton = false,
     autoHideForwardButton = false,
@@ -61,6 +63,7 @@ export class SidebarSettings {
     this.padding = padding;
     this.allowWindowDragging = allowWindowDragging;
     this.newWebPanelPosition = newWebPanelPosition;
+    this.newWebPanelSpaces = newWebPanelSpaces;
     this.defaultFloatingOffset = defaultFloatingOffset;
     this.autoHideBackButton = autoHideBackButton;
     this.autoHideForwardButton = autoHideForwardButton;

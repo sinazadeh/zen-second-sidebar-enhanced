@@ -2,6 +2,8 @@ import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
+import { ZenSpacesWrapper } from "../wrappers/zen_spaces.mjs";
+import { getNewWebPanelSpaces } from "../utils/spaces.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 export class WebPanelNewController {
@@ -41,6 +43,11 @@ export class WebPanelNewController {
       userContextId,
       temporary,
       presetSettings,
+      // Worked out here: every window gets the event, each in its own space.
+      spaces: getNewWebPanelSpaces(
+        this.newWebPanelSpaces,
+        ZenSpacesWrapper.activeSpace,
+      ),
       newWebPanelPosition: this.newWebPanelPosition,
     });
   }
@@ -77,5 +84,19 @@ export class WebPanelNewController {
    */
   setNewWebPanelPosition(value) {
     this.newWebPanelPosition = value;
+  }
+
+  /**
+   * @returns {string} "all" or "current" (Zen's spaces)
+   */
+  getNewWebPanelSpaces() {
+    return this.newWebPanelSpaces;
+  }
+
+  /**
+   * @param {string} value
+   */
+  setNewWebPanelSpaces(value) {
+    this.newWebPanelSpaces = value;
   }
 }

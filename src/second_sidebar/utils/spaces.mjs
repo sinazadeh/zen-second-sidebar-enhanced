@@ -17,3 +17,15 @@ export function isWebPanelInSpace(panelSpaces, activeSpace, existingSpaces) {
   if (!panelSpaces.some((uuid) => existingSpaces.includes(uuid))) return true;
   return panelSpaces.includes(activeSpace);
 }
+
+/**
+ * The spaces a new web panel starts in.
+ *
+ * @param {string} newWebPanelSpaces the "New panels show in" setting: "all"
+ *   or "current"
+ * @param {string?} activeSpace
+ * @returns {string[]} none for all spaces
+ */
+export function getNewWebPanelSpaces(newWebPanelSpaces, activeSpace) {
+  return newWebPanelSpaces === "current" && activeSpace ? [activeSpace] : [];
+}
