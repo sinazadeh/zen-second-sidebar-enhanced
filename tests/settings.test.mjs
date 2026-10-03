@@ -103,6 +103,27 @@ test("WebPanelSettings turns older versions' Mobile View into a user agent", () 
   );
 });
 
+test("WebPanelSettings keeps a list of Zen spaces, all of them by default", () => {
+  const panel = (fields) =>
+    WebPanelSettings.fromObject("left", OFFSET, {
+      uuid: "a",
+      url: "https://example.com/",
+      ...fields,
+    });
+  assert.deepEqual(panel({}).spaces, []);
+  assert.deepEqual(panel({ spaces: ["work", "home"] }).spaces, [
+    "work",
+    "home",
+  ]);
+  assert.deepEqual(panel({ spaces: "work" }).spaces, []);
+  assert.deepEqual(panel({ spaces: ["work", 3, null] }).spaces, ["work"]);
+  // A copy, not the same list.
+  const spaces = ["work"];
+  const settings = panel({ spaces });
+  spaces.push("home");
+  assert.deepEqual(settings.toObject().spaces, ["work"]);
+});
+
 test("WebPanelsSettings doesn't save or load temporary panels", async (t) => {
   const panels = [
     { uuid: "kept", url: "https://kept.example/" },

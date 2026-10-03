@@ -105,6 +105,19 @@ export class WebPanelButton extends Widget {
   }
 
   /**
+   * Hides the button outside the Zen spaces its panel is limited to (shown
+   * anyway while customizing the toolbar, so it can still be moved).
+   *
+   * @param {boolean} value
+   * @returns {WebPanelButton}
+   */
+  setOutsideSpace(value) {
+    return this.doWhenButtonReady(() => {
+      this.button.toggleAttribute("sb2-outside-space", value);
+    });
+  }
+
+  /**
    *
    * @param {boolean} value
    * @returns {WebPanelButton}

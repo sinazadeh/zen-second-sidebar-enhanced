@@ -71,6 +71,21 @@ before changing any of those.
   creating or navigating panel tabs. Account for temporary panels, unload on
   close, reload timers, listeners, and observers when changing panel lifecycle.
 
+## Zen spaces
+
+- A web panel's `spaces` (Zen's spaces, formerly workspaces; none for all)
+  decide where its button shows: `WebPanelsController#applySpaces` runs
+  `isWebPanelInSpace` (`utils/spaces.mjs`) for this window's active space at
+  startup, after every switch, when spaces change and after customizing.
+  A panel outside the space gets `sb2-outside-space` on its button (shown
+  anyway while customizing), closes if open, and is skipped by shortcuts and
+  next/previous.
+- Go through `ZenSpacesWrapper` (`wrappers/zen_spaces.mjs`), not
+  `gZenWorkspaces` directly. Zen awaits its `addChangeListeners` callbacks in
+  the middle of switching spaces, so a callback that throws breaks the switch;
+  the wrapper catches. `getWorkspaces()` returns the list in current Zen but a
+  promise in older versions, whose cache was `{ workspaces }`.
+
 ## Context menu items
 
 - The "Open…/Preview… in Second Sidebar" items are created in

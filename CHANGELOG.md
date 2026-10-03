@@ -15,6 +15,9 @@ below (see `.github/workflows/release.yml`).
   right-click menu, for every loaded panel in every window.
 - More website presets: Discord, Gmail, Google Keep, Messenger, Notion,
   Outlook, Perplexity, Slack and Spotify.
+- In Zen, **Spaces** in **Edit web panel**: limit a web panel to the spaces
+  (workspaces) you pick. In other spaces its button is hidden, and if it was
+  open it closes.
 
 ### Changed
 

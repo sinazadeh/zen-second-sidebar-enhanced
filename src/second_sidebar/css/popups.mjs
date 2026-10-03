@@ -328,6 +328,12 @@ export const POPUPS_CSS = `
     }
   }
 
+  .sb2-popup-body:has(#sb2-popup-all-spaces-toggle[pressed]) {
+    #sb2-popup-spaces-items {
+      display: none;
+    }
+  }
+
   .sb2-popup-body:has(#sb2-popup-user-agent-menu-list:not([value="custom"])) {
     #sb2-popup-custom-user-agent-items {
       display: none;

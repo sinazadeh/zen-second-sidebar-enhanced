@@ -19,6 +19,8 @@ import { WebPanelsState } from "../settings/web_panels_state.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { extractHostname } from "../utils/url.mjs";
 import { getAdjacentIndex } from "../utils/cycle.mjs";
+import { isWebPanelInSpace } from "../utils/spaces.mjs";
+import { ZenSpacesWrapper } from "../wrappers/zen_spaces.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
 const SAVE_DEBOUNCE_MS = 300;
@@ -183,7 +185,8 @@ export class WebPanelsController {
         isActiveWindow,
         newWebPanelPosition,
       );
-      if (isActiveWindow) {
+      this.applySpaces();
+      if (isActiveWindow && !webPanelController.isOutsideSpace()) {
         webPanelController.switchWebPanel();
       }
       setTimeout(() => this.#unwrapButtons(), 100);
@@ -375,6 +378,12 @@ export class WebPanelsController {
       WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT,
       "shortcut",
       "setShortcut",
+    );
+    this.#bindSimpleSetting(
+      WebPanelEvents.EDIT_WEB_PANEL_SPACES,
+      "spaces",
+      "setSpaces",
+      { onChanged: () => this.applySpaces() },
     );
     this.#bindSimpleSetting(
       WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR,
@@ -773,7 +782,28 @@ export class WebPanelsController {
   switchLastWebPanel() {
     if (!this.lastOpenedWebPanelUUID) return;
     const webPanelController = this.get(this.lastOpenedWebPanelUUID);
+    if (webPanelController?.isOutsideSpace()) return;
     webPanelController?.switchWebPanel();
+  }
+
+  /**
+   * Shows the web panels for this window's active Zen space and hides the
+   * others' (see isWebPanelInSpace). Without spaces, every panel shows.
+   */
+  applySpaces() {
+    const activeSpace = ZenSpacesWrapper.activeSpace;
+    const existingSpaces = ZenSpacesWrapper.getSpaces().map(
+      (space) => space.uuid,
+    );
+    for (const webPanelController of this.webPanelControllers.values()) {
+      webPanelController.setOutsideSpace(
+        !isWebPanelInSpace(
+          webPanelController.getSpaces(),
+          activeSpace,
+          existingSpaces,
+        ),
+      );
+    }
   }
 
   /**
@@ -795,14 +825,16 @@ export class WebPanelsController {
   }
 
   /**
-   * The web panels whose buttons are in this window, in the order the
-   * buttons are in, which the user can change by customizing the toolbar.
+   * The web panels whose buttons are in this window and shown in its Zen
+   * space, in the order the buttons are in, which the user can change by
+   * customizing the toolbar.
    *
    * @returns {WebPanelController[]}
    */
   #getAllInButtonOrder() {
     const withButtons = [];
     for (const webPanelController of this.webPanelControllers.values()) {
+      if (webPanelController.isOutsideSpace()) continue;
       const node = webPanelController.button.button?.getXUL();
       if (node?.isConnected) withButtons.push({ webPanelController, node });
     }
@@ -854,6 +886,8 @@ export class WebPanelsController {
       }
       // Hide web panels window after initialization
       SidebarElements.sidebarBox.hide();
+      // Now, and whenever Zen's active space or spaces change.
+      ZenSpacesWrapper.listen(() => this.applySpaces());
     });
   }
 
