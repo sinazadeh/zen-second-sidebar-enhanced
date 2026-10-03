@@ -32,6 +32,12 @@ export class BrowserElements {
     });
   }
 
+  static get tabContextMenu() {
+    return new XULElement({
+      element: document.getElementById("tabContextMenu"),
+    });
+  }
+
   static get placesContextMenu() {
     return new XULElement({
       element: document.getElementById("placesContext"),

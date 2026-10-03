@@ -16,7 +16,12 @@ const theme = await readJSON("../theme.json");
 
 // Keyboard shortcuts need the settings popup's key capture, so they have no
 // pref of their own.
-const POPUP_ONLY_FIELDS = ["sidebarWidgetShortcut", "lastWebPanelShortcut"];
+const POPUP_ONLY_FIELDS = [
+  "sidebarWidgetShortcut",
+  "lastWebPanelShortcut",
+  "nextWebPanelShortcut",
+  "previousWebPanelShortcut",
+];
 const defaults = new SidebarSettings({});
 const controls = sinePrefs.filter((pref) => pref.type !== "separator");
 

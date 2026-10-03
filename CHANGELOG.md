@@ -12,6 +12,16 @@ below (see `.github/workflows/release.yml`).
   toolbar's **More** menu, replaces **Mobile View**: **Default** (the
   browser's own), **Firefox Mobile**, **Galaxy Phone**, **Galaxy Tab**,
   **iPhone** or **Custom**, which sends a user agent you enter.
+- **Open Tab in Second Sidebar** and **Preview Tab in Second Sidebar** at the
+  end of a tab's right-click menu: they open the tab's page as a web panel,
+  in the tab's container. **Sidebar settings → Links, bookmarks and tabs**
+  (renamed from **Links and bookmarks**) hides them along with the other
+  **Open…** and **Preview…** items.
+- **Open next web panel** and **Open previous web panel** keyboard shortcuts
+  in **Sidebar settings**. They go through the panels in the order of their
+  buttons, wrapping around at the ends.
+- The README now describes every feature and setting itself, instead of
+  pointing to the upstream README.
 
 ### Changed
 

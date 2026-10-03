@@ -71,6 +71,16 @@ before changing any of those.
   creating or navigating panel tabs. Account for temporary panels, unload on
   close, reload timers, listeners, and observers when changing panel lifecycle.
 
+## Context menu items
+
+- The "Open…/Preview… in Second Sidebar" items are created in
+  `sidebar_elements.mjs` and handled in `controllers/context_menu_items.mjs`.
+  Firefox arranges `#tabContextMenu` when it's first shown
+  (`TabContextMenu.MENU_SECTIONS` through `MenuSectionLayout`) and, if any
+  item it doesn't know sits before its own last one, logs an error and
+  leaves the whole menu unarranged. So the tab items go at the end, where
+  extensions' items go, and never into a submenu such as **Move Tab**.
+
 ## Icons and selectors
 
 - Web panel icons: `fetchIconURL` (`utils/icons.mjs`) returns the first

@@ -4,6 +4,8 @@ import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manage
 import { SearchService } from "../wrappers/search.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
+import { TabContextMenuWrapper } from "../wrappers/tab_context_menu.mjs";
+import { canOpenTabAsWebPanel } from "../utils/tab_url.mjs";
 
 export class ContextMenuItemsController {
   constructor() {
@@ -12,6 +14,9 @@ export class ContextMenuItemsController {
     }
     if (SidebarElements.bookmarkMenuItemsEnabled) {
       this.#setupBookmarkListeners();
+    }
+    if (SidebarElements.tabMenuItemsEnabled) {
+      this.#setupTabListeners();
     }
     this.searchQuery = "";
   }
@@ -62,6 +67,23 @@ export class ContextMenuItemsController {
     );
   }
 
+  #setupTabListeners() {
+    // Firefox's own listener (TabContextMenu) runs first and sets contextTab.
+    BrowserElements.tabContextMenu.addEventListener("popupshowing", (event) => {
+      if (event.target !== event.currentTarget) return;
+      this.#onTabPopupShowing();
+    });
+
+    SidebarElements.openTabAsWebPanelMenuItem.addEventListener("command", () =>
+      this.#openTabAsWebPanel(),
+    );
+
+    SidebarElements.openTabAsTempWebPanelMenuItem.addEventListener(
+      "command",
+      () => this.#openTabAsWebPanel(true),
+    );
+  }
+
   #onPopupShowing() {
     const hideLinkItems = !gContextMenu.onSaveableLink;
     SidebarElements.openLinkAsWebPanelMenuItem.toggleHidden(
@@ -97,6 +119,25 @@ export class ContextMenuItemsController {
     }
   }
 
+  #onTabPopupShowing() {
+    const tab = TabContextMenuWrapper.contextTab;
+    // With several tabs selected, Firefox's items act on all of them; these
+    // would only take the one right-clicked, so they're left out.
+    const hideTabItems =
+      !tab ||
+      tab.multiselected ||
+      !canOpenTabAsWebPanel(tab.linkedBrowser?.currentURI?.spec);
+    const hideOpen =
+      hideTabItems ||
+      !SidebarControllers.sidebarController.showOpenInSidebarItems;
+    const hidePreview =
+      hideTabItems ||
+      !SidebarControllers.sidebarController.showPreviewInSidebarItems;
+    SidebarElements.openTabAsWebPanelMenuItem.toggleHidden(hideOpen);
+    SidebarElements.openTabAsTempWebPanelMenuItem.toggleHidden(hidePreview);
+    SidebarElements.tabMenuItemsSeparator.toggleHidden(hideOpen && hidePreview);
+  }
+
   /**
    * @param {boolean} temporary
    */
@@ -119,6 +160,23 @@ export class ContextMenuItemsController {
     SidebarControllers.webPanelNewController.createWebPanel(
       node.uri,
       ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+      temporary,
+    );
+  }
+
+  /**
+   * Opens the right-clicked tab's page in the second sidebar, in the tab's
+   * container.
+   *
+   * @param {boolean} temporary
+   */
+  #openTabAsWebPanel(temporary = false) {
+    const tab = TabContextMenuWrapper.contextTab;
+    const url = tab?.linkedBrowser?.currentURI?.spec;
+    if (!canOpenTabAsWebPanel(url)) return;
+    SidebarControllers.webPanelNewController.createWebPanel(
+      url,
+      tab.userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
       temporary,
     );
   }

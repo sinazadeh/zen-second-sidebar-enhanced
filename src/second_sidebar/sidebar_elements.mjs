@@ -1,10 +1,13 @@
 import { AfterSplitter } from "./xul/after_splitter.mjs";
 import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
 import { GeometryHint } from "./xul/geometry_hint.mjs";
+import { MenuSeparator } from "./xul/base/menuseparator.mjs";
 import { OpenBookmarkAsTempWebPanelMenuItem } from "./xul/open_bookmark_as_temp_web_panel.mjs";
 import { OpenBookmarkAsWebPanelMenuItem } from "./xul/open_bookmark_as_web_panel.mjs";
 import { OpenLinkAsTempWebPanelMenuItem } from "./xul/open_link_as_temp_web_panel.mjs";
 import { OpenLinkAsWebPanelMenuItem } from "./xul/open_link_as_web_panel.mjs";
+import { OpenTabAsTempWebPanelMenuItem } from "./xul/open_tab_as_temp_web_panel.mjs";
+import { OpenTabAsWebPanelMenuItem } from "./xul/open_tab_as_web_panel.mjs";
 import { SearchInWebPanelMenuItem } from "./xul/search_in_web_panel.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxArea } from "./xul/sidebar_box_area.mjs";
@@ -44,6 +47,7 @@ export class SidebarElements {
     console.log("Context menu items creation...");
     this.#createContextMenuItems();
     this.#createBookmarkMenuItems();
+    this.#createTabMenuItems();
   }
 
   static #createSidebar() {
@@ -207,5 +211,30 @@ export class SidebarElements {
       separator,
     );
     this.bookmarkMenuItemsEnabled = true;
+  }
+
+  static #createTabMenuItems() {
+    this.tabMenuItemsEnabled = false;
+    this.tabMenuItemsSeparator = new MenuSeparator({
+      id: "context_sb2-tab-items-separator",
+    });
+    this.openTabAsWebPanelMenuItem = new OpenTabAsWebPanelMenuItem();
+    this.openTabAsTempWebPanelMenuItem = new OpenTabAsTempWebPanelMenuItem();
+
+    const tabContextMenuElement = document.getElementById("tabContextMenu");
+    if (!tabContextMenuElement) {
+      console.log("Tab menu items skipped because the tab menu is missing");
+      return;
+    }
+
+    // Last, like extensions' items: Firefox arranges this menu when it's
+    // first shown (TabContextMenu.MENU_SECTIONS), and refuses to if it finds
+    // an item it doesn't know anywhere but after its own last one.
+    new XULElement({ element: tabContextMenuElement }).appendChildren(
+      this.tabMenuItemsSeparator,
+      this.openTabAsWebPanelMenuItem,
+      this.openTabAsTempWebPanelMenuItem,
+    );
+    this.tabMenuItemsEnabled = true;
   }
 }

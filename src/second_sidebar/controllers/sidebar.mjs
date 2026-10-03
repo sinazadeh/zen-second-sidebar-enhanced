@@ -24,6 +24,8 @@ export class SidebarController {
     this.autoHideSidebar = false;
     this.autoHideEdgeGap = true;
     this.lastWebPanelShortcut = "";
+    this.nextWebPanelShortcut = "";
+    this.previousWebPanelShortcut = "";
     this.hideSidebarAnimated = false;
     this.hideToolbarAnimated = true;
     this.showOpenInSidebarItems = true;
@@ -159,6 +161,17 @@ export class SidebarController {
     listenEvent(SidebarEvents.EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT, (event) => {
       this.lastWebPanelShortcut = event.detail.value;
     });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_NEXT_WEB_PANEL_SHORTCUT, (event) => {
+      this.nextWebPanelShortcut = event.detail.value;
+    });
+
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_PREVIOUS_WEB_PANEL_SHORTCUT,
+      (event) => {
+        this.previousWebPanelShortcut = event.detail.value;
+      },
+    );
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, (event) => {
       const value = event.detail.value;
@@ -473,6 +486,8 @@ export class SidebarController {
     );
     this.setAutoHideEdgeGap(settings.autoHideEdgeGap);
     this.lastWebPanelShortcut = settings.lastWebPanelShortcut;
+    this.nextWebPanelShortcut = settings.nextWebPanelShortcut;
+    this.previousWebPanelShortcut = settings.previousWebPanelShortcut;
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
     SidebarControllers.sidebarGeometry.setEnableSidebarBoxHint(
@@ -509,6 +524,8 @@ export class SidebarController {
       sidebarWidgetHideWebPanel: this.sidebarWidgetHideWebPanel,
       sidebarWidgetShortcut: this.sidebarWidgetShortcut,
       lastWebPanelShortcut: this.lastWebPanelShortcut,
+      nextWebPanelShortcut: this.nextWebPanelShortcut,
+      previousWebPanelShortcut: this.previousWebPanelShortcut,
       hideSidebarAnimated: this.hideSidebarAnimated,
       hideToolbarAnimated: this.hideToolbarAnimated,
       enableSidebarBoxHint:

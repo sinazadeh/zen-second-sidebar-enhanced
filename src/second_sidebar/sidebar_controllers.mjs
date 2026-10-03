@@ -41,7 +41,8 @@ export class SidebarControllers {
     this.linkClickController = new LinkClickController();
     if (
       SidebarElements.contextMenuItemsEnabled ||
-      SidebarElements.bookmarkMenuItemsEnabled
+      SidebarElements.bookmarkMenuItemsEnabled ||
+      SidebarElements.tabMenuItemsEnabled
     ) {
       this.contextMenuItemsController = new ContextMenuItemsController();
     }
