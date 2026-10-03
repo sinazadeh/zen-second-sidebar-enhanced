@@ -36,6 +36,6 @@ export function markZenWindowUnsynced(window) {
       "true",
     );
   } catch (error) {
-    console.log("Failed to mark web panels window as Zen unsynced:", error);
+    console.warn("Failed to mark web panels window as Zen unsynced:", error);
   }
 }

@@ -27,15 +27,17 @@ and `$ARGUMENTS` framed as data in commands.
 
 ## Workflows
 
-CI installs ESLint 9.7.0 and uploads SARIF using
+CI installs the same ESLint as the local setup command and uploads SARIF using
 `@microsoft/eslint-formatter-sarif@3.1.0`. A lint error fails the workflow;
 don't add `continue-on-error` as a way to land something that doesn't pass.
 The SARIF report is generated and
 uploaded even when the lint step fails. The Prettier workflow uses a dry run
 via `creyD/prettier_action`, pinned (`prettier_version`) to the same
-Prettier version as the local setup command in `AGENTS.md`; keep the two in sync
-when upgrading, or a newer local Prettier can flag untouched files CI
-wouldn't. Add legitimate
+Prettier version as the local setup command in `AGENTS.md`, or a newer local
+Prettier can flag untouched files CI wouldn't. When upgrading a tool, change
+its version everywhere it's installed: `AGENTS.md`, `CONTRIBUTING.md`, the
+`sb2-checks-runner` agent and the workflow. `tests/dev_tool_versions.test.mjs`
+fails until they agree. Add legitimate
 Firefox/Zen globals to the existing ESLint globals list when needed, rather
 than broadly disabling rules; note that VS Code's built-in JS language
 service checks JSDoc `@param`/global references independently of ESLint's

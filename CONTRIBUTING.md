@@ -17,6 +17,8 @@ From the repository root:
 npm install --no-save --package-lock=false eslint@9.7.0 @eslint/js@9.7.0 globals@15 prettier@3.9.9
 ```
 
+CI installs the same versions. To upgrade one of these tools, change its version everywhere it's installed (`node --test` fails until they all match).
+
 ## Checks
 
 Run the checks relevant to your changes:

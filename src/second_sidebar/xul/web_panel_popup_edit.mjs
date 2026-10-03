@@ -917,8 +917,9 @@ export class WebPanelPopupEdit extends Panel {
         this.onSelectorChange(this.settings.uuid, this.settings.selector),
       );
     }
-    // URL and selector updates share a debounce timer. Restore the URL last so
-    // a selector rollback cannot cancel the navigation back to the saved URL.
+    // Upstream restores the URL last because its URL and selector updates
+    // share a debounce timer. Here they don't (WebPanelsController), so the
+    // order doesn't matter; it's kept to match upstream.
     if (this.urlInput.getValue() !== this.settings.url) {
       reverters.push(() =>
         this.onUrlChange(this.settings.uuid, this.settings.url),

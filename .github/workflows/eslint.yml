@@ -31,8 +31,9 @@ jobs:
         uses: actions/checkout@v7
 
       # eslint.config.mjs imports @eslint/js and globals directly, so install
-      # them explicitly (same versions as the local setup in AGENTS.md) rather
-      # than relying on them being hoisted from ESLint's own dependencies.
+      # them explicitly (same versions as the local setup in AGENTS.md, which
+      # tests/dev_tool_versions.test.mjs checks) rather than relying on them
+      # being hoisted from ESLint's own dependencies.
       - name: Install ESLint
         run: |
           npm install --no-save --package-lock=false \
