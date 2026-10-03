@@ -20,6 +20,7 @@ const FIELD_EVENTS = {
   padding: SidebarEvents.EDIT_SIDEBAR_PADDING,
   allowWindowDragging: SidebarEvents.EDIT_SIDEBAR_ALLOW_WINDOW_DRAGGING,
   newWebPanelPosition: SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION,
+  newWebPanelSpaces: SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_SPACES,
   defaultFloatingOffset: SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET,
   autoHideBackButton: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON,
   autoHideForwardButton: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON,

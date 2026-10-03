@@ -113,6 +113,12 @@ export class SidebarController {
       SidebarControllers.webPanelNewController.setNewWebPanelPosition(value);
     });
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_SPACES, (event) => {
+      SidebarControllers.webPanelNewController.setNewWebPanelSpaces(
+        event.detail.value,
+      );
+    });
+
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, (event) => {
       const value = event.detail.value;
       SidebarElements.sidebarToolbar
@@ -466,6 +472,9 @@ export class SidebarController {
     SidebarControllers.webPanelNewController.setNewWebPanelPosition(
       settings.newWebPanelPosition,
     );
+    SidebarControllers.webPanelNewController.setNewWebPanelSpaces(
+      settings.newWebPanelSpaces,
+    );
     SidebarControllers.sidebarGeometry.setDefaultFloatingOffset(
       settings.defaultFloatingOffset,
     );
@@ -509,6 +518,8 @@ export class SidebarController {
       allowWindowDragging: SidebarElements.sidebarMain.getAllowWindowDragging(),
       newWebPanelPosition:
         SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
+      newWebPanelSpaces:
+        SidebarControllers.webPanelNewController.getNewWebPanelSpaces(),
       defaultFloatingOffset:
         SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
       autoHideBackButton:

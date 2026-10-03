@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { isWebPanelInSpace } from "../src/second_sidebar/utils/spaces.mjs";
+import {
+  getNewWebPanelSpaces,
+  isWebPanelInSpace,
+} from "../src/second_sidebar/utils/spaces.mjs";
 
 const SPACES = ["work", "home", "study"];
 
@@ -23,4 +26,11 @@ test("a panel whose spaces were all deleted shows everywhere", () => {
   assert.equal(isWebPanelInSpace(["gone"], "home", SPACES), true);
   // One left is enough to keep it to that one.
   assert.equal(isWebPanelInSpace(["gone", "work"], "home", SPACES), false);
+});
+
+test("new panels start in all spaces, or the current one if set to", () => {
+  assert.deepEqual(getNewWebPanelSpaces("all", "work"), []);
+  assert.deepEqual(getNewWebPanelSpaces("current", "work"), ["work"]);
+  // Without spaces (Firefox), there's no current one to start in.
+  assert.deepEqual(getNewWebPanelSpaces("current", null), []);
 });

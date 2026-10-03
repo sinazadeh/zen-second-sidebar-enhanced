@@ -192,6 +192,23 @@
     ]
   },
   {
+    "type": "dropdown",
+    "property": "second-sidebar.new-web-panel-spaces",
+    "label": "New panels show in (Zen)",
+    "placeholder": false,
+    "defaultValue": "all",
+    "options": [
+      {
+        "value": "all",
+        "label": "All Spaces"
+      },
+      {
+        "value": "current",
+        "label": "Current Space"
+      }
+    ]
+  },
+  {
     "type": "checkbox",
     "property": "second-sidebar.show-geometry-hint",
     "label": "Show geometry hint",

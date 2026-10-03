@@ -59,6 +59,11 @@ export const SIDEBAR_PREFS = [
     pref: "second-sidebar.new-web-panel-position",
     values: ["before", "after"],
   },
+  {
+    field: "newWebPanelSpaces",
+    pref: "second-sidebar.new-web-panel-spaces",
+    values: ["all", "current"],
+  },
   { field: "enableSidebarBoxHint", pref: "second-sidebar.show-geometry-hint" },
   {
     field: "containerBorder",

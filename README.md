@@ -64,7 +64,7 @@ Right-click the sidebar and choose **Sidebar settings**. With Sine, the same set
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | General                   | **Position** (left or right) • **Width** • **Allow window dragging**                                                                                                                                            |
 | Visibility                | **Auto-hide sidebar** and its **Auto-hide behavior** (inline or overlay) • **Keep gap at window edge** (Zen, with overlay) • **Hide web panel when sidebar is hidden** • a shortcut to show or hide the sidebar |
-| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **Show geometry hint** while moving or resizing                                                                     |
+| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **New panels show in** (Zen: all spaces, or the current one) • **Show geometry hint** while moving or resizing      |
 | Shortcuts                 | **Open/close last active web panel** • **Open next web panel** • **Open previous web panel** (see [Keyboard shortcuts](#keyboard-shortcuts))                                                                    |
 | Web panel button          | **Container indicator** • **Tooltip** (off, title, URL, or both) • **Show full URL in tooltip**                                                                                                                 |
 | Web panel toolbar         | **Auto-hide back button** • **Auto-hide forward button**                                                                                                                                                        |
@@ -90,11 +90,15 @@ Each web panel has its own settings in **Edit web panel** (right-click its butto
 In Zen, a web panel shows in all your spaces (workspaces) unless you limit it: in **Edit web panel**, turn off **All spaces** and turn on the spaces it belongs in. Each window follows its own active space:
 
 - Switching to a space a panel isn't in hides its button. If the panel was open, it closes, which unloads it if **Unload from memory after closing** is on.
+- Coming back to a space opens the panel you had open there again, unless a panel shown in every space is still open.
+- Changes to the spaces of the panel you're editing apply when you close **Edit web panel**, so it doesn't disappear while you edit it.
 - Its keyboard shortcut, and **Open next/previous web panel**, skip it there too.
 - While you customize the toolbar, every panel's button shows, so you can still move them.
 - If all the spaces a panel was limited to are deleted, it shows in every space again.
 
-Firefox has no spaces, so the setting isn't there.
+New panels show in every space. To start them in the space you're in instead (when you add one, or open a link, tab or bookmark in the sidebar), set **Sidebar settings → New panels show in** to **Current Space**.
+
+Firefox has no spaces, so these settings aren't there.
 
 ## Keyboard shortcuts
 

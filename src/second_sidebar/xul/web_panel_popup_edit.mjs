@@ -895,6 +895,13 @@ export class WebPanelPopupEdit extends Panel {
     return picked.length > 0 ? [...this.deletedSpaces, ...picked] : [];
   }
 
+  /**
+   * @returns {string?} the web panel being edited, while the popup is open
+   */
+  getEditedUUID() {
+    return this.editSessionActive ? this.settings.uuid : null;
+  }
+
   #requestClose() {
     if (this.editSessionActive && this.#hasChanges()) {
       this.discardConfirmation.show();

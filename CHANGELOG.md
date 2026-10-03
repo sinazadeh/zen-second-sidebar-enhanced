@@ -17,7 +17,9 @@ below (see `.github/workflows/release.yml`).
   Outlook, Perplexity, Slack and Spotify.
 - In Zen, **Spaces** in **Edit web panel**: limit a web panel to the spaces
   (workspaces) you pick. In other spaces its button is hidden, and if it was
-  open it closes.
+  open it closes; coming back to a space opens the panel you had open there
+  again. **Sidebar settings → New panels show in** can start new panels in
+  the current space instead of all of them.
 
 ### Changed
 

@@ -48,6 +48,7 @@ export class SidebarMainPopupSettings extends Panel {
     });
     this.newWebPanelPositionMenuList =
       this.#createNewWebPanelPositionMenuList();
+    this.newWebPanelSpacesMenuList = this.#createNewWebPanelSpacesMenuList();
     this.autoHideBackToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
     this.defaultFloatingOffsetMenuList = this.#createPaddingMenuList();
@@ -262,6 +263,17 @@ export class SidebarMainPopupSettings extends Panel {
    *
    * @returns {MenuList}
    */
+  #createNewWebPanelSpacesMenuList() {
+    const menuList = createMenuList();
+    menuList.appendItem("All Spaces", "all");
+    menuList.appendItem("Current Space", "current");
+    return menuList;
+  }
+
+  /**
+   *
+   * @returns {MenuList}
+   */
   #createContainerBorderMenuList() {
     const menuList = createMenuList();
     menuList.appendItem("Off", "off");
@@ -360,6 +372,15 @@ export class SidebarMainPopupSettings extends Panel {
               "New panel position",
               this.newWebPanelPositionMenuList,
             ),
+            new Div({
+              id: "sb2-main-popup-settings-new-web-panel-spaces-items",
+            }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupGroup(
+                "New panels show in",
+                this.newWebPanelSpacesMenuList,
+              ),
+            ),
             new ToolbarSeparator(),
             createPopupGroup(
               "Show geometry hint",
@@ -452,6 +473,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(string):void} callbacks.padding
    * @param {function(boolean):void} callbacks.allowWindowDragging
    * @param {function(string):void} callbacks.newWebPanelPosition
+   * @param {function(string):void} callbacks.newWebPanelSpaces
    * @param {function(string):void} callbacks.defaultFloatingOffset
    * @param {function(boolean):void} callbacks.autoHideBackButton
    * @param {function(boolean):void} callbacks.autoHideForwardButton
@@ -475,6 +497,7 @@ export class SidebarMainPopupSettings extends Panel {
     padding,
     allowWindowDragging,
     newWebPanelPosition,
+    newWebPanelSpaces,
     defaultFloatingOffset,
     autoHideBackButton,
     autoHideForwardButton,
@@ -497,6 +520,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onPaddingChange = padding;
     this.onAllowWindowDraggingChange = allowWindowDragging;
     this.onNewWebPanelPositionChange = newWebPanelPosition;
+    this.onNewWebPanelSpacesChange = newWebPanelSpaces;
     this.onDefaultFloatingOffsetChange = defaultFloatingOffset;
     this.onAutoHideBackButtonChange = autoHideBackButton;
     this.onAutoHideForwardButtonChange = autoHideForwardButton;
@@ -526,6 +550,9 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.newWebPanelPositionMenuList.addEventListener("command", () =>
       newWebPanelPosition(this.newWebPanelPositionMenuList.getValue()),
+    );
+    this.newWebPanelSpacesMenuList.addEventListener("command", () =>
+      newWebPanelSpaces(this.newWebPanelSpacesMenuList.getValue()),
     );
     this.defaultFloatingOffsetMenuList.addEventListener("command", () =>
       defaultFloatingOffset(this.defaultFloatingOffsetMenuList.getValue()),
@@ -699,6 +726,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.paddingMenuList.setValue(settings.padding);
     this.allowWindowDraggingToggle.setPressed(settings.allowWindowDragging);
     this.newWebPanelPositionMenuList.setValue(settings.newWebPanelPosition);
+    this.newWebPanelSpacesMenuList.setValue(settings.newWebPanelSpaces);
     this.defaultFloatingOffsetMenuList.setValue(settings.defaultFloatingOffset);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
     this.autoHideForwardToggle.setPressed(settings.autoHideForwardButton);
@@ -840,6 +868,14 @@ export class SidebarMainPopupSettings extends Panel {
     ) {
       reverters.push(() =>
         this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition),
+      );
+    }
+    if (
+      this.newWebPanelSpacesMenuList.getValue() !==
+      this.settings.newWebPanelSpaces
+    ) {
+      reverters.push(() =>
+        this.onNewWebPanelSpacesChange(this.settings.newWebPanelSpaces),
       );
     }
     if (

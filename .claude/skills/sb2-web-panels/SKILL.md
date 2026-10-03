@@ -79,7 +79,12 @@ before changing any of those.
   startup, after every switch, when spaces change and after customizing.
   A panel outside the space gets `sb2-outside-space` on its button (shown
   anyway while customizing), closes if open, and is skipped by shortcuts and
-  next/previous.
+  next/previous. The panel being edited is left alone until Edit web panel
+  closes. On a switch, `#onSpacesChanged` remembers the panel open in the
+  space left and reopens the new space's one if nothing is open. A new
+  panel's spaces (`newWebPanelSpaces`) are worked out in the window that
+  makes it and sent in `CREATE_WEB_PANEL`, since each window has its own
+  active space.
 - Go through `ZenSpacesWrapper` (`wrappers/zen_spaces.mjs`), not
   `gZenWorkspaces` directly. Zen awaits its `addChangeListeners` callbacks in
   the middle of switching spaces, so a callback that throws breaks the switch;
