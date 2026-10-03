@@ -48,8 +48,8 @@ that area.
    with `removeTab` inside `safeCall`.
 4. **Settings plumbing**: a new setting needs its model and
    `fromObject`/`toObject`, popup control, change reverter, event, receiving
-   controller, and for sidebar settings the mirrored pref,
-   `preferences.json` control and `FIELD_EVENTS` entry. Writes go through
+   controller, its `WEB_PANEL_FIELDS` or `SIDEBAR_FIELD_EVENTS` entry, and
+   for sidebar settings the mirrored pref and `preferences.json` control. Writes go through
    `saveSettings()` so an import's save suspension holds.
 5. **Invariants** from the skills you opened. Cite the skill and the rule.
 6. **Logging and errors**: `Logger.debug` for per-action logs, plain

@@ -3,6 +3,7 @@ import {
   getSidebarPref,
   isValidSidebarPrefValue,
 } from "../settings/sidebar_prefs.mjs";
+import { SIDEBAR_FIELD_EVENTS, VISIBILITY_FIELDS } from "./sidebar_fields.mjs";
 import { SidebarEvents, sendLocalEvent } from "./events.mjs";
 
 import { Logger } from "../utils/logger.mjs";
@@ -11,38 +12,6 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs"; // eslint-disable-line no-unused-vars
 
 const PREF_DOMAIN = "second-sidebar.";
-
-// The events the settings popup sends for each field (see
-// SidebarMainSettingsController), so a change made through a pref is
-// applied exactly like one made in the popup.
-const FIELD_EVENTS = {
-  position: SidebarEvents.EDIT_SIDEBAR_POSITION,
-  padding: SidebarEvents.EDIT_SIDEBAR_PADDING,
-  allowWindowDragging: SidebarEvents.EDIT_SIDEBAR_ALLOW_WINDOW_DRAGGING,
-  newWebPanelPosition: SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION,
-  newWebPanelSpaces: SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_SPACES,
-  defaultFloatingOffset: SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET,
-  autoHideBackButton: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON,
-  autoHideForwardButton: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON,
-  enableSidebarBoxHint: SidebarEvents.EDIT_SIDEBAR_ENABLE_BOX_HINT,
-  containerBorder: SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER,
-  tooltip: SidebarEvents.EDIT_SIDEBAR_TOOLTIP,
-  tooltipFullUrl: SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL,
-  autoHideEdgeGap: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_EDGE_GAP,
-  hideSidebarAnimated: SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED,
-  hideToolbarAnimated: SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED,
-  showOpenInSidebarItems: SidebarEvents.EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS,
-  showPreviewInSidebarItems:
-    SidebarEvents.EDIT_SIDEBAR_SHOW_PREVIEW_IN_SIDEBAR_ITEMS,
-  linkClickModifier: SidebarEvents.EDIT_SIDEBAR_LINK_CLICK_MODIFIER,
-};
-
-// Sent together in one EDIT_SIDEBAR_VISIBILITY event.
-const VISIBILITY_FIELDS = [
-  "autoHideSidebar",
-  "autoHideSidebarBehavior",
-  "sidebarWidgetHideWebPanel",
-];
 
 /**
  * Keeps the individual sidebar prefs (settings/sidebar_prefs.mjs), which
@@ -125,8 +94,11 @@ export class SidebarPrefsController {
         sidebarWidgetHideWebPanel: settings.sidebarWidgetHideWebPanel,
         sidebarWidgetShortcut: settings.sidebarWidgetShortcut,
       });
-    } else if (FIELD_EVENTS[field]) {
-      sendLocalEvent(FIELD_EVENTS[field], { value: settings[field] });
+    } else if (SIDEBAR_FIELD_EVENTS[field]) {
+      // As the settings popup sends it (SidebarMainSettingsController).
+      sendLocalEvent(SidebarEvents[SIDEBAR_FIELD_EVENTS[field]], {
+        value: settings[field],
+      });
     } else {
       console.error(`No event applies the sidebar setting ${field}`);
     }

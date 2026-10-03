@@ -72,6 +72,16 @@ upstream improvements automatically. If upstream ever changes how
 re-apply the loader-portability treatment on top of upstream's version
 rather than taking upstream's as-is.
 
+The settings popups' callbacks are generated here from `WEB_PANEL_FIELDS`
+(`controllers/web_panel_fields.mjs`) and `SIDEBAR_FIELD_EVENTS`
+(`controllers/sidebar_fields.mjs`), which also bind the simple web panel
+settings in `WebPanelsController#bindFields` and give the mirrored prefs
+their events. When upstream adds a setting's callback to
+`controllers/web_panel_edit.mjs` or `controllers/sidebar_main_settings.mjs`,
+or a `#bindSimpleSetting` call to `web_panels.mjs`, add a table entry
+instead of keeping theirs; `tests/settings_wiring.test.mjs` fails until the
+popup's new callback has one.
+
 Upstream's web panel `mobile` setting (a toggle sending a fixed mobile
 user agent) is `userAgent`/`customUserAgent` here, with its choices in
 `utils/user_agents.mjs` and a **User Agent** list in both the edit popup and
