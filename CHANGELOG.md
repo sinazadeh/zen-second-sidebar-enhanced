@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-03
+
 ### Added
 
 - **User Agent** web panel setting, in **Edit web panel** and the panel
