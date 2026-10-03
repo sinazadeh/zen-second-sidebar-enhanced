@@ -21,10 +21,13 @@ import { extractHostname } from "../utils/url.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
 const SAVE_DEBOUNCE_MS = 300;
+// How long the main browser's active tab has to stay on a site before the
+// shown panel reloads for it, so flicking through tabs reloads it once.
+const RELOAD_ON_URL_CHANGE_DELAY_MS = 500;
 
 export class WebPanelsController {
-  /**@type {string?} */
-  #lastMainBrowserHostname = null;
+  /**@type {number?} */
+  #reloadOnUrlChangeTimer = null;
   /**@type {number?} */
   #saveSettingsTimer = null;
   /**@type {number?} */
@@ -457,50 +460,51 @@ export class WebPanelsController {
     });
   }
 
-  // Reload panels with "reload on address change" enabled whenever the main
-  // browser's active tab is switched or navigated to a different hostname.
+  // "Reload when address changes": when the main browser's active tab is
+  // switched or navigated, the shown panel reloads if the tab's site is no
+  // longer the one it loaded with. Panels that aren't shown catch up when
+  // they're opened (WebPanelController#reloadIfSiteChanged) instead of
+  // reloading in the background on every tab switch, which slowed the
+  // browser down: a Bitwarden vault restarts its whole app on each reload.
   #setupMainBrowserListener() {
     const gBrowser = new WindowWrapper().gBrowser;
-    const checkHostnameChange = () => {
-      try {
-        const url = gBrowser.raw?.selectedBrowser?.currentURI?.spec;
-        if (!url) return;
-        const hostname = extractHostname(url);
-        if (
-          this.#lastMainBrowserHostname !== null &&
-          hostname !== this.#lastMainBrowserHostname
-        ) {
-          this.#reloadPanelsOnUrlChange();
-        }
-        this.#lastMainBrowserHostname = hostname;
-      } catch (error) {
-        console.error(
-          "Second Sidebar: failed to check main browser hostname change",
-          error,
-        );
-      }
+    const scheduleReload = () => {
+      clearTimeout(this.#reloadOnUrlChangeTimer);
+      this.#reloadOnUrlChangeTimer = setTimeout(() => {
+        this.#reloadOnUrlChangeTimer = null;
+        this.getActive()?.reloadIfSiteChanged();
+      }, RELOAD_ON_URL_CHANGE_DELAY_MS);
     };
 
-    gBrowser.addEventListener("TabSelect", checkHostnameChange);
+    gBrowser.addEventListener("TabSelect", scheduleReload);
     gBrowser.addProgressListener({
       QueryInterface: ChromeUtilsWrapper.generateQI([
         "nsIWebProgressListener",
         "nsISupportsWeakReference",
       ]),
       onLocationChange: (webProgress) => {
-        if (webProgress.isTopLevel) checkHostnameChange();
+        if (webProgress.isTopLevel) scheduleReload();
       },
     });
   }
 
-  #reloadPanelsOnUrlChange() {
-    for (const webPanelController of this.getAll()) {
-      if (
-        webPanelController.getReloadOnUrlChange() &&
-        !webPanelController.isUnloaded()
-      ) {
-        webPanelController.reload();
-      }
+  /**
+   * The site of the main browser's active tab, as "Reload when address
+   * changes" compares it: the host of an http(s) URL, any other URL whole.
+   *
+   * @returns {string?} null if it can't be read
+   */
+  getMainBrowserHostname() {
+    try {
+      const url = new WindowWrapper().gBrowser.raw?.selectedBrowser?.currentURI
+        ?.spec;
+      return url ? extractHostname(url) : null;
+    } catch (error) {
+      console.error(
+        "Second Sidebar: failed to read the main browser's address",
+        error,
+      );
+      return null;
     }
   }
 

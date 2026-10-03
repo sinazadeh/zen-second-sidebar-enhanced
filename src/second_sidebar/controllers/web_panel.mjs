@@ -37,6 +37,13 @@ export class WebPanelController {
   #inactivityUnloadTimer = null;
   /**@type {number?} */
   #nextInactivityUnloadAt = null;
+  /**
+   * The main browser's site when this panel's page last (re)loaded, for
+   * "Reload when address changes" (see reloadIfSiteChanged).
+   *
+   * @type {string?}
+   */
+  #loadedForHostname = null;
 
   /**
    *
@@ -349,6 +356,9 @@ export class WebPanelController {
 
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open();
+
+    // Catch up on site changes it missed while it wasn't shown.
+    this.reloadIfSiteChanged();
   }
 
   close() {
@@ -399,6 +409,8 @@ export class WebPanelController {
     const url = this.#settings.loadLastUrl
       ? (this.#state?.lastUrl ?? this.#settings.url)
       : this.#settings.url;
+    this.#loadedForHostname =
+      SidebarControllers.webPanelsController.getMainBrowserHostname();
     this.go(url);
   }
 
@@ -433,6 +445,7 @@ export class WebPanelController {
     }
 
     this.#tab = null;
+    this.#loadedForHostname = null;
   }
 
   #startTimer() {
@@ -539,7 +552,32 @@ export class WebPanelController {
       return;
     }
     this.#startTimer();
+    this.#loadedForHostname =
+      SidebarControllers.webPanelsController.getMainBrowserHostname();
     this.#tab.linkedBrowser.reload();
+  }
+
+  /**
+   * "Reload when address changes": reloads the panel if it's shown and the
+   * main browser's active tab is on a different site than when the panel
+   * last loaded, so a page like Bitwarden's vault, which reads the current
+   * tab once when it loads, lists that site's logins. A panel that isn't
+   * shown is left alone until it's opened (see open()).
+   */
+  reloadIfSiteChanged() {
+    if (
+      !this.#settings.reloadOnUrlChange ||
+      !this.isActive() ||
+      SidebarControllers.sidebarController.closed()
+    ) {
+      return;
+    }
+    const hostname =
+      SidebarControllers.webPanelsController.getMainBrowserHostname();
+    if (hostname !== null && hostname !== this.#loadedForHostname) {
+      this.#log(`reloading: site changed to ${hostname}`);
+      this.reload();
+    }
   }
 
   /**

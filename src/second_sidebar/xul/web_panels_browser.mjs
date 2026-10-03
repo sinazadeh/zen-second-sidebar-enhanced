@@ -292,10 +292,10 @@ export class WebPanelsBrowser extends Browser {
     this.#listenToFirstDialogAndClose();
 
     // Patch PopupNotifications
-    PopupNotificationsPatcher.patch();
+    PopupNotificationsPatcher.patch(this.window.raw);
 
     // Patch #urlbar-input
-    UrlbarInputPatcher.patch();
+    UrlbarInputPatcher.patch(this.window.raw);
   }
 
   #runWindowCommandsInMainWindow() {
@@ -453,7 +453,20 @@ export class WebPanelsBrowser extends Browser {
   }
 
   deselectWebPanelTab() {
-    this.window.gBrowser.selectTabAtIndex(FIRST_TAB_INDEX);
+    // Select the window's own tab, the one that isn't a panel's. Not with
+    // selectTabAtIndex(): it only counts visible tabs, and Zen doesn't count
+    // that tab (its "empty tab") as one, so there it picked a panel's tab
+    // instead. A closed panel's page then stayed visible and active, running
+    // as if it were on screen.
+    const gBrowser = this.window.gBrowser;
+    const emptyTab = gBrowser.tabs.find((tab) =>
+      WebPanelTab.fromTab(tab).isEmpty(),
+    );
+    if (emptyTab) {
+      gBrowser.selectedTab = emptyTab;
+    } else {
+      gBrowser.selectTabAtIndex(FIRST_TAB_INDEX);
+    }
   }
 
   /**

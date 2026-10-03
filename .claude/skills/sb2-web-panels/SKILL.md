@@ -22,6 +22,11 @@ before changing any of those.
   `zen-unsynced-window="true"` during creation and startup observers. This stops
   Zen from treating the panel's internal window as a syncable workspace or tabbox.
   Also ensure `#zen-appcontent-navbar-wrapper` remains hidden inside panel chrome.
+- `WebPanelsBrowser#deselectWebPanelTab` (closing the sidebar) selects the
+  window's own tab, the one with no `uuid`. Not with `selectTabAtIndex()`:
+  it counts only visible tabs, and Zen doesn't count its empty tab, so in
+  Zen it reselected a panel's tab. The closed panel then stayed selected,
+  its page active, its button open, and unload-on-close never ran.
 - **GPU compositing on Windows (Zen)**: Switching or showing web panels on Windows
   under Zen can occasionally leave a blank frame. `WebPanelsBrowser.forceRepaint()`
   briefly toggles `opacity: 0.9999` to force the compositor to paint content.
@@ -44,6 +49,13 @@ before changing any of those.
   reformat inside `permitUnload` can throw there (see the long comment in
   `urlbar_input_patcher.mjs`); losing that wrapper reintroduces a bug where
   a "closed" panel's tab silently stays alive in the background.
+- **Reload when address changes** (`reloadOnUrlChange`, on for the Bitwarden
+  preset, whose vault reads the current tab only when it loads) reloads a
+  panel only while it's shown (`WebPanelController#reloadIfSiteChanged`,
+  debounced in `WebPanelsController#setupMainBrowserListener`); a closed
+  panel catches up in `open()` if the main tab's site differs from the one
+  it loaded with. Reloading closed panels on every tab switch made the
+  browser slow (each reload restarts Bitwarden's whole app).
 - Preserve container identity and the existing loading/security context when
   creating or navigating panel tabs. Account for temporary panels, unload on
   close, reload timers, listeners, and observers when changing panel lifecycle.
