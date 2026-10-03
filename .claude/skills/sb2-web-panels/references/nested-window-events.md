@@ -38,6 +38,14 @@ boundary in ways that are easy to break. Paths are relative to
   `WebPanelsBrowser#activeWebPanelContains`). Their `screenX` isn't in the
   main window's coordinates, though (issue #10): map such events through
   the embedded browser's box, as `SidebarMainCollapser#getScreenX` does.
+- The panels' window's tab events bubble the same way, and Zen listens for
+  them on the main window: split view (`ZenViewSplitter`), spaces, folders and
+  Glance treat the panels' tabs as the main window's, and split view throws
+  on every panel switch. `WebPanelsBrowser` stops `TabOpen` and `TabSelect`
+  from that window at its `<browser>` (`PANELS_WINDOW_ONLY_EVENTS`). Leave
+  `TabAttrModified`, `TabClose` and `TabBrowserDiscarded` to pass: Zen's media
+  controls show and clean up a panel's audio with them. Capturing listeners
+  on the main window still see everything, since they run first.
 - Modifier-clicks on page links reach `LinkClickController`
   (`controllers/link_click.mjs`) through `patchers/content_click_hook.sys.mjs`,
   which replaces `ClickHandlerParent.prototype.contentAreaClick` (Firefox
