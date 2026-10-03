@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-10-03
+
 ### Fixed
 
 - In Zen, opening or switching web panels no longer fills the Browser
