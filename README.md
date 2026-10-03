@@ -48,7 +48,8 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 ## Using it
 
 - **Add a web panel** with the **New Web Panel** (**+**) button in the sidebar: enter a URL or pick a [preset](#presets), and optionally a Multi-Account Container. Click a panel's button to open it, and again to close it.
-- **Right-click a panel's button** to edit it (**Edit web panel**), unload it from memory, mute it, reset its position and size, delete it, or rearrange the sidebar (**Customize Toolbar...**). Middle-click the button to unload the panel.
+- **Right-click a panel's button** to edit it (**Edit web panel**), make a copy of it (**Duplicate web panel**, with all its settings except its keyboard shortcut — handy for the same site in another container), unload it from memory, mute it, reset its position and size, delete it, or rearrange the sidebar (**Customize Toolbar...**). Middle-click the button to unload the panel.
+- **Right-click the sidebar** for **Sidebar settings** and **Mute all web panels** (or **Unmute all web panels** when they're all muted), which mutes every loaded panel, in every window.
 - **The panel's toolbar** has Back, Forward, Reload, Home, **Pin**/**Unpin** (switch between floating over the page and pinned beside it) and **Unload**. Its **More** menu has **Open in New Tab**, **Copy Page URL**, the [user agent](#user-agent), **Always On Top**, **Temporary** and zoom.
 - **Move** a floating panel by dragging its title in the toolbar, and **resize** it by dragging its edges or corners. Resize a pinned one by dragging the splitter beside it.
 - A panel's button shows a badge with the unread count from its page title, such as "(3) Inbox", and a speaker icon while it plays sound.
@@ -105,7 +106,7 @@ In **Sidebar settings**, under **Links, bookmarks and tabs**, you can hide eithe
 
 When adding a web panel with **New Web Panel** (**+**), **Preset** offers:
 
-- **Common websites** such as ChatGPT, Claude, Gemini, WhatsApp, Telegram and X. Sites that work better that way (e.g. Telegram, X) open in mobile view, with the **Firefox Mobile** [user agent](#user-agent).
+- **Common websites** such as ChatGPT, Claude, Gemini, Gmail, Discord, Slack, WhatsApp, Telegram, Spotify and X. Sites that work better that way (e.g. Telegram, X) open in mobile view, with the **Firefox Mobile** [user agent](#user-agent).
 - **Installed extensions' sidebars**, such as Bitwarden's. The panel keeps the extension's own icon, as these pages don't set one. Bitwarden opens on its vault with **Reload when address changes** on, so the vault always shows the logins for the site in your current tab.
 
 Picking one fills in its URL; editing the URL afterwards turns it back into a custom one. A preset only sets the URL, user agent, favicon and whether the panel reloads when the address changes. Everything else (size, position, toolbar, unloading...) starts from the usual defaults, and all of it can be changed later in **Edit web panel** (right-click the panel's button).

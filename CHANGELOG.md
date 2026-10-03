@@ -6,11 +6,26 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Added
+
+- **Duplicate web panel** in a panel button's right-click menu: adds a copy
+  of the panel with all its settings except its keyboard shortcut, for
+  example to open the same site in another container.
+- **Mute all web panels** / **Unmute all web panels** in the sidebar's
+  right-click menu, for every loaded panel in every window.
+- More website presets: Discord, Gmail, Google Keep, Messenger, Notion,
+  Outlook, Perplexity, Slack and Spotify.
+
 ### Changed
 
 - **Import settings** now resets a setting whose value in the file is
   invalid (of the wrong type, or not one the sidebar offers) to its default,
   instead of using it, and says how many there were.
+
+### Fixed
+
+- A panel button's right-click menu no longer keeps **Edit**, **Delete** and
+  **Mute** disabled for good after it once opened without finding its panel.
 
 ## [1.6.0] - 2026-10-03
 

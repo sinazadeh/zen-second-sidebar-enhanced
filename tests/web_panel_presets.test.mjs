@@ -51,6 +51,16 @@ test("website presets only set the URL, user agent, favicon and reloading", () =
     presets.length,
     "ids are unique",
   );
+  const names = presets.map((preset) => preset.name);
+  assert.deepEqual(
+    names,
+    [...names].sort((a, b) => a.localeCompare(b)),
+    "listed alphabetically",
+  );
+  assert.equal(
+    presets.every((preset) => preset.url.startsWith("https://")),
+    true,
+  );
   const telegram = presets.find((preset) => preset.name === "Telegram");
   assert.equal(telegram.settings.userAgent, "firefox-mobile");
   const chatgpt = presets.find((preset) => preset.name === "ChatGPT");

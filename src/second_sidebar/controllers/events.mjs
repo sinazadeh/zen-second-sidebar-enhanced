@@ -36,6 +36,8 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_SHORTCUT_ENABLED: "edit_web_panel_shortcut_enabled",
   EDIT_WEB_PANEL_SHORTCUT: "edit_web_panel_shortcut",
   CREATE_WEB_PANEL: "create_web_panel",
+  DUPLICATE_WEB_PANEL: "duplicate_web_panel",
+  MUTE_ALL_WEB_PANELS: "mute_all_web_panels",
   DELETE_WEB_PANEL: "delete_web_panel",
 };
 

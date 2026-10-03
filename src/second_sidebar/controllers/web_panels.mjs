@@ -113,6 +113,10 @@ export class WebPanelsController {
       },
     );
 
+    SidebarElements.webPanelMenuPopup.listenDuplicateItemClick(
+      (webPanelController) => this.duplicate(webPanelController),
+    );
+
     SidebarElements.webPanelMenuPopup.listenDeleteItemClick(
       (webPanelController) => {
         SidebarControllers.webPanelDeleteController.openPopup(
@@ -163,6 +167,31 @@ export class WebPanelsController {
           webPanelController.switchWebPanel();
         }
         setTimeout(() => this.#unwrapButtons(), 100);
+      }
+    });
+
+    listenEvent(WebPanelEvents.DUPLICATE_WEB_PANEL, (event) => {
+      const { settings, newWebPanelPosition, isActiveWindow } = event.detail;
+      // Like a new temporary panel, a copy of one is only in this window.
+      if (settings.temporary && !isActiveWindow) return;
+      const webPanelController = this.#addNewWebPanel(
+        WebPanelSettings.fromObject(
+          SidebarElements.sidebarWrapper.getPosition(),
+          SidebarControllers.sidebarGeometry.getDefaultFloatingOffsetCSS(),
+          settings,
+        ),
+        isActiveWindow,
+        newWebPanelPosition,
+      );
+      if (isActiveWindow) {
+        webPanelController.switchWebPanel();
+      }
+      setTimeout(() => this.#unwrapButtons(), 100);
+    });
+
+    listenEvent(WebPanelEvents.MUTE_ALL_WEB_PANELS, (event) => {
+      for (const webPanelController of this.webPanelControllers.values()) {
+        webPanelController.setMuted(event.detail.muted);
       }
     });
 
@@ -632,11 +661,26 @@ export class WebPanelsController {
         reloadOnUrlChange,
       },
     );
-    const webPanelState = new WebPanelState(uuid);
+    return this.#addNewWebPanel(
+      webPanelSettings,
+      isActiveWindow,
+      newWebPanelPosition,
+    );
+  }
 
+  /**
+   * Adds a new web panel, loaded and saved if this is the window it was
+   * made in.
+   *
+   * @param {WebPanelSettings} webPanelSettings
+   * @param {boolean} isActiveWindow
+   * @param {string} newWebPanelPosition
+   * @returns {WebPanelController}
+   */
+  #addNewWebPanel(webPanelSettings, isActiveWindow, newWebPanelPosition) {
     const webPanelController = new WebPanelController(
       webPanelSettings,
-      webPanelState,
+      new WebPanelState(webPanelSettings.uuid),
       {
         loaded: isActiveWindow,
         position: newWebPanelPosition,
@@ -645,11 +689,29 @@ export class WebPanelsController {
     this.add(webPanelController);
 
     // Temporary panels aren't saved (WebPanelsSettings#persistentWebPanels).
-    if (isActiveWindow && !temporary) {
+    if (isActiveWindow && !webPanelSettings.temporary) {
       this.saveSettings();
     }
 
     return webPanelController;
+  }
+
+  /**
+   * Adds a copy of a web panel with all its settings except its keyboard
+   * shortcut, which can only open one panel, placed like a new web panel.
+   *
+   * @param {WebPanelController} webPanelController
+   */
+  duplicate(webPanelController) {
+    sendEvents(WebPanelEvents.DUPLICATE_WEB_PANEL, {
+      settings: {
+        ...webPanelController.dumpSettings().toObject(),
+        uuid: crypto.randomUUID(),
+        shortcut: "",
+      },
+      newWebPanelPosition:
+        SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
+    });
   }
 
   /**
