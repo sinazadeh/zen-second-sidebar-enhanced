@@ -6,6 +6,14 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Fixed
+
+- In Zen, opening or switching web panels no longer fills the Browser
+  Console with `can't access property "hasAttribute", tab is undefined`
+  errors from Zen's split view, or "Workspace element or object not found"
+  warnings when a panel is added. Zen's split view, spaces, folders and
+  Glance took the panels' own tabs for the browser window's.
+
 ## [1.7.0] - 2026-10-03
 
 ### Added

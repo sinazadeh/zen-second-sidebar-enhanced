@@ -47,6 +47,15 @@ const MAIN_WINDOW_COMMANDS = new Set([
   "Tools:Search",
 ]);
 
+// Tab events of the panels' window that mustn't reach the main window. Events
+// there bubble on into it through this browser (that window's chrome event
+// handler), and Zen's split view, spaces, folders and Glance listen for these
+// on the main window and take the panels' tabs for its own: split view throws
+// ("tab is undefined") on every panel switch. Media events (TabAttrModified,
+// TabClose, TabBrowserDiscarded) still go through: Zen's media controls show
+// a panel's audio with them.
+const PANELS_WINDOW_ONLY_EVENTS = ["TabOpen", "TabSelect"];
+
 export class WebPanelsBrowser extends Browser {
   /** @type {Set<string>} topics this is registered for with the observer service */
   #observedTopics = new Set();
@@ -69,6 +78,13 @@ export class WebPanelsBrowser extends Browser {
       autocompletepopup: "PopupAutoComplete",
       chromehidden: "",
     });
+    for (const type of PANELS_WINDOW_ONLY_EVENTS) {
+      this.addEventListener(type, (event) => {
+        if (event.target.ownerDocument !== document) {
+          event.stopPropagation();
+        }
+      });
+    }
 
     this.initialized = false;
   }
