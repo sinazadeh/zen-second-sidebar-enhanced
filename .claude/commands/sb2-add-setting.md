@@ -23,17 +23,17 @@ command.
    web panel setting whether it's also offered when creating a panel.
 3. Find the existing setting closest to it and follow it through every file
    the skill lists. Write the plan as a checklist of files, including the
-   change reverter, and for a sidebar setting the mirrored pref,
-   `preferences.json` control and `FIELD_EVENTS` entry.
+   change reverter, the `WEB_PANEL_FIELDS` or `SIDEBAR_FIELD_EVENTS` entry,
+   and for a sidebar setting the mirrored pref and `preferences.json`
+   control.
 4. If the name, default, value range or label isn't clear from the
    request, ask before writing code.
 
 ## Phase 2: implement
 
 Implement the checklist in this session, one file at a time, following the
-closest existing setting's shape. Bind web panel settings with
-`#bindSimpleSetting`, `#bindGeometrySetting` or `#bindSimpleAction` unless
-they need real branching logic.
+closest existing setting's shape. Give a web panel setting a `setter` in
+`WEB_PANEL_FIELDS` unless it needs real branching logic.
 
 ## Phase 3: tests and docs
 

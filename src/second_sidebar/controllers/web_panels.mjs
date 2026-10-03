@@ -12,6 +12,7 @@ import { Logger } from "../utils/logger.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelController } from "./web_panel.mjs";
+import { WEB_PANEL_FIELDS } from "./web_panel_fields.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelState } from "../settings/web_panel_state.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
@@ -234,13 +235,6 @@ export class WebPanelsController {
       },
     );
 
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_TITLE,
-      ["dynamicTitle", "title"],
-      "setTitle",
-      { onChanged: (webPanelController) => webPanelController.updateTitle() },
-    );
-
     this.#listenWebPanelEvent(
       WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL,
       (webPanelController, { dynamicFavicon, faviconURL, timeout }) => {
@@ -320,121 +314,7 @@ export class WebPanelsController {
       },
     );
 
-    // The five floating-geometry settings below all follow the same shape:
-    // apply the setter, then recalculate on-screen geometry if the panel is
-    // currently visible.
-    this.#bindGeometrySetting(
-      WebPanelEvents.EDIT_WEB_PANEL_ANCHOR,
-      "anchor",
-      "setAnchor",
-    );
-    this.#bindGeometrySetting(
-      WebPanelEvents.EDIT_WEB_PANEL_OFFSET_X_TYPE,
-      "offsetXType",
-      "setOffsetXType",
-    );
-    this.#bindGeometrySetting(
-      WebPanelEvents.EDIT_WEB_PANEL_OFFSET_Y_TYPE,
-      "offsetYType",
-      "setOffsetYType",
-    );
-    this.#bindGeometrySetting(
-      WebPanelEvents.EDIT_WEB_PANEL_WIDTH_TYPE,
-      "widthType",
-      "setWidthType",
-    );
-    this.#bindGeometrySetting(
-      WebPanelEvents.EDIT_WEB_PANEL_HEIGHT_TYPE,
-      "heightType",
-      "setHeightType",
-    );
-
-    // The settings below are each just "apply this one setter", optionally
-    // followed by a small fixed side effect (onChanged).
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID,
-      "userContextId",
-      "setUserContextId",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY,
-      "temporary",
-      "setTemporary",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_ALWAYS_ON_TOP,
-      "alwaysOnTop",
-      "setAlwaysOnTop",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_LOAD_ON_STARTUP,
-      "loadOnStartup",
-      "setLoadOnStartup",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_LOAD_LAST_URL,
-      "loadLastUrl",
-      "setLoadLastUrl",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_ON_CLOSE,
-      "unloadOnClose",
-      "setUnloadOnClose",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_AFTER_INACTIVITY,
-      "unloadAfterInactivity",
-      "setUnloadAfterInactivity",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT,
-      "shortcut",
-      "setShortcut",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_SPACES,
-      "spaces",
-      "setSpaces",
-      { onChanged: () => this.applySpaces() },
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR,
-      "hideToolbar",
-      "setHideToolbar",
-      {
-        onChanged: (_webPanelController, { hideToolbar }) =>
-          hideToolbar
-            ? SidebarControllers.sidebarController.collapseToolbar()
-            : SidebarControllers.sidebarController.uncollapseToolbar(),
-      },
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_HIDE_SOUND_ICON,
-      "hideSoundIcon",
-      "setHideSoundIcon",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_HIDE_NOTIFICATION_BADGE,
-      "hideNotificationBadge",
-      "setHideNotificationBadge",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_PERIODIC_RELOAD,
-      "periodicReload",
-      "setPeriodicReload",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_RELOAD_ON_URL_CHANGE,
-      "reloadOnUrlChange",
-      "setReloadOnUrlChange",
-    );
-    this.#bindSimpleAction(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, "zoomOut");
-    this.#bindSimpleAction(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, "zoomIn");
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_ZOOM,
-      "value",
-      "setZoom",
-    );
+    this.#bindFields();
 
     this.#listenWebPanelEvent(
       WebPanelEvents.DELETE_WEB_PANEL,
@@ -446,6 +326,37 @@ export class WebPanelsController {
         this.delete(uuid);
       },
     );
+  }
+
+  /**
+   * Binds each setting in WEB_PANEL_FIELDS that has a setter (or action) to
+   * its event; the others have their own handlers in #setupListeners.
+   */
+  #bindFields() {
+    // Follow-ups to applying some of them.
+    const onChanged = {
+      title: (webPanelController) => webPanelController.updateTitle(),
+      hideToolbar: (_webPanelController, { hideToolbar }) =>
+        hideToolbar
+          ? SidebarControllers.sidebarController.collapseToolbar()
+          : SidebarControllers.sidebarController.uncollapseToolbar(),
+      spaces: () => this.applySpaces(),
+    };
+    for (const [name, field] of Object.entries(WEB_PANEL_FIELDS)) {
+      const event = WebPanelEvents[field.event];
+      if (field.action) {
+        this.#bindSimpleAction(event, field.action);
+      } else if (field.geometry) {
+        this.#bindGeometrySetting(event, field.values[0], field.setter);
+      } else if (field.setter) {
+        this.#bindSimpleSetting(
+          event,
+          field.values.filter((key) => key !== "timeout"),
+          field.setter,
+          { onChanged: onChanged[name] },
+        );
+      }
+    }
   }
 
   /**

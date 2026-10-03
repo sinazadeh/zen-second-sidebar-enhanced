@@ -14,24 +14,29 @@ changing the export format or anything that writes settings.
 
 Follow an existing setting through these files under `src/second_sidebar/`:
 
-- Sidebar: `xul/sidebar_main_popup_settings.mjs` →
-  `controllers/sidebar_main_settings.mjs` → `controllers/events.mjs` → the
-  receiving controller → `settings/sidebar_settings.mjs`. Also give it a pref
-  in `settings/sidebar_prefs.mjs` and a control in the root `preferences.json`
-  (Sine's mod settings dialog), and add its event to `FIELD_EVENTS` in
-  `controllers/sidebar_prefs.mjs`; `tests/sidebar_prefs.test.mjs` fails until
-  the first two match `SidebarSettings`. Only settings that need the popup's
+- Sidebar: `xul/sidebar_main_popup_settings.mjs` → an entry in
+  `SIDEBAR_FIELD_EVENTS` (`controllers/sidebar_fields.mjs`), which both the
+  popup's callbacks (`controllers/sidebar_main_settings.mjs`) and a change to
+  its mirrored pref (`controllers/sidebar_prefs.mjs`) send it through →
+  `controllers/events.mjs` → a `listenEvent` in the receiving controller
+  (`controllers/sidebar.mjs`) → `settings/sidebar_settings.mjs`. Also give it
+  a pref in `settings/sidebar_prefs.mjs` and a control in the root
+  `preferences.json` (Sine's mod settings dialog);
+  `tests/sidebar_prefs.test.mjs` fails until the two match `SidebarSettings`,
+  and `tests/settings_wiring.test.mjs` until the popup's callback has an
+  event. Only settings that need the popup's
   own input handling (keyboard shortcuts) are left out: list a new shortcut
   in `POPUP_ONLY_FIELDS` there instead, and in
   `Shortcuts#getSidebarShortcuts` (`controllers/shortcuts.mjs`) so it's
   checked against the other shortcuts.
-- Panel editing: `xul/web_panel_popup_edit.mjs` →
-  `controllers/web_panel_edit.mjs` → `controllers/events.mjs` →
-  `controllers/web_panels.mjs` (bind it with `#bindSimpleSetting` /
-  `#bindGeometrySetting` / `#bindSimpleAction` unless it needs real branching
-  logic) / `controllers/web_panel.mjs` → `settings/web_panel_settings.mjs`.
-  Also check the new-panel popup/controller when the setting should be
-  available during creation.
+- Panel editing: `xul/web_panel_popup_edit.mjs` → an entry in
+  `WEB_PANEL_FIELDS` (`controllers/web_panel_fields.mjs`: its event, the
+  values in the popup callback's order, and its `WebPanelController` setter)
+  → `controllers/events.mjs` → `controllers/web_panel.mjs` →
+  `settings/web_panel_settings.mjs`. `tests/settings_wiring.test.mjs` checks
+  the entry against the popup, the events and the controller. Also check the
+  new-panel popup/controller when the setting should be available during
+  creation.
 
 Both settings dialogs apply changes live, and Save persists them. Closing
 without saving (Cancel, Escape, clicking outside) asks for confirmation when
@@ -42,10 +47,12 @@ reverter there too, or discarding changes will leave it applied.
 
 ## Wiring web panel settings
 
-- For a new "call one setter, maybe with a small fixed follow-up" web panel
-  setting, wire it in `web_panels.mjs` via `#bindSimpleSetting` (or
-  `#bindGeometrySetting` for floating-geometry fields, `#bindSimpleAction`
-  for no-argument actions) rather than a bespoke `listenEvent` block.
+- A `WEB_PANEL_FIELDS` entry with a `setter` (`geometry: true` for a
+  floating-geometry field, or an `action` for a no-argument one) is bound to
+  its event by `WebPanelsController#bindFields`; give it a small fixed
+  follow-up in the `onChanged` map there if it needs one. Leave out the
+  setter only for a setting with real branching logic, and handle its event
+  in `#setupListeners` instead.
   Debounced edit handlers keep their timers per panel (`KeyedTimeouts`,
   `utils/keyed_timeouts.mjs`), so editing one panel can't cancel another's
   pending update.

@@ -5,6 +5,7 @@ import {
 } from "../settings/settings_export.mjs";
 
 import { AppStartupWrapper } from "../wrappers/app_startup.mjs";
+import { SIDEBAR_FIELD_EVENTS } from "./sidebar_fields.mjs";
 import { FilePickerWrapper } from "../wrappers/file_picker.mjs";
 import { IOUtilsWrapper } from "../wrappers/io_utils.mjs";
 import { PromptServiceWrapper } from "../wrappers/prompt.mjs";
@@ -22,38 +23,14 @@ export class SidebarMainSettingsController {
 
   #setupListeners() {
     SidebarElements.sidebarMainPopupSettings.listenChanges({
-      position: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_POSITION, { value }),
-      padding: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_PADDING, { value }),
-      allowWindowDragging: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_ALLOW_WINDOW_DRAGGING, { value }),
-      newWebPanelPosition: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, {
-          value,
-        }),
-      newWebPanelSpaces: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_SPACES, {
-          value,
-        }),
-      defaultFloatingOffset: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET, {
-          value,
-        }),
-      autoHideBackButton: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, { value }),
-      autoHideForwardButton: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON, {
-          value,
-        }),
-      enableSidebarBoxHint: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_ENABLE_BOX_HINT, { value }),
-      containerBorder: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
-      tooltip: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLTIP, { value }),
-      tooltipFullUrl: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL, { value }),
+      // Every setting but the visibility ones is sent as { value } in its
+      // own event (SIDEBAR_FIELD_EVENTS).
+      ...Object.fromEntries(
+        Object.entries(SIDEBAR_FIELD_EVENTS).map(([field, event]) => [
+          field,
+          (value) => sendEvents(SidebarEvents[event], { value }),
+        ]),
+      ),
       visibility: (
         autoHideSidebar,
         autoHideSidebarBehavior,
@@ -66,36 +43,6 @@ export class SidebarMainSettingsController {
           sidebarWidgetHideWebPanel,
           sidebarWidgetShortcut,
         }),
-      autoHideEdgeGap: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_EDGE_GAP, { value }),
-      lastWebPanelShortcut: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT, {
-          value,
-        }),
-      nextWebPanelShortcut: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_NEXT_WEB_PANEL_SHORTCUT, {
-          value,
-        }),
-      previousWebPanelShortcut: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_PREVIOUS_WEB_PANEL_SHORTCUT, {
-          value,
-        }),
-      hideSidebarAnimated: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
-      hideToolbarAnimated: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED, {
-          value,
-        }),
-      showOpenInSidebarItems: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_SHOW_OPEN_IN_SIDEBAR_ITEMS, {
-          value,
-        }),
-      showPreviewInSidebarItems: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_SHOW_PREVIEW_IN_SIDEBAR_ITEMS, {
-          value,
-        }),
-      linkClickModifier: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_LINK_CLICK_MODIFIER, { value }),
     });
 
     SidebarElements.sidebarMainPopupSettings.listenCancelButtonClick(() =>
