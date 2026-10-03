@@ -167,7 +167,7 @@ export class WebPanelsBrowser extends Browser {
         this.deselectWebPanelTab();
       }
     } catch (error) {
-      console.log("Failed to deactivate web panel for WebAuthn:", error);
+      console.warn("Failed to deactivate web panel for WebAuthn:", error);
     }
   }
 

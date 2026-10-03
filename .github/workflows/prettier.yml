@@ -21,7 +21,8 @@ jobs:
         uses: creyD/prettier_action@v4.6
         with:
           dry: True
-          # Keep in sync with the local setup command in AGENTS.md so local
-          # and CI formatting never disagree.
+          # Same version as the local setup command in AGENTS.md, so local
+          # and CI formatting never disagree (tests/dev_tool_versions.test.mjs
+          # checks).
           prettier_version: 3.9.9
           prettier_options: --write **/*.{js,mjs,md,yml,json}
