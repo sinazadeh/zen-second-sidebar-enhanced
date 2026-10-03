@@ -77,7 +77,10 @@ user agent) is `userAgent`/`customUserAgent` here, with its choices in
 `utils/user_agents.mjs` and a **User Agent** list in both the edit popup and
 the **More** popup. Port upstream changes to mobile view onto that rather
 than restoring the toggle, and keep `WebPanelSettings` reading `mobile` from
-older saves. `parseNotifications` (`utils/string.mjs`) is rewritten too.
+older saves. `parseNotifications` (`utils/string.mjs`) is rewritten too, and
+`controllers/shortcuts.mjs` checks every shortcut for conflicts through one
+`#isShortcutTaken`, which also covers this fork's next/previous web panel
+shortcuts: add an upstream shortcut to `#getSidebarShortcuts` there.
 
 The patchers diverge from upstream too: their text patches live in
 `patchers/source_patches.mjs` and their module loading in

@@ -79,6 +79,24 @@ export class SidebarMainPopupSettings extends Panel {
         tooltipText: "Reset shortcut",
       },
     );
+    this.nextWebPanelShortcutInput = createInput({
+      placeholder: "Click here and press keys...",
+    });
+    this.nextWebPanelShortcutResetButton = createSubviewIconicButton(
+      ICONS.UNDO,
+      {
+        tooltipText: "Reset shortcut",
+      },
+    );
+    this.previousWebPanelShortcutInput = createInput({
+      placeholder: "Click here and press keys...",
+    });
+    this.previousWebPanelShortcutResetButton = createSubviewIconicButton(
+      ICONS.UNDO,
+      {
+        tooltipText: "Reset shortcut",
+      },
+    );
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
     this.enableSidebarBoxHintToggle = new Toggle();
@@ -146,6 +164,24 @@ export class SidebarMainPopupSettings extends Panel {
       this.lastWebPanelShortcutResetButton,
       (shortcut, event) =>
         SidebarControllers.webPanelsShortcuts.isLastWebPanelShortcutBusy(
+          shortcut,
+          event,
+        ),
+    );
+    this.#setupShortcutListeners(
+      this.nextWebPanelShortcutInput,
+      this.nextWebPanelShortcutResetButton,
+      (shortcut, event) =>
+        SidebarControllers.webPanelsShortcuts.isNextWebPanelShortcutBusy(
+          shortcut,
+          event,
+        ),
+    );
+    this.#setupShortcutListeners(
+      this.previousWebPanelShortcutInput,
+      this.previousWebPanelShortcutResetButton,
+      (shortcut, event) =>
+        SidebarControllers.webPanelsShortcuts.isPreviousWebPanelShortcutBusy(
           shortcut,
           event,
         ),
@@ -336,6 +372,18 @@ export class SidebarMainPopupSettings extends Panel {
               this.lastWebPanelShortcutResetButton,
             ),
           ]),
+          createPopupSet("Open next web panel", [
+            createPopupRow(
+              this.nextWebPanelShortcutInput,
+              this.nextWebPanelShortcutResetButton,
+            ),
+          ]),
+          createPopupSet("Open previous web panel", [
+            createPopupRow(
+              this.previousWebPanelShortcutInput,
+              this.previousWebPanelShortcutResetButton,
+            ),
+          ]),
           createPopupSet("Web panel button", [
             createPopupGroup(
               "Container indicator",
@@ -361,7 +409,7 @@ export class SidebarMainPopupSettings extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
           ]),
-          createPopupSet("Links and bookmarks", [
+          createPopupSet("Links, bookmarks and tabs", [
             createPopupGroup(
               'Show "Open in Second Sidebar"',
               this.showOpenInSidebarItemsToggle,
@@ -414,6 +462,8 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(boolean, string, boolean, string):void} callbacks.visibility
    * @param {function(boolean):void} callbacks.autoHideEdgeGap
    * @param {function(string):void} callbacks.lastWebPanelShortcut
+   * @param {function(string):void} callbacks.nextWebPanelShortcut
+   * @param {function(string):void} callbacks.previousWebPanelShortcut
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
    * @param {function(boolean):void} callbacks.showOpenInSidebarItems
@@ -435,6 +485,8 @@ export class SidebarMainPopupSettings extends Panel {
     visibility,
     autoHideEdgeGap,
     lastWebPanelShortcut,
+    nextWebPanelShortcut,
+    previousWebPanelShortcut,
     hideSidebarAnimated,
     hideToolbarAnimated,
     showOpenInSidebarItems,
@@ -455,6 +507,8 @@ export class SidebarMainPopupSettings extends Panel {
     this.onVisibilityChange = visibility;
     this.onAutoHideEdgeGapChange = autoHideEdgeGap;
     this.onLastWebPanelShortcutChange = lastWebPanelShortcut;
+    this.onNextWebPanelShortcutChange = nextWebPanelShortcut;
+    this.onPreviousWebPanelShortcutChange = previousWebPanelShortcut;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
     this.onShowOpenInSidebarItemsChange = showOpenInSidebarItems;
@@ -542,6 +596,18 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.lastWebPanelShortcutInput.addEventListener("error", () =>
       lastWebPanelShortcut(this.settings.lastWebPanelShortcut),
+    );
+    this.nextWebPanelShortcutInput.addEventListener("input", () =>
+      nextWebPanelShortcut(this.nextWebPanelShortcutInput.getValue()),
+    );
+    this.nextWebPanelShortcutInput.addEventListener("error", () =>
+      nextWebPanelShortcut(this.settings.nextWebPanelShortcut),
+    );
+    this.previousWebPanelShortcutInput.addEventListener("input", () =>
+      previousWebPanelShortcut(this.previousWebPanelShortcutInput.getValue()),
+    );
+    this.previousWebPanelShortcutInput.addEventListener("error", () =>
+      previousWebPanelShortcut(this.settings.previousWebPanelShortcut),
     );
     this.hideSidebarAnimatedToggle.addEventListener("toggle", () =>
       hideSidebarAnimated(this.hideSidebarAnimatedToggle.getPressed()),
@@ -653,6 +719,12 @@ export class SidebarMainPopupSettings extends Panel {
       .removeAttribute("error");
     this.lastWebPanelShortcutInput
       .setValue(settings.lastWebPanelShortcut)
+      .removeAttribute("error");
+    this.nextWebPanelShortcutInput
+      .setValue(settings.nextWebPanelShortcut)
+      .removeAttribute("error");
+    this.previousWebPanelShortcutInput
+      .setValue(settings.previousWebPanelShortcut)
       .removeAttribute("error");
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
@@ -866,6 +938,27 @@ export class SidebarMainPopupSettings extends Panel {
     if (lastWebPanelShortcut !== this.settings.lastWebPanelShortcut) {
       reverters.push(() =>
         this.onLastWebPanelShortcutChange(this.settings.lastWebPanelShortcut),
+      );
+    }
+    const nextWebPanelShortcut = this.nextWebPanelShortcutInput.hasAttribute(
+      "error",
+    )
+      ? this.settings.nextWebPanelShortcut
+      : this.nextWebPanelShortcutInput.getValue();
+    if (nextWebPanelShortcut !== this.settings.nextWebPanelShortcut) {
+      reverters.push(() =>
+        this.onNextWebPanelShortcutChange(this.settings.nextWebPanelShortcut),
+      );
+    }
+    const previousWebPanelShortcut =
+      this.previousWebPanelShortcutInput.hasAttribute("error")
+        ? this.settings.previousWebPanelShortcut
+        : this.previousWebPanelShortcutInput.getValue();
+    if (previousWebPanelShortcut !== this.settings.previousWebPanelShortcut) {
+      reverters.push(() =>
+        this.onPreviousWebPanelShortcutChange(
+          this.settings.previousWebPanelShortcut,
+        ),
       );
     }
     if (

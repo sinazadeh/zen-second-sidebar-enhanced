@@ -22,6 +22,8 @@ export class SidebarSettings {
    * @param {boolean} params.sidebarWidgetHideWebPanel
    * @param {string} params.sidebarWidgetShortcut
    * @param {string} params.lastWebPanelShortcut
+   * @param {string} params.nextWebPanelShortcut
+   * @param {string} params.previousWebPanelShortcut
    * @param {boolean} params.hideSidebarAnimated
    * @param {boolean} params.hideToolbarAnimated
    * @param {boolean} params.enableSidebarBoxHint
@@ -46,6 +48,8 @@ export class SidebarSettings {
     sidebarWidgetHideWebPanel = false,
     sidebarWidgetShortcut = "",
     lastWebPanelShortcut = "",
+    nextWebPanelShortcut = "",
+    previousWebPanelShortcut = "",
     hideSidebarAnimated = true,
     hideToolbarAnimated = true,
     enableSidebarBoxHint = false,
@@ -67,6 +71,8 @@ export class SidebarSettings {
     this.sidebarWidgetHideWebPanel = sidebarWidgetHideWebPanel;
     this.sidebarWidgetShortcut = sidebarWidgetShortcut;
     this.lastWebPanelShortcut = lastWebPanelShortcut;
+    this.nextWebPanelShortcut = nextWebPanelShortcut;
+    this.previousWebPanelShortcut = previousWebPanelShortcut;
     this.tooltip = tooltip;
     this.tooltipFullUrl = tooltipFullUrl;
     this.hideSidebarAnimated = hideSidebarAnimated;

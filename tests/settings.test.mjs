@@ -22,6 +22,8 @@ test("SidebarSettings fills fields missing from older saves with defaults", () =
   assert.equal(settings.padding, "small");
   assert.equal(settings.autoHideSidebar, false);
   assert.equal(settings.hideToolbarAnimated, true);
+  assert.equal(settings.nextWebPanelShortcut, "");
+  assert.equal(settings.previousWebPanelShortcut, "");
 });
 
 test("SidebarSettings round-trips through toObject", () => {

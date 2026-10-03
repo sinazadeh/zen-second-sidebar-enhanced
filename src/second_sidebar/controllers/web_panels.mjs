@@ -18,6 +18,7 @@ import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WebPanelsState } from "../settings/web_panels_state.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { extractHostname } from "../utils/url.mjs";
+import { getAdjacentIndex } from "../utils/cycle.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
 const SAVE_DEBOUNCE_MS = 300;
@@ -711,6 +712,46 @@ export class WebPanelsController {
     if (!this.lastOpenedWebPanelUUID) return;
     const webPanelController = this.get(this.lastOpenedWebPanelUUID);
     webPanelController?.switchWebPanel();
+  }
+
+  /**
+   * Opens the web panel after (step 1) or before (step -1) the open one, in
+   * the order of their buttons, wrapping around at the ends. With none open,
+   * it opens the first or the last one.
+   *
+   * @param {number} step 1 or -1
+   */
+  switchAdjacentWebPanel(step) {
+    const webPanelControllers = this.#getAllInButtonOrder();
+    const index = getAdjacentIndex(
+      webPanelControllers.indexOf(this.getActive()),
+      webPanelControllers.length,
+      step,
+    );
+    if (index === null) return;
+    webPanelControllers[index].switchWebPanel({ forceOpen: true });
+  }
+
+  /**
+   * The web panels whose buttons are in this window, in the order the
+   * buttons are in, which the user can change by customizing the toolbar.
+   *
+   * @returns {WebPanelController[]}
+   */
+  #getAllInButtonOrder() {
+    const withButtons = [];
+    for (const webPanelController of this.webPanelControllers.values()) {
+      const node = webPanelController.button.button?.getXUL();
+      if (node?.isConnected) withButtons.push({ webPanelController, node });
+    }
+    return withButtons
+      .sort((a, b) =>
+        a.node.compareDocumentPosition(b.node) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+          ? -1
+          : 1,
+      )
+      .map(({ webPanelController }) => webPanelController);
   }
 
   /**

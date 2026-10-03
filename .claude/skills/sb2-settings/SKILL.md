@@ -21,7 +21,10 @@ Follow an existing setting through these files under `src/second_sidebar/`:
   (Sine's mod settings dialog), and add its event to `FIELD_EVENTS` in
   `controllers/sidebar_prefs.mjs`; `tests/sidebar_prefs.test.mjs` fails until
   the first two match `SidebarSettings`. Only settings that need the popup's
-  own input handling (keyboard shortcuts) are left out.
+  own input handling (keyboard shortcuts) are left out: list a new shortcut
+  in `POPUP_ONLY_FIELDS` there instead, and in
+  `Shortcuts#getSidebarShortcuts` (`controllers/shortcuts.mjs`) so it's
+  checked against the other shortcuts.
 - Panel editing: `xul/web_panel_popup_edit.mjs` →
   `controllers/web_panel_edit.mjs` → `controllers/events.mjs` →
   `controllers/web_panels.mjs` (bind it with `#bindSimpleSetting` /

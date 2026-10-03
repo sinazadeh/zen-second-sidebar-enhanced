@@ -8,14 +8,15 @@
 > - Web panel setting: `User Agent` — choose what a panel identifies itself as: the browser's own, Firefox Mobile, a Galaxy phone or tablet, an iPhone, or a user agent you type in — see [User agent](#user-agent).
 > - Web panel setting: `Unload after inactivity` — automatically unloads a panel that's been in the background for a set time, without relying on Firefox's own background tab unloader (which isn't reliable for panels living in the hidden window that hosts them).
 > - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden) when adding a panel — see [Presets](#presets).
-> - Bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links and bookmarks](#links-and-bookmarks).
+> - Tabs, bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links, bookmarks and tabs](#links-bookmarks-and-tabs).
+> - Keyboard shortcuts to open the next or previous web panel — see [Keyboard shortcuts](#keyboard-shortcuts).
 > - Sidebar setting: `Export settings` / `Import settings` — back up or restore the sidebar and all web panel settings as a single JSON file.
 > - [Sine](https://github.com/CosmoCreeper/Sine) mod support (`theme.json`) alongside fx-autoconfig, so the script can be installed without manually copying files.
 > - Windows GPU compositing fix so web panels don't render as a blank frame when switching.
 
 A Zen userChrome.js script that brings a second sidebar with web panels like in Vivaldi/Edge/Floorp but better.
 
-For a tour of the features and settings shared with upstream (web panels, containers, floating and pinned panels, shortcuts, auto-hide, and more), see the [upstream README](https://github.com/aminought/firefox-second-sidebar#readme). Changes in this fork are listed in the [changelog](CHANGELOG.md).
+Everything you can do with web panels and the sidebar is listed under [Using it](#using-it) and [Settings](#settings). Changes in this fork are listed in the [changelog](CHANGELOG.md).
 
 <img width="2200" height="2131" alt="promo-rounded" src="https://github.com/user-attachments/assets/020ee8cf-1f3d-4184-98fe-889be89d6145" />
 
@@ -42,17 +43,61 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 4. [Clear](https://github.com/MrOtherGuy/fx-autoconfig?tab=readme-ov-file#deleting-startup-cache) startup-cache.
 5. Have fun!
 
+## Using it
+
+- **Add a web panel** with the **New Web Panel** (**+**) button in the sidebar: enter a URL or pick a [preset](#presets), and optionally a Multi-Account Container. Click a panel's button to open it, and again to close it.
+- **Right-click a panel's button** to edit it (**Edit web panel**), unload it from memory, mute it, reset its position and size, delete it, or rearrange the sidebar (**Customize Toolbar...**). Middle-click the button to unload the panel.
+- **The panel's toolbar** has Back, Forward, Reload, Home, **Pin**/**Unpin** (switch between floating over the page and pinned beside it) and **Unload**. Its **More** menu has **Open in New Tab**, **Copy Page URL**, the [user agent](#user-agent), **Always On Top**, **Temporary** and zoom.
+- **Move** a floating panel by dragging its title in the toolbar, and **resize** it by dragging its edges or corners. Resize a pinned one by dragging the splitter beside it.
+- A panel's button shows a badge with the unread count from its page title, such as "(3) Inbox", and a speaker icon while it plays sound.
+- **The Second Sidebar button** (add it to a toolbar with **Customize Toolbar...**) shows or hides the sidebar.
+
 ## Settings
 
 Right-click the sidebar and choose **Sidebar settings**. With Sine, the same settings are also on Sine's mod page: click the gear button of **Zen Second Sidebar Enhanced**. Changes there apply right away, like in the popup. Keyboard shortcuts and settings export/import are only in the popup.
 
-## Links and bookmarks
+| Section                   | Settings                                                                                                                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| General                   | **Position** (left or right) • **Width** • **Allow window dragging**                                                                                                                                            |
+| Visibility                | **Auto-hide sidebar** and its **Auto-hide behavior** (inline or overlay) • **Keep gap at window edge** (Zen, with overlay) • **Hide web panel when sidebar is hidden** • a shortcut to show or hide the sidebar |
+| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **Show geometry hint** while moving or resizing                                                                     |
+| Shortcuts                 | **Open/close last active web panel** • **Open next web panel** • **Open previous web panel** (see [Keyboard shortcuts](#keyboard-shortcuts))                                                                    |
+| Web panel button          | **Container indicator** • **Tooltip** (off, title, URL, or both) • **Show full URL in tooltip**                                                                                                                 |
+| Web panel toolbar         | **Auto-hide back button** • **Auto-hide forward button**                                                                                                                                                        |
+| Links, bookmarks and tabs | Show **Open…** and **Preview… in Second Sidebar** in right-click menus • **Preview on click with** (see [below](#links-bookmarks-and-tabs))                                                                     |
+| Animations                | **Animate sidebar** • **Animate web panel toolbar**                                                                                                                                                             |
+| Backup                    | **Export settings** and **Import settings** (see [Backup](#backup))                                                                                                                                             |
+
+Each web panel has its own settings in **Edit web panel** (right-click its button):
+
+| Section           | Settings                                                                                                                                                                                                                          |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| General           | **URL** • **Multi-Account Container** • **Temporary** (removed when closed) • **[User Agent](#user-agent)** • **Zoom**                                                                                                            |
+| Title, Favicon    | Follow the page (**Dynamic**), or set your own                                                                                                                                                                                    |
+| Position and size | **Mode** (floating or pinned) • **Always on top** • **Position anchor** • **Horizontal**/**Vertical offset** • **Width** • **Height**                                                                                             |
+| Loading           | **Load into memory at startup** • **Restore last opened page** • **Unload from memory after closing** • **Unload after inactivity** • **Periodic reload** • **Reload when address changes** (when the current tab's site changes) |
+| Keyboard shortcut | Opens and closes this panel                                                                                                                                                                                                       |
+| CSS selector      | Shows only the part of the page that matches it                                                                                                                                                                                   |
+| Hide elements     | **Hide toolbar** • **Hide sound icon** • **Hide notification badge**                                                                                                                                                              |
+
+## Keyboard shortcuts
+
+None are set by default. Click a shortcut box in the settings and press the keys; shortcuts follow the key's position, so they keep working when you switch keyboard layouts. A shortcut that's already taken (by another web panel or sidebar action) is refused.
+
+- **Show or hide the sidebar**: **Sidebar settings → Visibility**.
+- **Open/close last active web panel**, **Open next web panel** and **Open previous web panel**: **Sidebar settings**. Next and previous go through the panels in the order of their buttons, wrapping around at the ends; with no panel open, they open the first or the last one.
+- **Open or close one web panel**: **Edit web panel → Keyboard shortcut**.
+
+They work in the browser window and inside web panels, but not while a settings popup is open. Pick keys Zen or Firefox don't already use, or the browser's own shortcut may run as well.
+
+## Links, bookmarks and tabs
 
 - Right-click a link and choose **Open Link in Second Sidebar** to add it as a web panel, or **Preview Link in Second Sidebar** to open it in a temporary panel that goes away when you close it.
 - Right-click a bookmark (on the bookmarks toolbar or in the Bookmarks menu) or an entry in the History menu for the same two items: **Open in Second Sidebar** and **Preview in Second Sidebar**.
+- Right-click a tab for **Open Tab in Second Sidebar** and **Preview Tab in Second Sidebar**, at the end of the menu. The panel opens the tab's page in the same container; the tab stays open. They're not offered for an empty tab, or when several tabs are selected.
 - **Alt+Shift+click** a link or a bookmark to preview it.
 
-In **Sidebar settings**, under **Links and bookmarks**, you can hide either menu item, and change the click to plain **Alt** or turn it off. In Zen, Alt+click also opens Glance, and Glance gets it first: to preview with Alt+click, set Glance's **Trigger method** to another key in Zen's settings (**Glance**).
+In **Sidebar settings**, under **Links, bookmarks and tabs**, you can hide either menu item, and change the click to plain **Alt** or turn it off. In Zen, Alt+click also opens Glance, and Glance gets it first: to preview with Alt+click, set Glance's **Trigger method** to another key in Zen's settings (**Glance**).
 
 ## Presets
 
