@@ -1,6 +1,9 @@
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { getLayoutIndependentKey } from "../utils/keyboard.mjs";
+import {
+  getShortcutPartsFromEvent,
+  isShortcutPressed,
+} from "../utils/keyboard.mjs";
 
 export class Shortcuts {
   constructor() {
@@ -222,15 +225,7 @@ export class Shortcuts {
    * @returns {boolean}
    */
   isShortcutPressed(shortcut, event) {
-    if (shortcut.length === 0) return false;
-    const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
-    const eventParts = this.getShortcutPartsFromEvent(event);
-    const layoutDependentEventParts =
-      this.#getLayoutDependentShortcutPartsFromEvent(event);
-    return (
-      this.isEqual(shortcutParts, eventParts) ||
-      this.isEqual(shortcutParts, layoutDependentEventParts)
-    );
+    return isShortcutPressed(shortcut, event);
   }
 
   /**
@@ -239,49 +234,6 @@ export class Shortcuts {
    * @returns {string[]}
    */
   getShortcutPartsFromEvent(event) {
-    const parts = [];
-    if (event.altKey) parts.push("Alt");
-    if (event.ctrlKey) parts.push("Ctrl");
-    if (event.metaKey) parts.push("Meta");
-    if (event.shiftKey) parts.push("Shift");
-    parts.push(getLayoutIndependentKey(event));
-    return parts;
-  }
-
-  /**
-   * Keeps shortcuts saved with a layout-dependent key working in that layout.
-   *
-   * @param {KeyboardEvent} event
-   * @returns {string[]}
-   */
-  #getLayoutDependentShortcutPartsFromEvent(event) {
-    const parts = this.getShortcutPartsFromEvent(event);
-    parts[parts.length - 1] = event.key.toUpperCase();
-    return parts;
-  }
-
-  /**
-   *
-   * @param {string} shortcut
-   * @returns {string[]}
-   */
-  getShortcutPartsFromShortcut(shortcut) {
-    const parts = shortcut.split("+");
-    // "+" is both the separator and a valid key label.
-    const lastIndex = parts.length - 1;
-    if (parts[lastIndex] === "" && parts[lastIndex - 1] === "") {
-      parts.splice(-2, 2, "+");
-    }
-    return parts;
-  }
-
-  /**
-   *
-   * @param {string[]} lhs
-   * @param {string[]} rhs
-   * @returns {boolean}
-   */
-  isEqual(lhs, rhs) {
-    return JSON.stringify([...lhs].sort()) === JSON.stringify([...rhs].sort());
+    return getShortcutPartsFromEvent(event);
   }
 }
