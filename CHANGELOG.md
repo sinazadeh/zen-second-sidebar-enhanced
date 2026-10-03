@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-10-03
+
 ### Fixed
 
 - **Reload when address changes** (on for the Bitwarden preset) no longer
