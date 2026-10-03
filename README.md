@@ -22,6 +22,8 @@ Everything you can do with web panels and the sidebar is listed under [Using it]
 
 ## Installation
 
+Second Sidebar is made for current versions of Zen and Firefox: the Firefox code it adjusts is checked every week against Firefox release, beta and Nightly. Older versions may work, but aren't tested.
+
 Pick whichever loader you already use (or prefer) — both install the exact same script.
 
 ### Sine

@@ -210,10 +210,24 @@ export class SidebarMainSettingsController {
       return;
     }
 
+    const { invalidSettings } = imported;
+    let invalidNote = "";
+    if (invalidSettings.length > 0) {
+      console.warn(
+        "Second Sidebar: imported settings with invalid values, reset to their defaults:",
+        invalidSettings,
+      );
+      invalidNote =
+        invalidSettings.length === 1
+          ? "One setting in the file had an invalid value and was reset to its default"
+          : `${invalidSettings.length} settings in the file had invalid values and were reset to their defaults`;
+      invalidNote += " (listed in the Browser Console).\n\n";
+    }
     const restartNow = PromptServiceWrapper.confirm(
       window,
       IMPORT_TITLE,
       "Settings imported. Restart the browser now to apply them?\n\n" +
+        invalidNote +
         "Until the browser restarts, changes to the sidebar or web panels won't be saved.",
       "Restart Now",
       "Later",

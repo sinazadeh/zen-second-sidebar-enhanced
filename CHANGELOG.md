@@ -6,6 +6,12 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Changed
+
+- **Import settings** now resets a setting whose value in the file is
+  invalid (of the wrong type, or not one the sidebar offers) to its default,
+  instead of using it, and says how many there were.
+
 ## [1.6.0] - 2026-10-03
 
 ### Added

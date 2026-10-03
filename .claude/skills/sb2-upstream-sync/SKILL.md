@@ -80,7 +80,9 @@ than restoring the toggle, and keep `WebPanelSettings` reading `mobile` from
 older saves. `parseNotifications` (`utils/string.mjs`) is rewritten too, and
 `controllers/shortcuts.mjs` checks every shortcut for conflicts through one
 `#isShortcutTaken`, which also covers this fork's next/previous web panel
-shortcuts: add an upstream shortcut to `#getSidebarShortcuts` there.
+shortcuts: add an upstream shortcut to `#getSidebarShortcuts` there. Its
+key matching (`isShortcutPressed` and the shortcut parts) moved to
+`utils/keyboard.mjs`, so `tests/keyboard.test.mjs` can run it.
 
 The patchers diverge from upstream too: their text patches live in
 `patchers/source_patches.mjs` and their module loading in

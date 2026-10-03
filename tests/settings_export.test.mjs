@@ -106,6 +106,67 @@ test("exports from a newer, incompatible format are rejected", () => {
   assert.throws(() => parseSettingsExport(data), /newer/);
 });
 
+test("an import without bad values reports none", () => {
+  assert.deepEqual(parseSettingsExport(makeExport()).invalidSettings, []);
+});
+
+test("imported values of the wrong type get their defaults", () => {
+  const data = makeExport();
+  Object.assign(data.sidebarSettings, {
+    position: "middle",
+    autoHideSidebar: "yes",
+    lastWebPanelShortcut: 5,
+  });
+  Object.assign(data.webPanels[0], {
+    zoom: "big",
+    temporary: 1,
+    title: ["x"],
+    floatingGeometry: { anchor: "topleft", width: 420 },
+    pinnedGeometry: "wide",
+  });
+  const { sidebarSettings, webPanelsSettings, invalidSettings } =
+    parseSettingsExport(data);
+
+  assert.deepEqual(invalidSettings.sort(), [
+    "autoHideSidebar",
+    "lastWebPanelShortcut",
+    "position",
+    "web panel #1: floatingGeometry.width",
+    "web panel #1: pinnedGeometry",
+    "web panel #1: temporary",
+    "web panel #1: title",
+    "web panel #1: zoom",
+  ]);
+  assert.equal(sidebarSettings.position, "right");
+  assert.equal(sidebarSettings.autoHideSidebar, false);
+  assert.equal(sidebarSettings.lastWebPanelShortcut, "");
+  // The rest of the file still counts.
+  assert.equal(sidebarSettings.padding, "small");
+  const [panel] = webPanelsSettings.webPanels;
+  assert.equal(panel.zoom, 1);
+  assert.equal(panel.temporary, false);
+  assert.equal(panel.title, "");
+  assert.equal(panel.pinned, true);
+  assert.equal(panel.floatingGeometry.anchor, "topleft");
+  assert.equal(panel.floatingGeometry.width, "600px");
+  assert.equal(panel.pinnedGeometry.width, "600px");
+});
+
+test("numbers saved as strings and nulls are accepted quietly", () => {
+  const data = makeExport();
+  Object.assign(data.webPanels[1], {
+    periodicReload: "60000",
+    userContextId: "2",
+    selector: null,
+  });
+  const { webPanelsSettings, invalidSettings } = parseSettingsExport(data);
+  assert.deepEqual(invalidSettings, []);
+  const panel = webPanelsSettings.webPanels[1];
+  assert.equal(panel.periodicReload, 60000);
+  assert.equal(panel.userContextId, 2);
+  assert.equal(panel.selector, "");
+});
+
 test("broken web panel entries are rejected", () => {
   const cases = [
     [(panels) => (panels[1] = "nope"), /#2 is not an object/],
