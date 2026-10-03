@@ -46,6 +46,41 @@ test("an export parses back to the same settings", () => {
   );
 });
 
+test("temporary panels are left out of exports", () => {
+  const sidebarSettings = new SidebarSettings({});
+  const webPanelsSettings = new WebPanelsSettings([
+    WebPanelSettings.fromObject("right", OFFSET, {
+      uuid: "kept",
+      url: "https://kept.example/",
+    }),
+    WebPanelSettings.fromObject("right", OFFSET, {
+      uuid: "preview",
+      url: "https://preview.example/",
+      temporary: true,
+    }),
+  ]);
+  const data = buildSettingsExport(sidebarSettings, webPanelsSettings);
+  assert.deepEqual(
+    data.webPanels.map((webPanel) => webPanel.uuid),
+    ["kept"],
+  );
+});
+
+test("a version 1 export's Mobile View becomes the Firefox Mobile user agent", () => {
+  const data = makeExport();
+  data.version = 1;
+  for (const webPanel of data.webPanels) {
+    delete webPanel.userAgent;
+    delete webPanel.customUserAgent;
+  }
+  data.webPanels[0].mobile = true;
+  const { webPanelsSettings } = parseSettingsExport(data);
+  assert.deepEqual(
+    webPanelsSettings.webPanels.map((webPanel) => webPanel.userAgent),
+    ["firefox-mobile", "default"],
+  );
+});
+
 test("an export without a version (older format) is accepted", () => {
   const data = makeExport();
   delete data.version;

@@ -9,4 +9,13 @@ export class AppInfoWrapper {
     const { name, version, platformVersion } = Services.appinfo;
     return `${name} ${version} (Gecko ${platformVersion})`;
   }
+
+  /**
+   * The running Gecko version, e.g. "149.0.1".
+   *
+   * @returns {string}
+   */
+  static get platformVersion() {
+    return Services.appinfo.platformVersion;
+  }
 }

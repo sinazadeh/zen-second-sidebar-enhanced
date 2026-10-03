@@ -187,7 +187,9 @@ export class WebPanelsBrowser extends Browser {
     const elements = document.querySelectorAll('[command="cmd_closeWindow"]');
     for (const element of elements) {
       element.removeAttribute("command");
-      element.addEventListener("click", (e) => {
+      // "command", not "click": it's all a <key> (Ctrl+Shift+W) fires, and a
+      // menu item chosen from the keyboard doesn't fire "click" either.
+      element.addEventListener("command", (e) => {
         this.#hackSessionStore(false);
         this.remove();
         BrowserCommandsWrapper.tryToCloseWindow(e);
@@ -424,11 +426,10 @@ export class WebPanelsBrowser extends Browser {
     });
 
     // Set user agent
-    if (webPanelSettings.mobile) {
-      tab.linkedBrowser.setMobileUserAgent();
-    } else {
-      tab.linkedBrowser.unsetMobileUserAgent();
-    }
+    tab.linkedBrowser.setUserAgent(
+      webPanelSettings.userAgent,
+      webPanelSettings.customUserAgent,
+    );
 
     // Set zoom
     tab.linkedBrowser.setZoom(webPanelSettings.zoom);

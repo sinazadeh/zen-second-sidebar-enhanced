@@ -72,6 +72,13 @@ upstream improvements automatically. If upstream ever changes how
 re-apply the loader-portability treatment on top of upstream's version
 rather than taking upstream's as-is.
 
+Upstream's web panel `mobile` setting (a toggle sending a fixed mobile
+user agent) is `userAgent`/`customUserAgent` here, with its choices in
+`utils/user_agents.mjs` and a **User Agent** list in both the edit popup and
+the **More** popup. Port upstream changes to mobile view onto that rather
+than restoring the toggle, and keep `WebPanelSettings` reading `mobile` from
+older saves. `parseNotifications` (`utils/string.mjs`) is rewritten too.
+
 The patchers diverge from upstream too: their text patches live in
 `patchers/source_patches.mjs` and their module loading in
 `importPatchedModule()`. When upstream changes a replacement in one of its

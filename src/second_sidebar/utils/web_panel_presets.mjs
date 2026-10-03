@@ -1,10 +1,15 @@
+import {
+  DEFAULT_USER_AGENT,
+  FIREFOX_MOBILE_USER_AGENT,
+} from "./user_agents.mjs";
+
 import { getExtensionSidebarPanels } from "./extension_panels.mjs";
 
 /**
  * @typedef {Object} WebPanelPresetSettings Settings a preset gives a new web
  *   panel; anything left out (geometry, toolbar, unloading...) keeps its
  *   default, since that's the user's preference rather than the site's.
- * @property {boolean} [mobile]
+ * @property {string} [userAgent] an id from getUserAgentChoices()
  * @property {boolean} [dynamicFavicon]
  * @property {string} [faviconURL]
  * @property {boolean} [reloadOnUrlChange]
@@ -20,7 +25,11 @@ import { getExtensionSidebarPanels } from "./extension_panels.mjs";
  * @property {WebPanelPresetSettings} settings
  */
 
-/** @type {Array<{name: string, url: string, mobile?: boolean}>} */
+/**
+ * `mobile`: open in mobile view (the Firefox Mobile user agent).
+ *
+ * @type {Array<{name: string, url: string, mobile?: boolean}>}
+ */
 const WEBSITES = [
   { name: "ChatGPT", url: "https://chatgpt.com/" },
   { name: "Claude", url: "https://claude.ai/new", mobile: true },
@@ -72,7 +81,11 @@ export function getWebsitePresets() {
     id: `website:${url}`,
     name,
     url,
-    settings: { mobile, dynamicFavicon: true, reloadOnUrlChange: false },
+    settings: {
+      userAgent: mobile ? FIREFOX_MOBILE_USER_AGENT : DEFAULT_USER_AGENT,
+      dynamicFavicon: true,
+      reloadOnUrlChange: false,
+    },
   }));
 }
 
@@ -93,7 +106,7 @@ export function getExtensionPresets() {
         url: page ? new URL(page, baseURL).href : url,
         iconURL,
         settings: {
-          mobile: false,
+          userAgent: DEFAULT_USER_AGENT,
           ...(iconURL
             ? { dynamicFavicon: false, faviconURL: iconURL }
             : { dynamicFavicon: true }),

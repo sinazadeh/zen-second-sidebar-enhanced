@@ -5,7 +5,9 @@ import { WebPanelsSettings } from "./web_panels_settings.mjs";
 // Bump when the exported shape changes in a way old exports can't just be
 // read as (a field renamed or repurposed, not just a new optional field -
 // those already default fine via the settings classes' own constructors).
-export const EXPORT_VERSION = 1;
+// 2: a web panel's `mobile` flag became `userAgent`; WebPanelSettings still
+// reads `mobile` from version 1 files.
+export const EXPORT_VERSION = 2;
 
 /**
  * Builds the settings export file's contents: the sidebar settings and every
@@ -21,7 +23,7 @@ export function buildSettingsExport(sidebarSettings, webPanelsSettings) {
     version: EXPORT_VERSION,
     exportedAt: new Date().toISOString(),
     sidebarSettings: sidebarSettings.toObject(),
-    webPanels: webPanelsSettings.webPanels.map((webPanel) =>
+    webPanels: webPanelsSettings.persistentWebPanels.map((webPanel) =>
       webPanel.toObject(),
     ),
   };

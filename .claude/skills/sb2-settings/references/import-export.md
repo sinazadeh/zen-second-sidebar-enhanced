@@ -25,4 +25,5 @@ suspension. Bump
 `EXPORT_VERSION` only for a breaking shape change (a field
 renamed/repurposed) - a new optional field doesn't need it, since the
 settings classes' own constructor defaults already backfill it for older
-exports.
+exports. Version 2 renamed a web panel's `mobile` to `userAgent`. Temporary
+panels are never exported (`WebPanelsSettings#persistentWebPanels`).

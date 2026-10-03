@@ -101,6 +101,16 @@ export const POPUPS_CSS = `
         margin: var(--space-xsmall);
       }
 
+      .sb2-popup-group {
+        gap: var(--space-medium);
+        padding-inline: var(--arrowpanel-menuitem-padding-inline, 8px);
+        box-sizing: border-box;
+
+        label {
+          font-weight: normal;
+        }
+      }
+
       menuseparator {
         padding-block: 0;
       }
@@ -314,6 +324,12 @@ export const POPUPS_CSS = `
 
   .sb2-popup-body:has(#sb2-popup-css-selector-toggle:not([pressed])) {
     #sb2-popup-css-selector-items {
+      display: none;
+    }
+  }
+
+  .sb2-popup-body:has(#sb2-popup-user-agent-menu-list:not([value="custom"])) {
+    #sb2-popup-custom-user-agent-items {
       display: none;
     }
   }

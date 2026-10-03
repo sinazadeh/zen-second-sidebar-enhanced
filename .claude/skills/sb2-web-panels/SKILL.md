@@ -56,6 +56,17 @@ before changing any of those.
   panel catches up in `open()` if the main tab's site differs from the one
   it loaded with. Reloading closed panels on every tab switch made the
   browser slow (each reload restarts Bitwarden's whole app).
+- **User Agent** (`userAgent`, `customUserAgent`): the choices and the
+  strings they send are in `utils/user_agents.mjs`, kept free of browser
+  globals so `tests/user_agents.test.mjs` runs it in Node.
+  `WebPanelBrowser#setUserAgent` applies one with `customUserAgent` on the
+  tab's browsing context. Firefox Mobile is built from the running Gecko
+  version; the Samsung Internet and Safari strings are fixed, so refresh them
+  when those browsers ship a new major version. A custom user agent can come
+  from an imported file and is sent as an HTTP header, so
+  `sanitizeUserAgent` keeps it to one line. Changing the setting reloads a
+  loaded panel only if the string it sends changed; typing a custom one is
+  debounced per panel.
 - Preserve container identity and the existing loading/security context when
   creating or navigating panel tabs. Account for temporary panels, unload on
   close, reload timers, listeners, and observers when changing panel lifecycle.

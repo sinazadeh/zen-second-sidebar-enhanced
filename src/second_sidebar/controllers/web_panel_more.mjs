@@ -46,11 +46,13 @@ export class WebPanelMoreController {
       ClipboardHelperWrapper.copyString(webPanelController.getTabUrl());
     });
 
-    SidebarElements.webPanelPopupMore.listenMobileButtonClick(
-      (uuid, mobile) => {
-        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
+    SidebarElements.webPanelPopupMore.listenUserAgentChange(
+      (uuid, userAgent, customUserAgent) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_AGENT, {
           uuid,
-          mobile,
+          userAgent,
+          customUserAgent,
+          timeout: 0,
         });
         SidebarControllers.webPanelsController.saveSettings();
       },
@@ -58,9 +60,10 @@ export class WebPanelMoreController {
 
     SidebarElements.webPanelPopupMore.listenTemporaryButtonClick(
       (uuid, temporary) => {
-        const webPanelController =
-          SidebarControllers.webPanelsController.get(uuid);
-        webPanelController.setTemporary(temporary);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
+          uuid,
+          temporary,
+        });
         SidebarControllers.webPanelsController.saveSettings();
       },
     );
