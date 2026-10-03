@@ -59,6 +59,11 @@ const TARGETS = [
     requires: {
       "_afterTabSelectAndFocusChange() {":
         "UrlbarInputPatcher wraps _afterTabSelectAndFocusChange",
+      "setURI({": "UrlbarInputPatcher wraps setURI",
+      "handleRevert() {": "UrlbarInputPatcher wraps handleRevert",
+      "handleEvent(event) {": "UrlbarInputPatcher wraps handleEvent",
+      "this.controller = new UrlbarChildController(":
+        "UrlbarInputPatcher skips those while this.controller is unset",
     },
   },
   {

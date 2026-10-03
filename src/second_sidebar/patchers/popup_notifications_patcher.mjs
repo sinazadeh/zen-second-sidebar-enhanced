@@ -8,9 +8,12 @@ const MODULE_URL = "resource://gre/modules/PopupNotifications.sys.mjs";
 const PATCHED_MODULE_RELATIVE_PATH = "fss/PopupNotifications.sys.mjs";
 
 export class PopupNotificationsPatcher {
-  static patch() {
+  /**
+   * @param {Window} childWindow the hidden web panels window
+   */
+  static patch(childWindow) {
     console.log("Patching PopupNotifications.sys.mjs...");
-    this.#patch().then(
+    this.#patch(childWindow).then(
       (complete) =>
         console.log(
           complete
@@ -23,9 +26,10 @@ export class PopupNotificationsPatcher {
   }
 
   /**
+   * @param {Window} childWindow
    * @returns {Promise<boolean>} false if any patch no longer applies
    */
-  static async #patch() {
+  static async #patch(childWindow) {
     const { source, unmatched } = patchPopupNotificationsSource(
       await fetchFirstAvailable([MODULE_URL]),
     );
@@ -34,15 +38,15 @@ export class PopupNotificationsPatcher {
       PATCHED_MODULE_RELATIVE_PATH,
       source,
     );
-    this.#defineLazyGetter(module);
+    this.#defineLazyGetter(childWindow, module);
     return unmatched.length === 0;
   }
 
   /**
+   * @param {Window} childWindow
    * @param {Object} module
    */
-  static #defineLazyGetter(module) {
-    const childWindow = window[1];
+  static #defineLazyGetter(childWindow, module) {
     ChromeUtils.defineLazyGetter(childWindow, "PopupNotifications", () => {
       try {
         let shouldSuppress = () => {

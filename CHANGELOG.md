@@ -6,6 +6,22 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-10-03
+
+### Fixed
+
+- **Reload when address changes** (on for the Bitwarden preset) no longer
+  reloads a closed panel on every tab switch, which made the browser slower
+  over time: a panel reloads only while it's open, and a closed one reloads
+  once when it's opened, if the site changed in the meantime. Switching
+  through several tabs quickly reloads it once.
+- In Zen, closing the sidebar now deselects the web panel that was open.
+  Its page kept running as if it were on screen, its button stayed
+  highlighted, and **Unload from memory after closing** didn't unload it.
+- The hidden window behind the web panels no longer fills the Browser
+  Console with `this.controller is undefined` errors from its address bar
+  on every page load in a panel.
+
 ## [1.5.0] - 2026-09-29
 
 ### Added

@@ -7,23 +7,69 @@ const VALUE_FORMATTER_RETRY_MS = 50;
 const VALUE_FORMATTER_MAX_ATTEMPTS = 600;
 
 export class UrlbarInputPatcher {
-  static patch() {
+  /**
+   * @param {Window} childWindow the hidden web panels window
+   */
+  static patch(childWindow) {
     console.log("Patching #urlbar-input...");
-    this.#defineLazyGetter();
-    this.#patchTabSwitchFocusChange();
-    this.#patchValueFormatterUpdate();
-    this.#suppressValueFormatterErrors();
+    this.#defineLazyGetter(childWindow);
+    this.#skipWithoutController(childWindow);
+    this.#patchTabSwitchFocusChange(childWindow);
+    this.#patchValueFormatterUpdate(childWindow);
+    this.#suppressValueFormatterErrors(childWindow);
     console.log("#urlbar-input was patched");
   }
 
-  static #defineLazyGetter() {
-    const childWindow = window[1];
+  /**
+   * @param {Window} childWindow
+   */
+  static #defineLazyGetter(childWindow) {
     const urlbarInput = childWindow.document.querySelector("#urlbar-input");
+    // Newer Firefox creates the input only when the urlbar initializes,
+    // which may not have happened yet (or ever, see #skipWithoutController).
+    // Throwing here would skip the patches after this one.
+    if (!urlbarInput) return;
     ChromeUtils.defineLazyGetter(urlbarInput, "editor", () => null);
   }
 
-  static #patchTabSwitchFocusChange() {
-    const urlbar = window[1].gURLBar;
+  /**
+   * Newer Firefox (where gURLBar is a <moz-urlbar> element) can't
+   * initialize the hidden window's urlbar: its controller needs the Urlbar
+   * actor, which Firefox only registers for top-level windows, and this
+   * window is a frame of the main one. Without a controller, setURI() throws
+   * on every page load in a web panel, filling the Browser Console and
+   * cutting short the window's own location-change handling. handleRevert()
+   * (which Zen calls when a panel's tab opens) and the urlbar's event
+   * handlers (TabClose on every unload) throw too. The urlbar is never shown
+   * here, so skip them while it has no controller. Where it has one (older
+   * Firefox), they run as usual.
+   *
+   * @param {Window} childWindow
+   */
+  static #skipWithoutController(childWindow) {
+    const urlbar = childWindow.gURLBar;
+    const skipped = [];
+    for (const name of ["setURI", "handleRevert", "handleEvent"]) {
+      const original = urlbar?.[name];
+      if (typeof original !== "function") {
+        skipped.push(`skip ${name} while the hidden urlbar has no controller`);
+        continue;
+      }
+      urlbar[name] = function (...args) {
+        if (!this.controller) return undefined;
+        return original.apply(this, args);
+      };
+    }
+    if (skipped.length) {
+      reportUnappliedPatches("UrlbarInput", skipped);
+    }
+  }
+
+  /**
+   * @param {Window} childWindow
+   */
+  static #patchTabSwitchFocusChange(childWindow) {
+    const urlbar = childWindow.gURLBar;
     const afterTabSelectAndFocusChange = urlbar._afterTabSelectAndFocusChange;
     if (typeof afterTabSelectAndFocusChange !== "function") {
       reportUnappliedPatches("UrlbarInput", [
@@ -59,9 +105,10 @@ export class UrlbarInputPatcher {
    * synchronously inside removeTab() and there is nothing to patch: the
    * rejected promise it leaves behind is filtered by
    * #suppressValueFormatterErrors.
+   *
+   * @param {Window} childWindow
    */
-  static #patchValueFormatterUpdate() {
-    const childWindow = window[1];
+  static #patchValueFormatterUpdate(childWindow) {
     let attempts = 0;
     const tryPatch = () => {
       attempts++;
@@ -97,8 +144,10 @@ export class UrlbarInputPatcher {
     tryPatch();
   }
 
-  static #suppressValueFormatterErrors() {
-    const childWindow = window[1];
+  /**
+   * @param {Window} childWindow
+   */
+  static #suppressValueFormatterErrors(childWindow) {
     // Belt-and-suspenders fallback for the same underlying issue as
     // #patchValueFormatterUpdate, in case some other path still reaches
     // UrlbarValueFormatter (e.g. before that patch takes effect). Swallow

@@ -34,6 +34,15 @@ its patches inline in `patchers/*_patcher.mjs`; how to port its changes is in
   itself, and any rejected promise is filtered by
   `#suppressValueFormatterErrors`. Its retry loop is capped (30 s) so it
   can't poll forever.
+- The panels' window is a frame of the main one, and Firefox registers the
+  `Urlbar` actor for top-level windows only, so in newer Firefox its urlbar
+  never gets a `controller`. `UrlbarInputPatcher#skipWithoutController`
+  makes `setURI`, `handleRevert` (which Zen calls when a panel's tab opens)
+  and `handleEvent` no-ops while `controller` is unset; otherwise every page
+  load in a panel throws from `XULBrowserWindow.onLocationChange`.
+- Pass the patchers the panels' window (`WebPanelsBrowser#initWindow` does,
+  with `this.window.raw`). Don't reach it as `window[1]`: the main window's
+  frames include its sidebar and window-modal dialogs, so the index varies.
 
 ## Checking patch targets
 
