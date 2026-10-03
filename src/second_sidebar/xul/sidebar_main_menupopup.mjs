@@ -10,6 +10,9 @@ export class SidebarMainMenuPopup extends MenuPopup {
     });
 
     this.settingsItem = new MenuItem().setLabel("Sidebar settings");
+    this.muteAllItem = new MenuItem();
+    /** @type {boolean} */
+    this.allMuted = false;
     this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
     this.#compose();
   }
@@ -17,9 +20,42 @@ export class SidebarMainMenuPopup extends MenuPopup {
   #compose() {
     this.appendChildren(
       this.settingsItem,
+      this.muteAllItem,
       new MenuSeparator(),
       this.customizeItem,
     );
+  }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
+  listenPopupShowing(callback) {
+    this.addEventListener("popupshowing", (event) => {
+      if (event.target === this.getXUL()) {
+        callback();
+      }
+    });
+  }
+
+  /**
+   * @param {boolean?} allMuted whether every loaded web panel is muted;
+   *   null, which hides the item, when none is loaded
+   */
+  updateMuteAllItem(allMuted) {
+    this.allMuted = allMuted === true;
+    this.muteAllItem
+      .setLabel(`${this.allMuted ? "Unmute" : "Mute"} all web panels`)
+      .toggleHidden(allMuted === null);
+  }
+
+  /**
+   * @param {function(boolean):void} callback gets whether to mute
+   */
+  listenMuteAllItemClick(callback) {
+    this.muteAllItem.addEventListener("command", () => {
+      callback(!this.allMuted);
+    });
   }
 
   /**

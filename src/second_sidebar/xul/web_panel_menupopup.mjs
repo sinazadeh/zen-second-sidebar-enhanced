@@ -21,6 +21,7 @@ export class WebPanelMenuPopup extends MenuPopup {
     this.resetHeightItem = new MenuItem().setLabel("Reset height");
     this.resetAllItem = new MenuItem().setLabel("Reset all");
     this.editItem = new MenuItem().setLabel("Edit web panel");
+    this.duplicateItem = new MenuItem().setLabel("Duplicate web panel");
     this.deleteItem = new MenuItem().setLabel("Delete web panel");
     this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
     this.#compose();
@@ -35,9 +36,15 @@ export class WebPanelMenuPopup extends MenuPopup {
         this.muteItem.setDisabled(true);
         this.resetMenu.setDisabled(true);
         this.editItem.setDisabled(true);
+        this.duplicateItem.setDisabled(true);
         this.deleteItem.setDisabled(true);
         return;
       }
+      // Disabled above when the menu last opened on something else.
+      this.muteItem.setDisabled(false);
+      this.editItem.setDisabled(false);
+      this.duplicateItem.setDisabled(false);
+      this.deleteItem.setDisabled(false);
 
       // unloading
       this.unloadItem.setDisabled(this.webPanelController.isUnloaded());
@@ -80,6 +87,7 @@ export class WebPanelMenuPopup extends MenuPopup {
         ),
       ),
       this.editItem,
+      this.duplicateItem,
       this.deleteItem,
       new MenuSeparator(),
       this.customizeItem,
@@ -154,6 +162,14 @@ export class WebPanelMenuPopup extends MenuPopup {
    */
   listenEditItemClick(callback) {
     this.#listenItemClick(this.editItem, callback);
+  }
+
+  /**
+   *
+   * @param {function(WebPanelController):void} callback
+   */
+  listenDuplicateItemClick(callback) {
+    this.#listenItemClick(this.duplicateItem, callback);
   }
 
   /**

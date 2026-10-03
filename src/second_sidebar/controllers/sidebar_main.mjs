@@ -1,3 +1,5 @@
+import { WebPanelEvents, sendEvents } from "./events.mjs";
+
 import { BrowserElements } from "../browser_elements.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
@@ -29,6 +31,21 @@ export class SidebarMainController {
         this.mouseX,
         this.mouseY,
       );
+    });
+
+    SidebarElements.sidebarMainMenuPopup.listenPopupShowing(() => {
+      const loaded = SidebarControllers.webPanelsController
+        .getAll()
+        .filter((webPanelController) => !webPanelController.isUnloaded());
+      SidebarElements.sidebarMainMenuPopup.updateMuteAllItem(
+        loaded.length === 0
+          ? null
+          : loaded.every((webPanelController) => webPanelController.isMuted()),
+      );
+    });
+
+    SidebarElements.sidebarMainMenuPopup.listenMuteAllItemClick((muted) => {
+      sendEvents(WebPanelEvents.MUTE_ALL_WEB_PANELS, { muted });
     });
 
     SidebarElements.sidebarMainMenuPopup.listenCustomizeItemClick(() => {

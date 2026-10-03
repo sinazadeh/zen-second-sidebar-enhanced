@@ -107,3 +107,6 @@ reverter there too, or discarding changes will leave it applied.
   temporary panel it doesn't have: per-panel listeners must ignore unknown
   uuids (use `WebPanelsController#listenWebPanelEvent`, which the `#bind*`
   helpers already do, or check `webPanelsController.get(uuid)` for null).
+- `DUPLICATE_WEB_PANEL` carries the copy's whole settings object, so every
+  window builds the same panel; give it a new `uuid` and clear the fields
+  that must stay unique to one panel (its `shortcut`).

@@ -1016,6 +1016,17 @@ export class WebPanelController {
     this.#tab.toggleMuteAudio();
   }
 
+  /**
+   * Mutes or unmutes a loaded panel; an unloaded one is left alone.
+   *
+   * @param {boolean} muted
+   */
+  setMuted(muted) {
+    if (!this.isUnloaded() && this.#tab.muted !== muted) {
+      this.#tab.toggleMuteAudio();
+    }
+  }
+
   remove() {
     this.#stopTimer();
     this.#stopInactivityTimer();
