@@ -11,7 +11,8 @@ whole file (web panel uuids/urls, duplicate uuids, newer `version`) before
 anything is written. A setting whose value isn't of its default's type, or a
 sidebar setting outside its `SIDEBAR_PREFS` values, gets its default and is
 listed in `invalidSettings`, which the import reports; fields the settings
-class doesn't have (an old `mobile`) are passed through for it to read. Import writes straight to the same storage
+class doesn't have (an old `mobile`) are passed through for it to read. A
+list setting (a web panel's `spaces`) must be a list of strings. Import writes straight to the same storage
 `SidebarSettings`/`WebPanelsSettings.save()` already use rather than
 hot-applying live, since a wholesale replacement can add/remove entire panels
 and containers at once; a restart picks it up like any fresh window. Until

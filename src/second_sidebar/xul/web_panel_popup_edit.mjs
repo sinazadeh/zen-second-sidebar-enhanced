@@ -30,6 +30,7 @@ import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { UserAgentMenuList } from "./user_agent_menu_list.mjs";
 import { VBox } from "./base/vbox.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
+import { ZenSpacesWrapper } from "../wrappers/zen_spaces.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
@@ -93,6 +94,17 @@ export class WebPanelPopupEdit extends Panel {
       id: "sb2-popup-custom-user-agent-input",
       placeholder: "User agent string",
     });
+    this.allSpacesToggle = new Toggle({ id: "sb2-popup-all-spaces-toggle" });
+    this.spacesList = new Div({ id: "sb2-popup-spaces-items" });
+    /** @type {Map<string, Toggle>} by space uuid */
+    this.spaceToggles = new Map();
+    /** @type {string[]} the panel's spaces that no longer exist */
+    this.deletedSpaces = [];
+    this.spacesAvailable = false;
+    this.spacesSet = createPopupSet("Spaces", [
+      createPopupGroup("All spaces", this.allSpacesToggle),
+      this.spacesList,
+    ]);
     this.loadOnStartupToggle = new Toggle();
     this.loadLastUrlToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
@@ -361,6 +373,7 @@ export class WebPanelPopupEdit extends Panel {
               ),
             ),
           ]),
+          this.spacesSet,
           createPopupSet("Title", [
             createPopupGroup("Dynamic", this.dynamicTitleToggle),
             new Div({ id: "sb2-popup-title-items" }).appendChildren(
@@ -458,6 +471,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.selectorEnabled
    * @param {function(string, string, number):void} callbacks.selector
    * @param {function(string, string, string, number):void} callbacks.userAgent
+   * @param {function(string, string[]):void} callbacks.spaces
    * @param {function(string, boolean):void} callbacks.pinned
    * @param {function(string, boolean):void} callbacks.alwaysOnTop
    * @param {function(string, string):void} callbacks.anchor
@@ -488,6 +502,7 @@ export class WebPanelPopupEdit extends Panel {
     selectorEnabled,
     selector,
     userAgent,
+    spaces,
     alwaysOnTop,
     pinned,
     anchor,
@@ -518,6 +533,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onSelectorChange = selector;
     this.onTemporaryChange = temporary;
     this.onUserAgentChange = userAgent;
+    this.onSpacesChange = spaces;
     this.onPinnedChange = pinned;
     this.onAlwaysOnTopChange = alwaysOnTop;
     this.onFloatingAnchorChange = anchor;
@@ -620,6 +636,19 @@ export class WebPanelPopupEdit extends Panel {
         this.customUserAgentInput.getValue(),
         1000,
       );
+    });
+    this.allSpacesToggle.addEventListener("toggle", () => {
+      // Turning "All spaces" off starts from the active one.
+      if (
+        !this.allSpacesToggle.getPressed() &&
+        this.#getPickedSpaces().length === 0
+      ) {
+        this.spaceToggles.get(ZenSpacesWrapper.activeSpace)?.setPressed(true);
+      }
+      if (this.#getPickedSpaces().length === 0) {
+        this.allSpacesToggle.setPressed(true);
+      }
+      spaces(this.settings.uuid, this.#getPickedSpaces());
     });
     this.loadOnStartupToggle.addEventListener("toggle", () => {
       loadOnStartup(this.settings.uuid, this.loadOnStartupToggle.getPressed());
@@ -769,6 +798,7 @@ export class WebPanelPopupEdit extends Panel {
     this.temporaryToggle.setPressed(settings.temporary);
     this.userAgentMenuList.setValue(settings.userAgent);
     this.customUserAgentInput.setValue(settings.customUserAgent);
+    this.#fillSpaces(settings.spaces);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.loadLastUrlToggle.setPressed(settings.loadLastUrl);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
@@ -815,6 +845,54 @@ export class WebPanelPopupEdit extends Panel {
       this,
       webPanelController.button,
     );
+  }
+
+  /**
+   * Lists this window's Zen spaces, with the panel's turned on. The section
+   * is hidden without spaces (Firefox).
+   *
+   * @param {string[]} panelSpaces
+   */
+  #fillSpaces(panelSpaces) {
+    this.spacesAvailable = ZenSpacesWrapper.available;
+    this.spacesSet.toggleHidden(!this.spacesAvailable);
+    this.spaceToggles = new Map();
+    this.spacesList.getXUL().replaceChildren();
+    if (!this.spacesAvailable) return;
+
+    const spaces = ZenSpacesWrapper.getSpaces();
+    // Kept as they are: the panel shows everywhere if none of its spaces is
+    // left (isWebPanelInSpace).
+    this.deletedSpaces = panelSpaces.filter(
+      (uuid) => !spaces.some((space) => space.uuid === uuid),
+    );
+    this.allSpacesToggle.setPressed(panelSpaces.length === 0);
+    for (const space of spaces) {
+      const toggle = new Toggle().setPressed(panelSpaces.includes(space.uuid));
+      toggle.addEventListener("toggle", () => {
+        // With none picked, it's back to all of them.
+        if (this.#getPickedSpaces().length === 0) {
+          this.allSpacesToggle.setPressed(true);
+        }
+        this.onSpacesChange(this.settings.uuid, this.#getPickedSpaces());
+      });
+      this.spaceToggles.set(space.uuid, toggle);
+      this.spacesList.appendChildren(
+        new ToolbarSeparator(),
+        createPopupGroup(space.name || "Unnamed space", toggle),
+      );
+    }
+  }
+
+  /**
+   * @returns {string[]} the spaces picked for the panel; none for all
+   */
+  #getPickedSpaces() {
+    if (this.allSpacesToggle.getPressed()) return [];
+    const picked = [...this.spaceToggles]
+      .filter(([, toggle]) => toggle.getPressed())
+      .map(([uuid]) => uuid);
+    return picked.length > 0 ? [...this.deletedSpaces, ...picked] : [];
   }
 
   #requestClose() {
@@ -1016,6 +1094,15 @@ export class WebPanelPopupEdit extends Panel {
           this.settings.userAgent,
           this.settings.customUserAgent,
         ),
+      );
+    }
+    if (
+      this.spacesAvailable &&
+      [...this.#getPickedSpaces()].sort().join() !==
+        [...this.settings.spaces].sort().join()
+    ) {
+      reverters.push(() =>
+        this.onSpacesChange(this.settings.uuid, this.settings.spaces),
       );
     }
     if (this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup) {

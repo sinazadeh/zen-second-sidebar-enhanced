@@ -64,6 +64,8 @@ export class SidebarMainController {
       for (const spring of springs) {
         spring.removeAttribute("context");
       }
+      // Customizing can rebuild buttons, losing the ones hidden for Zen spaces.
+      SidebarControllers.webPanelsController.applySpaces();
     });
 
     SidebarElements.sidebarMain.addEventListener("dragover", (event) => {

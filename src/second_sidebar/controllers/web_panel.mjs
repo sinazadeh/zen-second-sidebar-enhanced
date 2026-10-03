@@ -44,6 +44,13 @@ export class WebPanelController {
    * @type {string?}
    */
   #loadedForHostname = null;
+  /**
+   * Whether the panel is limited to Zen spaces other than this window's
+   * active one (see WebPanelsController#applySpaces).
+   *
+   * @type {boolean}
+   */
+  #outsideSpace = false;
 
   /**
    *
@@ -748,6 +755,47 @@ export class WebPanelController {
     this.#settings.unloadAfterInactivity = value;
     if (!this.isUnloaded() && !this.isActive()) {
       this.#startInactivityTimer();
+    }
+  }
+
+  /**
+   * @returns {string[]} the Zen spaces the panel shows in; none for all
+   */
+  getSpaces() {
+    return [...this.#settings.spaces];
+  }
+
+  /**
+   *
+   * @param {string[]} spaces
+   */
+  setSpaces(spaces) {
+    this.#settings.spaces = [...spaces];
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  isOutsideSpace() {
+    return this.#outsideSpace;
+  }
+
+  /**
+   * Hides the panel's button while it's outside the active space, closing
+   * the panel if it's open (which unloads it if it's set to unload on
+   * closing).
+   *
+   * @param {boolean} value
+   */
+  setOutsideSpace(value) {
+    this.#outsideSpace = value;
+    this.#button.setOutsideSpace(value);
+    if (
+      value &&
+      this.isActive() &&
+      !SidebarControllers.sidebarController.closed()
+    ) {
+      SidebarControllers.sidebarController.close();
     }
   }
 

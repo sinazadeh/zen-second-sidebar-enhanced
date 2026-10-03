@@ -279,6 +279,11 @@ export const SIDEBAR_MAIN_CSS = `
     }
   }
 
+  /* A panel limited to other Zen spaces (see WebPanelButton#setOutsideSpace). */
+  :root:not([customizing]) .sb2-main-web-panel-button[sb2-outside-space] {
+    display: none !important;
+  }
+
   /* Keep the active web panel visually in sync with Firefox's selected tab.
      The ID raises specificity above the native toolbarbutton [open] rule. */
   #sb2-main .sb2-main-web-panel-button[open] > .toolbarbutton-badge-stack {

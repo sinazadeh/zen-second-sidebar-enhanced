@@ -152,6 +152,16 @@ test("imported values of the wrong type get their defaults", () => {
   assert.equal(panel.pinnedGeometry.width, "600px");
 });
 
+test("a web panel's spaces must be a list of uuids", () => {
+  const data = makeExport();
+  data.webPanels[0].spaces = ["work", "home"];
+  data.webPanels[1].spaces = ["work", 7];
+  const { webPanelsSettings, invalidSettings } = parseSettingsExport(data);
+  assert.deepEqual(invalidSettings, ["web panel #2: spaces"]);
+  assert.deepEqual(webPanelsSettings.webPanels[0].spaces, ["work", "home"]);
+  assert.deepEqual(webPanelsSettings.webPanels[1].spaces, []);
+});
+
 test("numbers saved as strings and nulls are accepted quietly", () => {
   const data = makeExport();
   Object.assign(data.webPanels[1], {

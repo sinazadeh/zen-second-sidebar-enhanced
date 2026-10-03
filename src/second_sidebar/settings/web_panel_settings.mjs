@@ -43,6 +43,8 @@ export class WebPanelSettings {
    * @param {PinnedWebPanelGeometrySettings} params.pinnedGeometry
    * @param {boolean} params.temporary
    * @param {string} params.shortcut
+   * @param {string[]} params.spaces the uuids of the Zen spaces the panel
+   *   shows in; none for all of them
    */
   constructor(
     sidebarPosition,
@@ -79,6 +81,7 @@ export class WebPanelSettings {
       pinnedGeometry = new PinnedWebPanelGeometrySettings(),
       temporary = false,
       shortcut = "",
+      spaces = [],
     } = {},
   ) {
     this.uuid = uuid;
@@ -114,6 +117,9 @@ export class WebPanelSettings {
     this.pinnedGeometry = pinnedGeometry;
     this.temporary = temporary;
     this.shortcut = shortcut;
+    this.spaces = Array.isArray(spaces)
+      ? spaces.filter((uuid) => typeof uuid === "string")
+      : [];
   }
 
   /**

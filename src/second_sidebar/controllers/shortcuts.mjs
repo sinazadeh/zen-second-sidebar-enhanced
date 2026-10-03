@@ -100,7 +100,10 @@ export class Shortcuts {
     const webPanelControllers = SidebarControllers.webPanelsController.getAll();
     for (const webPanelController of webPanelControllers) {
       const shortcut = webPanelController.getShortcut();
-      if (shortcut.length === 0) continue;
+      // A panel limited to other Zen spaces is out of reach, like its button.
+      if (shortcut.length === 0 || webPanelController.isOutsideSpace()) {
+        continue;
+      }
 
       if (this.isShortcutPressed(shortcut, event)) {
         event.preventDefault();

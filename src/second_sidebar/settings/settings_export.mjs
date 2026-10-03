@@ -185,6 +185,13 @@ function validFields(object, defaults, prefix, invalid) {
  * @returns {*} undefined if `value` can't stand in for `defaultValue`
  */
 function toTypeOf(value, defaultValue) {
+  if (Array.isArray(defaultValue)) {
+    // Only lists of strings so far (a web panel's spaces).
+    return Array.isArray(value) &&
+      value.every((item) => typeof item === "string")
+      ? value
+      : undefined;
+  }
   switch (typeof defaultValue) {
     case "number": {
       const number =

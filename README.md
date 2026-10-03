@@ -6,6 +6,7 @@
 > - Full Zen Browser layout support (vertical tabs, split view, workspaces, compact mode, and both sidebar sides) alongside standard Firefox.
 > - Web panel setting: `Reload when address changes` — reloads the open web panel when the main browser's active tab is switched or navigated to a different site; a closed panel reloads when you next open it, if the site changed in the meantime. For example, with a Bitwarden panel this reloads its vault view as you switch tabs, so it's always showing logins for whichever site you're currently on.
 > - Web panel setting: `User Agent` — choose what a panel identifies itself as: the browser's own, Firefox Mobile, a Galaxy phone or tablet, an iPhone, or a user agent you type in — see [User agent](#user-agent).
+> - Web panel setting: `Spaces` — show a web panel only in the Zen spaces (workspaces) you pick — see [Spaces](#spaces).
 > - Web panel setting: `Unload after inactivity` — automatically unloads a panel that's been in the background for a set time, without relying on Firefox's own background tab unloader (which isn't reliable for panels living in the hidden window that hosts them).
 > - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden) when adding a panel — see [Presets](#presets).
 > - Tabs, bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links, bookmarks and tabs](#links-bookmarks-and-tabs).
@@ -76,12 +77,24 @@ Each web panel has its own settings in **Edit web panel** (right-click its butto
 | Section           | Settings                                                                                                                                                                                                                          |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | General           | **URL** • **Multi-Account Container** • **Temporary** (removed when closed) • **[User Agent](#user-agent)** • **Zoom**                                                                                                            |
+| Spaces            | In Zen, **All spaces**, or only the spaces you pick (see [Spaces](#spaces))                                                                                                                                                       |
 | Title, Favicon    | Follow the page (**Dynamic**), or set your own                                                                                                                                                                                    |
 | Position and size | **Mode** (floating or pinned) • **Always on top** • **Position anchor** • **Horizontal**/**Vertical offset** • **Width** • **Height**                                                                                             |
 | Loading           | **Load into memory at startup** • **Restore last opened page** • **Unload from memory after closing** • **Unload after inactivity** • **Periodic reload** • **Reload when address changes** (when the current tab's site changes) |
 | Keyboard shortcut | Opens and closes this panel                                                                                                                                                                                                       |
 | CSS selector      | Shows only the part of the page that matches it                                                                                                                                                                                   |
 | Hide elements     | **Hide toolbar** • **Hide sound icon** • **Hide notification badge**                                                                                                                                                              |
+
+## Spaces
+
+In Zen, a web panel shows in all your spaces (workspaces) unless you limit it: in **Edit web panel**, turn off **All spaces** and turn on the spaces it belongs in. Each window follows its own active space:
+
+- Switching to a space a panel isn't in hides its button. If the panel was open, it closes, which unloads it if **Unload from memory after closing** is on.
+- Its keyboard shortcut, and **Open next/previous web panel**, skip it there too.
+- While you customize the toolbar, every panel's button shows, so you can still move them.
+- If all the spaces a panel was limited to are deleted, it shows in every space again.
+
+Firefox has no spaces, so the setting isn't there.
 
 ## Keyboard shortcuts
 

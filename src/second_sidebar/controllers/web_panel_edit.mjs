@@ -109,6 +109,12 @@ export class WebPanelEditController {
           timeout,
         });
       },
+      spaces: (uuid, spaces) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SPACES, {
+          uuid,
+          spaces,
+        });
+      },
       loadOnStartup: (uuid, loadOnStartup) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_LOAD_ON_STARTUP, {
           uuid,
