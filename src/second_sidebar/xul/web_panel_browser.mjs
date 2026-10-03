@@ -1,7 +1,6 @@
+import { AppInfoWrapper } from "../wrappers/app_info.mjs";
 import { Browser } from "./base/browser.mjs";
-
-const MOBILE_USER_AGENT =
-  "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36";
+import { resolveUserAgent } from "../utils/user_agents.mjs";
 
 export class WebPanelBrowser extends Browser {
   /**
@@ -14,17 +13,19 @@ export class WebPanelBrowser extends Browser {
 
   /**
    *
-   * @returns {WebPanelBrowser}
+   * @param {string} userAgent an id from getUserAgentChoices()
+   * @param {string} customUserAgent sent when userAgent is "custom"
+   * @returns {boolean} whether the user agent changed
    */
-  setMobileUserAgent() {
-    return this.setCustomUserAgent(MOBILE_USER_AGENT);
-  }
-
-  /**
-   *
-   * @returns {WebPanelBrowser}
-   */
-  unsetMobileUserAgent() {
-    return this.setCustomUserAgent("");
+  setUserAgent(userAgent, customUserAgent) {
+    const value = resolveUserAgent(
+      userAgent,
+      customUserAgent,
+      AppInfoWrapper.platformVersion,
+    );
+    const changed =
+      value !== (this.element.browsingContext?.customUserAgent ?? "");
+    this.setCustomUserAgent(value);
+    return changed;
   }
 }

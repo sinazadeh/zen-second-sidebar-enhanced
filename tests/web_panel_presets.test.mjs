@@ -34,15 +34,15 @@ const { getExtensionPresets, getWebsitePresets } =
 const { WebPanelSettings } =
   await import("../src/second_sidebar/settings/web_panel_settings.mjs");
 
-test("website presets only set the URL, mobile view, favicon and reloading", () => {
+test("website presets only set the URL, user agent, favicon and reloading", () => {
   const presets = getWebsitePresets();
   assert.ok(presets.length > 0);
   for (const preset of presets) {
     assert.doesNotThrow(() => new URL(preset.url), preset.name);
     assert.deepEqual(Object.keys(preset.settings).sort(), [
       "dynamicFavicon",
-      "mobile",
       "reloadOnUrlChange",
+      "userAgent",
     ]);
     assert.equal(preset.settings.dynamicFavicon, true);
   }
@@ -52,7 +52,9 @@ test("website presets only set the URL, mobile view, favicon and reloading", () 
     "ids are unique",
   );
   const telegram = presets.find((preset) => preset.name === "Telegram");
-  assert.equal(telegram.settings.mobile, true);
+  assert.equal(telegram.settings.userAgent, "firefox-mobile");
+  const chatgpt = presets.find((preset) => preset.name === "ChatGPT");
+  assert.equal(chatgpt.settings.userAgent, "default");
 });
 
 test("extension presets keep the extension's icon fixed", () => {
@@ -64,7 +66,7 @@ test("extension presets keep the extension's icon fixed", () => {
     url: "moz-extension://uuid-bw/popup/index.html?uilocation=sidebar#/tabs/vault",
     iconURL: "moz-extension://uuid-bw/images/icon32.png",
     settings: {
-      mobile: false,
+      userAgent: "default",
       dynamicFavicon: false,
       faviconURL: "moz-extension://uuid-bw/images/icon32.png",
       reloadOnUrlChange: true,
@@ -73,7 +75,7 @@ test("extension presets keep the extension's icon fixed", () => {
   // Without an icon to fix, the page's own one is still better than nothing.
   assert.equal(iconless.url, "moz-extension://uuid-iconless/sidebar.html");
   assert.deepEqual(iconless.settings, {
-    mobile: false,
+    userAgent: "default",
     dynamicFavicon: true,
     reloadOnUrlChange: false,
   });
@@ -81,12 +83,12 @@ test("extension presets keep the extension's icon fixed", () => {
 
 test("settings a preset leaves out keep their defaults", () => {
   const settings = new WebPanelSettings("left", "0px", "uuid", "https://a/", {
-    mobile: undefined,
+    userAgent: undefined,
     dynamicFavicon: undefined,
     faviconURL: undefined,
     reloadOnUrlChange: undefined,
   });
-  assert.equal(settings.mobile, false);
+  assert.equal(settings.userAgent, "default");
   assert.equal(settings.dynamicFavicon, true);
   assert.equal(settings.faviconURL, "");
   assert.equal(settings.reloadOnUrlChange, false);

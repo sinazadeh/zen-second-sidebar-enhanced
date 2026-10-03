@@ -1,5 +1,11 @@
 import { FloatingWebPanelGeometrySettings } from "./floating_web_panel_geometry_settings.mjs";
 import { PinnedWebPanelGeometrySettings } from "./pinned_web_panel_geometry_settings.mjs";
+import {
+  DEFAULT_USER_AGENT,
+  FIREFOX_MOBILE_USER_AGENT,
+  isUserAgentId,
+} from "../utils/user_agents.mjs";
+
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 
 export class WebPanelSettings {
@@ -16,7 +22,10 @@ export class WebPanelSettings {
    * @param {string} params.faviconURL
    * @param {boolean} params.pinned
    * @param {boolean} params.alwaysOnTop
-   * @param {boolean} params.mobile
+   * @param {string} params.userAgent an id from getUserAgentChoices()
+   * @param {string} params.customUserAgent sent when userAgent is "custom"
+   * @param {boolean} params.mobile older versions' "Mobile View", read
+   *   when there's no userAgent
    * @param {number} params.zoom
    * @param {boolean} params.loadLastUrl
    * @param {boolean} params.loadOnStartup
@@ -47,6 +56,8 @@ export class WebPanelSettings {
       faviconURL = "",
       pinned = false,
       alwaysOnTop = false,
+      userAgent,
+      customUserAgent = "",
       mobile = false,
       zoom = 1,
       loadOnStartup = true,
@@ -78,7 +89,14 @@ export class WebPanelSettings {
     this.faviconURL = faviconURL;
     this.pinned = pinned;
     this.alwaysOnTop = alwaysOnTop;
-    this.mobile = mobile;
+    // Settings from older versions have a "Mobile View" flag instead.
+    this.userAgent = isUserAgentId(userAgent)
+      ? userAgent
+      : mobile
+        ? FIREFOX_MOBILE_USER_AGENT
+        : DEFAULT_USER_AGENT;
+    this.customUserAgent =
+      typeof customUserAgent === "string" ? customUserAgent : "";
     this.zoom = zoom;
     this.loadOnStartup = loadOnStartup;
     this.loadLastUrl = loadLastUrl;

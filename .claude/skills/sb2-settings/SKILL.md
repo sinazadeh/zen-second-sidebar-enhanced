@@ -83,6 +83,17 @@ reverter there too, or discarding changes will leave it applied.
   model, load/save or `fromObject`/`toObject` paths, UI, and event handling
   together. Keep panel settings distinct from state such as `lastUrl`.
   Web panel saves are debounced and flushed when the window unloads.
+- Temporary panels (previews, or panels with **Temporary** on) are never
+  saved or exported: `WebPanelsSettings#persistentWebPanels` drops them, and
+  `WebPanelsSettings.load()` drops any an older version saved. Each window
+  saves its own copy of the panel list, so the `temporary` flag goes to every
+  window (`EDIT_WEB_PANEL_TEMPORARY`), or windows would disagree about
+  whether to save a panel.
+- When a field is renamed, keep reading the old name in the settings class's
+  constructor, so older saves and exports still load: a web panel's
+  `userAgent` replaced the `mobile` flag, which `WebPanelSettings` still
+  reads when there's no `userAgent` (see `EXPORT_VERSION` in
+  [import and export](references/import-export.md)).
 
 ## Cross-window events
 

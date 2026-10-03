@@ -27,6 +27,7 @@ import { PopupHeader } from "./popup_header.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
+import { UserAgentMenuList } from "./user_agent_menu_list.mjs";
 import { VBox } from "./base/vbox.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
 import { fetchIconURL } from "../utils/icons.mjs";
@@ -85,7 +86,13 @@ export class WebPanelPopupEdit extends Panel {
     this.heightTypeMenuList = this.#createDimensionTypeMenuList();
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
     this.temporaryToggle = new Toggle();
-    this.mobileToggle = new Toggle();
+    this.userAgentMenuList = new UserAgentMenuList({
+      id: "sb2-popup-user-agent-menu-list",
+    });
+    this.customUserAgentInput = createInput({
+      id: "sb2-popup-custom-user-agent-input",
+      placeholder: "User agent string",
+    });
     this.loadOnStartupToggle = new Toggle();
     this.loadLastUrlToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
@@ -339,7 +346,11 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Temporary", this.temporaryToggle),
             new ToolbarSeparator(),
-            createPopupGroup("Mobile View", this.mobileToggle),
+            createPopupGroup("User Agent", this.userAgentMenuList),
+            new Div({ id: "sb2-popup-custom-user-agent-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.customUserAgentInput),
+            ),
             new ToolbarSeparator(),
             createPopupGroup(
               "Zoom",
@@ -446,7 +457,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.selectorEnabled
    * @param {function(string, string, number):void} callbacks.selector
-   * @param {function(string, boolean):void} callbacks.mobile
+   * @param {function(string, string, string, number):void} callbacks.userAgent
    * @param {function(string, boolean):void} callbacks.pinned
    * @param {function(string, boolean):void} callbacks.alwaysOnTop
    * @param {function(string, string):void} callbacks.anchor
@@ -476,7 +487,7 @@ export class WebPanelPopupEdit extends Panel {
     faviconURL,
     selectorEnabled,
     selector,
-    mobile,
+    userAgent,
     alwaysOnTop,
     pinned,
     anchor,
@@ -506,7 +517,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onSelectorEnabledChange = selectorEnabled;
     this.onSelectorChange = selector;
     this.onTemporaryChange = temporary;
-    this.onMobileChange = mobile;
+    this.onUserAgentChange = userAgent;
     this.onPinnedChange = pinned;
     this.onAlwaysOnTopChange = alwaysOnTop;
     this.onFloatingAnchorChange = anchor;
@@ -595,8 +606,20 @@ export class WebPanelPopupEdit extends Panel {
     this.temporaryToggle.addEventListener("toggle", () => {
       temporary(this.settings.uuid, this.temporaryToggle.getPressed());
     });
-    this.mobileToggle.addEventListener("toggle", () => {
-      mobile(this.settings.uuid, this.mobileToggle.getPressed());
+    this.userAgentMenuList.addEventListener("command", () => {
+      userAgent(
+        this.settings.uuid,
+        this.userAgentMenuList.getValue(),
+        this.customUserAgentInput.getValue(),
+      );
+    });
+    this.customUserAgentInput.addEventListener("input", () => {
+      userAgent(
+        this.settings.uuid,
+        this.userAgentMenuList.getValue(),
+        this.customUserAgentInput.getValue(),
+        1000,
+      );
     });
     this.loadOnStartupToggle.addEventListener("toggle", () => {
       loadOnStartup(this.settings.uuid, this.loadOnStartupToggle.getPressed());
@@ -744,7 +767,8 @@ export class WebPanelPopupEdit extends Panel {
     );
 
     this.temporaryToggle.setPressed(settings.temporary);
-    this.mobileToggle.setPressed(settings.mobile);
+    this.userAgentMenuList.setValue(settings.userAgent);
+    this.customUserAgentInput.setValue(settings.customUserAgent);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.loadLastUrlToggle.setPressed(settings.loadLastUrl);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
@@ -981,9 +1005,16 @@ export class WebPanelPopupEdit extends Panel {
         this.onTemporaryChange(this.settings.uuid, this.settings.temporary),
       );
     }
-    if (this.mobileToggle.getPressed() !== this.settings.mobile) {
+    if (
+      this.userAgentMenuList.getValue() !== this.settings.userAgent ||
+      this.customUserAgentInput.getValue() !== this.settings.customUserAgent
+    ) {
       reverters.push(() =>
-        this.onMobileChange(this.settings.uuid, this.settings.mobile),
+        this.onUserAgentChange(
+          this.settings.uuid,
+          this.settings.userAgent,
+          this.settings.customUserAgent,
+        ),
       );
     }
     if (this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup) {

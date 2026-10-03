@@ -5,6 +5,7 @@
 >
 > - Full Zen Browser layout support (vertical tabs, split view, workspaces, compact mode, and both sidebar sides) alongside standard Firefox.
 > - Web panel setting: `Reload when address changes` — reloads the open web panel when the main browser's active tab is switched or navigated to a different site; a closed panel reloads when you next open it, if the site changed in the meantime. For example, with a Bitwarden panel this reloads its vault view as you switch tabs, so it's always showing logins for whichever site you're currently on.
+> - Web panel setting: `User Agent` — choose what a panel identifies itself as: the browser's own, Firefox Mobile, a Galaxy phone or tablet, an iPhone, or a user agent you type in — see [User agent](#user-agent).
 > - Web panel setting: `Unload after inactivity` — automatically unloads a panel that's been in the background for a set time, without relying on Firefox's own background tab unloader (which isn't reliable for panels living in the hidden window that hosts them).
 > - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden) when adding a panel — see [Presets](#presets).
 > - Bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links and bookmarks](#links-and-bookmarks).
@@ -57,10 +58,10 @@ In **Sidebar settings**, under **Links and bookmarks**, you can hide either menu
 
 When adding a web panel with **New Web Panel** (**+**), **Preset** offers:
 
-- **Common websites** such as ChatGPT, Claude, Gemini, WhatsApp, Telegram and X. Sites that work better that way (e.g. Telegram, X) open in mobile view.
+- **Common websites** such as ChatGPT, Claude, Gemini, WhatsApp, Telegram and X. Sites that work better that way (e.g. Telegram, X) open in mobile view, with the **Firefox Mobile** [user agent](#user-agent).
 - **Installed extensions' sidebars**, such as Bitwarden's. The panel keeps the extension's own icon, as these pages don't set one. Bitwarden opens on its vault with **Reload when address changes** on, so the vault always shows the logins for the site in your current tab.
 
-Picking one fills in its URL; editing the URL afterwards turns it back into a custom one. A preset only sets the URL, mobile view, favicon and whether the panel reloads when the address changes. Everything else (size, position, toolbar, unloading...) starts from the usual defaults, and all of it can be changed later in **Edit web panel** (right-click the panel's button).
+Picking one fills in its URL; editing the URL afterwards turns it back into a custom one. A preset only sets the URL, user agent, favicon and whether the panel reloads when the address changes. Everything else (size, position, toolbar, unloading...) starts from the usual defaults, and all of it can be changed later in **Edit web panel** (right-click the panel's button).
 
 ### Adding an extension manually
 
@@ -81,6 +82,18 @@ jar:file:///C:/Users/Me/AppData/Roaming/zen/Profiles/abcd1234.Default%20(release
 ```
 
 On Linux or macOS the profile folder already starts with `/`, so it becomes `jar:file:///home/me/...`. Pasting the URL into the address bar should show the icon; if it doesn't, check the path.
+
+## User agent
+
+**User Agent** in **Edit web panel** (right-click the panel's button) sets what a web panel tells websites it is, which decides whether a site shows its mobile or desktop version:
+
+- **Default**: the browser's own, like a normal tab.
+- **Firefox Mobile**: Firefox for Android, matching your browser's version. Use this for a site's mobile version.
+- **Galaxy Phone** / **Galaxy Tab**: Samsung Internet on a Galaxy phone or tablet. Galaxy Tab gets a site's tablet version where it has one.
+- **iPhone**: Safari on an iPhone.
+- **Custom**: the user agent you enter in the box that appears.
+
+The panel reloads when you change it. The **More** menu in the panel's toolbar has the same list, without the box for a custom user agent: enter one in **Edit web panel** first. Panels that had **Mobile View** on in older versions use **Firefox Mobile**.
 
 ## Backup
 

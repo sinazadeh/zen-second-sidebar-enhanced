@@ -37,6 +37,7 @@ export class WebPanelsController {
   #urlTimeouts = new KeyedTimeouts();
   #selectorTimeouts = new KeyedTimeouts();
   #faviconURLTimeouts = new KeyedTimeouts();
+  #userAgentTimeouts = new KeyedTimeouts();
 
   constructor() {
     /**@type {Map<string, WebPanelController>} */
@@ -244,6 +245,21 @@ export class WebPanelsController {
     );
 
     this.#listenWebPanelEvent(
+      WebPanelEvents.EDIT_WEB_PANEL_USER_AGENT,
+      (webPanelController, { userAgent, customUserAgent, timeout }) => {
+        webPanelController.setUserAgent(userAgent, customUserAgent);
+
+        // Debounced so typing a custom user agent doesn't reload the page on
+        // every key.
+        this.#userAgentTimeouts.set(
+          webPanelController.getUUID(),
+          () => webPanelController.applyUserAgent(),
+          timeout,
+        );
+      },
+    );
+
+    this.#listenWebPanelEvent(
       WebPanelEvents.EDIT_WEB_PANEL_PINNED,
       (webPanelController, { pinned }) => {
         pinned ? webPanelController.pin() : webPanelController.unpin();
@@ -296,14 +312,14 @@ export class WebPanelsController {
       "setUserContextId",
     );
     this.#bindSimpleSetting(
+      WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY,
+      "temporary",
+      "setTemporary",
+    );
+    this.#bindSimpleSetting(
       WebPanelEvents.EDIT_WEB_PANEL_ALWAYS_ON_TOP,
       "alwaysOnTop",
       "setAlwaysOnTop",
-    );
-    this.#bindSimpleSetting(
-      WebPanelEvents.EDIT_WEB_PANEL_MOBILE,
-      "mobile",
-      "setMobile",
     );
     this.#bindSimpleSetting(
       WebPanelEvents.EDIT_WEB_PANEL_LOAD_ON_STARTUP,
@@ -591,7 +607,7 @@ export class WebPanelsController {
     temporary,
     newWebPanelPosition,
     isActiveWindow,
-    { mobile, dynamicFavicon, faviconURL, reloadOnUrlChange } = {},
+    { userAgent, dynamicFavicon, faviconURL, reloadOnUrlChange } = {},
   ) {
     try {
       NetUtilWrapper.newURI(url);
@@ -609,7 +625,7 @@ export class WebPanelsController {
         userContextId,
         temporary,
         // undefined (no preset) keeps WebPanelSettings' own defaults.
-        mobile,
+        userAgent,
         dynamicFavicon,
         faviconURL,
         reloadOnUrlChange,
@@ -627,7 +643,8 @@ export class WebPanelsController {
     );
     this.add(webPanelController);
 
-    if (isActiveWindow) {
+    // Temporary panels aren't saved (WebPanelsSettings#persistentWebPanels).
+    if (isActiveWindow && !temporary) {
       this.saveSettings();
     }
 
@@ -680,6 +697,7 @@ export class WebPanelsController {
     this.#urlTimeouts.clear(uuid);
     this.#selectorTimeouts.clear(uuid);
     this.#faviconURLTimeouts.clear(uuid);
+    this.#userAgentTimeouts.clear(uuid);
     if (this.lastOpenedWebPanelUUID === uuid) {
       this.lastOpenedWebPanelUUID = null;
     }

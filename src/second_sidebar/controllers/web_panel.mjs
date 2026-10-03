@@ -618,19 +618,27 @@ export class WebPanelController {
   }
 
   /**
+   * Takes effect with applyUserAgent().
    *
-   * @param {boolean} value
+   * @param {string} userAgent an id from getUserAgentChoices()
+   * @param {string} customUserAgent sent when userAgent is "custom"
    */
-  setMobile(value) {
-    this.#settings.mobile = value;
-    if (!this.isUnloaded()) {
-      if (value) {
-        this.#tab.linkedBrowser.setMobileUserAgent();
-      } else {
-        this.#tab.linkedBrowser.unsetMobileUserAgent();
-      }
-      this.reload();
-    }
+  setUserAgent(userAgent, customUserAgent) {
+    this.#settings.userAgent = userAgent;
+    this.#settings.customUserAgent = customUserAgent;
+  }
+
+  /**
+   * Makes a loaded panel send its user agent, reloading the page if that
+   * changed it, so the site sees the new one.
+   */
+  applyUserAgent() {
+    if (this.isUnloaded()) return;
+    const changed = this.#tab.linkedBrowser.setUserAgent(
+      this.#settings.userAgent,
+      this.#settings.customUserAgent,
+    );
+    if (changed) this.reload();
   }
 
   /**

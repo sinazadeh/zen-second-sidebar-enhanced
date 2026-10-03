@@ -6,6 +6,35 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Added
+
+- **User Agent** web panel setting, in **Edit web panel** and the panel
+  toolbar's **More** menu, replaces **Mobile View**: **Default** (the
+  browser's own), **Firefox Mobile**, **Galaxy Phone**, **Galaxy Tab**,
+  **iPhone** or **Custom**, which sends a user agent you enter.
+
+### Changed
+
+- Panels in mobile view (from **Mobile View** or a preset) now identify as
+  Firefox for Android, matching your browser's version, instead of a 2020
+  Samsung browser that some sites no longer support. Choose **Galaxy Phone**
+  to look like a current Samsung phone instead.
+- Settings exports are now format version 2. Older versions of Second
+  Sidebar can't import them; this version still imports older exports.
+
+### Fixed
+
+- Ctrl+Shift+W (Cmd+Shift+W on macOS) closes the window again, as does
+  **Close Window** chosen from the menu with the keyboard. Only clicking it
+  worked.
+- Preview panels, and panels set to **Temporary**, no longer come back after
+  a restart (in every window) or end up in settings exports. Turning
+  **Temporary** on or off now applies in every window, so they no longer
+  disagree about whether to save a panel.
+- A web panel's notification badge no longer shows numbers from its page
+  title that aren't unread counts, such as "Top 10" or a year in brackets.
+  Counts like "(99+)" now show as well.
+
 ## [1.5.1] - 2026-10-03
 
 ### Fixed

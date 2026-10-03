@@ -1,4 +1,5 @@
 import {
+  createPopupGroup,
   createPopupSet,
   createSubviewButton,
   createSubviewIconicButton,
@@ -11,7 +12,9 @@ import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs"; // eslint-disable-line no-unused-vars
 import { PopupBody } from "./popup_body.mjs";
+import { UserAgentMenuList } from "./user_agent_menu_list.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
+import { CUSTOM_USER_AGENT } from "../utils/user_agents.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 const ICONS = {
@@ -32,7 +35,7 @@ export class WebPanelPopupMore extends Panel {
     this.openInNewTabButton = createSubviewButton("Open in New Tab");
     this.copyPageUrlButton = createSubviewButton("Copy Page URL");
     this.temporaryButton = this.#createFlagButton("Temporary");
-    this.mobileButton = this.#createFlagButton("Mobile View");
+    this.userAgentMenuList = new UserAgentMenuList();
     this.alwaysOnTopButton = this.#createFlagButton("Always On Top");
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, "Zoom Out");
     this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, "Zoom In");
@@ -50,7 +53,7 @@ export class WebPanelPopupMore extends Panel {
           createPopupSet("", [
             this.openInNewTabButton,
             this.copyPageUrlButton,
-            this.mobileButton,
+            createPopupGroup("User Agent", this.userAgentMenuList),
             new MenuSeparator(),
             this.alwaysOnTopButton,
             new MenuSeparator(),
@@ -73,7 +76,10 @@ export class WebPanelPopupMore extends Panel {
    */
   listenPopupShowing(callback) {
     this.addEventListener("popupshowing", (event) => {
-      callback(event);
+      // Not the user agent list's own popup opening inside this one.
+      if (event.target === this.getXUL()) {
+        callback(event);
+      }
     });
   }
 
@@ -103,10 +109,16 @@ export class WebPanelPopupMore extends Panel {
 
   /**
    *
-   * @param {function(string, boolean):void} callback
+   * @param {function(string, string, string):void} callback
    */
-  listenMobileButtonClick(callback) {
-    this.#listenFlagButtonClick(this.mobileButton, callback);
+  listenUserAgentChange(callback) {
+    this.userAgentMenuList.addEventListener("command", () => {
+      callback(
+        this.settings.uuid,
+        this.userAgentMenuList.getValue(),
+        this.settings.customUserAgent,
+      );
+    });
   }
 
   /**
@@ -217,7 +229,15 @@ export class WebPanelPopupMore extends Panel {
    * @param {WebPanelSettings} settings
    */
   setDefaults(settings) {
-    this.#setFlagButtonChecked(this.mobileButton, settings.mobile);
+    // The custom one is entered in Edit Web Panel, so "Custom" is only
+    // offered once there is one.
+    this.userAgentMenuList
+      .fill({
+        custom:
+          settings.customUserAgent !== "" ||
+          settings.userAgent === CUSTOM_USER_AGENT,
+      })
+      .setValue(settings.userAgent);
     this.#setFlagButtonChecked(this.temporaryButton, settings.temporary);
     this.#setFlagButtonChecked(this.alwaysOnTopButton, settings.alwaysOnTop);
     this.#updateZoomButtons(settings.zoom);

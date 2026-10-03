@@ -96,14 +96,17 @@ export class WebPanelEditController {
         });
       },
       temporary: (uuid, temporary) => {
-        const webPanelController =
-          SidebarControllers.webPanelsController.get(uuid);
-        webPanelController.setTemporary(temporary);
-      },
-      mobile: (uuid, mobile) => {
-        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
           uuid,
-          mobile,
+          temporary,
+        });
+      },
+      userAgent: (uuid, userAgent, customUserAgent, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_AGENT, {
+          uuid,
+          userAgent,
+          customUserAgent,
+          timeout,
         });
       },
       loadOnStartup: (uuid, loadOnStartup) => {

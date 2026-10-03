@@ -9,6 +9,10 @@ const { WebPanelSettings } =
   await import("../src/second_sidebar/settings/web_panel_settings.mjs");
 const { WebPanelState } =
   await import("../src/second_sidebar/settings/web_panel_state.mjs");
+const { WebPanelsSettings } =
+  await import("../src/second_sidebar/settings/web_panels_settings.mjs");
+const { FileSettings } =
+  await import("../src/second_sidebar/settings/settings.mjs");
 
 const OFFSET = "var(--space-small)";
 
@@ -68,6 +72,65 @@ test("WebPanelSettings defaults missing fields from the sidebar position", () =>
   assert.equal(settings.floatingGeometry.right, "unset");
   assert.equal(settings.floatingGeometry.height, `calc(100% - ${OFFSET} * 2)`);
   assert.equal(settings.pinnedGeometry.width, "600px");
+});
+
+test("WebPanelSettings turns older versions' Mobile View into a user agent", () => {
+  const panel = (fields) =>
+    WebPanelSettings.fromObject("left", OFFSET, {
+      uuid: "a",
+      url: "https://example.com/",
+      ...fields,
+    });
+
+  assert.equal(panel({}).userAgent, "default");
+  assert.equal(panel({ mobile: false }).userAgent, "default");
+  assert.equal(panel({ mobile: true }).userAgent, "firefox-mobile");
+  // userAgent wins once there is one; mobile isn't saved any more.
+  const iphone = panel({ mobile: true, userAgent: "iphone" });
+  assert.equal(iphone.userAgent, "iphone");
+  assert.equal("mobile" in iphone.toObject(), false);
+  // Values from a broken or newer file fall back.
+  assert.equal(panel({ userAgent: "pager" }).userAgent, "default");
+  assert.equal(panel({ customUserAgent: 5 }).customUserAgent, "");
+  assert.equal(panel({}).customUserAgent, "");
+
+  const custom = panel({ userAgent: "custom", customUserAgent: "Agent/1" });
+  assert.deepEqual(
+    [custom.toObject().userAgent, custom.toObject().customUserAgent],
+    ["custom", "Agent/1"],
+  );
+});
+
+test("WebPanelsSettings doesn't save or load temporary panels", async (t) => {
+  const panels = [
+    { uuid: "kept", url: "https://kept.example/" },
+    { uuid: "preview", url: "https://preview.example/", temporary: true },
+  ];
+  let saved = null;
+  t.mock.method(FileSettings, "load", async () => panels);
+  t.mock.method(FileSettings, "save", async (_path, value) => {
+    saved = value;
+  });
+
+  // Older versions saved them.
+  const loaded = await WebPanelsSettings.load("left", "small");
+  assert.deepEqual(
+    loaded.webPanels.map((webPanel) => webPanel.uuid),
+    ["kept"],
+  );
+
+  const settings = new WebPanelsSettings(
+    panels.map((panel) => WebPanelSettings.fromObject("left", OFFSET, panel)),
+  );
+  assert.deepEqual(
+    settings.persistentWebPanels.map((webPanel) => webPanel.uuid),
+    ["kept"],
+  );
+  await settings.save();
+  assert.deepEqual(
+    saved.map((webPanel) => webPanel.uuid),
+    ["kept"],
+  );
 });
 
 test("WebPanelState round-trips and defaults lastUrl", () => {
