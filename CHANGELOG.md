@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-10-09
+
 ### Added
 
 - **Open in New Tab** in a panel button's right-click menu, as in the
