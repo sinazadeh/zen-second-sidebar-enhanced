@@ -6,12 +6,14 @@ import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
 import { FloatingWebPanelGeometrySettings } from "../settings/floating_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
 import { Logger } from "../utils/logger.mjs";
 import { PinnedWebPanelGeometrySettings } from "../settings/pinned_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
+import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelState } from "../settings/web_panel_state.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs"; // eslint-disable-line no-unused-vars
+import { WindowWrapper } from "../wrappers/window.mjs";
 import { buildSelectorScript } from "../utils/selector_script.mjs";
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 import { parseNotifications } from "../utils/string.mjs";
@@ -413,12 +415,37 @@ export class WebPanelController {
       this.#startInactivityTimer();
     }
 
-    const url = this.#settings.loadLastUrl
-      ? (this.#state?.lastUrl ?? this.#settings.url)
-      : this.#settings.url;
     this.#loadedForHostname =
       SidebarControllers.webPanelsController.getMainBrowserHostname();
-    this.go(url);
+    this.go(this.#getStartUrl());
+  }
+
+  /**
+   * @returns {string} the page the panel opens on when it's loaded
+   */
+  #getStartUrl() {
+    return this.#settings.loadLastUrl
+      ? (this.#state?.lastUrl ?? this.#settings.url)
+      : this.#settings.url;
+  }
+
+  /**
+   * Opens the panel's page in a new tab of this window, in the panel's
+   * container: the page it's on, or the one it would open on if it isn't
+   * loaded.
+   *
+   * @param {boolean} inBackground
+   */
+  openInNewTab(inBackground = false) {
+    const gBrowser = new WindowWrapper().gBrowser;
+    const tab = gBrowser.addTab(this.getTabUrl() ?? this.#getStartUrl(), {
+      triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
+      userContextId: this.getUserContextId(),
+      inBackground,
+    });
+    if (!inBackground) {
+      gBrowser.selectedTab = tab;
+    }
   }
 
   /**

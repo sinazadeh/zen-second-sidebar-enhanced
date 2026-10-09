@@ -71,6 +71,12 @@ export class WebPanelsController {
   }
 
   #setupListeners() {
+    SidebarElements.webPanelMenuPopup.listenOpenInNewTabItemClick(
+      (webPanelController, event) => {
+        webPanelController.openInNewTab(event.ctrlKey);
+      },
+    );
+
     SidebarElements.webPanelMenuPopup.listenUnloadItemClick(
       (webPanelController) => {
         if (webPanelController.isActive()) {
