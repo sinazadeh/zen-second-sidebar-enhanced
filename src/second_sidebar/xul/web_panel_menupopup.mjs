@@ -12,6 +12,7 @@ export class WebPanelMenuPopup extends MenuPopup {
       classList: ["sb2-menupopup"],
     });
 
+    this.openInNewTabItem = new MenuItem().setLabel("Open in New Tab");
     this.unloadItem = new MenuItem().setLabel("Unload web panel");
     this.muteItem = new MenuItem();
     this.resetMenu = new Menu().setLabel("Reset web panel");
@@ -32,6 +33,7 @@ export class WebPanelMenuPopup extends MenuPopup {
       );
 
       if (!this.webPanelController) {
+        this.openInNewTabItem.setDisabled(true);
         this.unloadItem.setDisabled(true);
         this.muteItem.setDisabled(true);
         this.resetMenu.setDisabled(true);
@@ -41,6 +43,7 @@ export class WebPanelMenuPopup extends MenuPopup {
         return;
       }
       // Disabled above when the menu last opened on something else.
+      this.openInNewTabItem.setDisabled(false);
       this.muteItem.setDisabled(false);
       this.editItem.setDisabled(false);
       this.duplicateItem.setDisabled(false);
@@ -74,6 +77,8 @@ export class WebPanelMenuPopup extends MenuPopup {
 
   #compose() {
     this.appendChildren(
+      this.openInNewTabItem,
+      new MenuSeparator(),
       this.unloadItem,
       this.muteItem,
       new MenuSeparator(),
@@ -100,12 +105,20 @@ export class WebPanelMenuPopup extends MenuPopup {
    * this one shared listener instead of repeating that itself.
    *
    * @param {MenuItem} item
-   * @param {function(WebPanelController):void} callback
+   * @param {function(WebPanelController, Event):void} callback
    */
   #listenItemClick(item, callback) {
-    item.addEventListener("command", () => {
-      callback(this.webPanelController);
+    item.addEventListener("command", (event) => {
+      callback(this.webPanelController, event);
     });
+  }
+
+  /**
+   * @param {function(WebPanelController, Event):void} callback gets the
+   *   command event too, for its modifier keys
+   */
+  listenOpenInNewTabItemClick(callback) {
+    this.#listenItemClick(this.openInNewTabItem, callback);
   }
 
   /**

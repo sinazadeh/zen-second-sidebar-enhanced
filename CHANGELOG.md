@@ -6,6 +6,15 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-10-09
+
+### Added
+
+- **Open in New Tab** in a panel button's right-click menu, as in the
+  panel toolbar's More menu: opens the panel's page in a new tab, in the
+  panel's container (Ctrl+click: in the background). For an unloaded panel
+  it opens the page the panel would open on.
+
 ## [1.7.1] - 2026-10-03
 
 ### Fixed
