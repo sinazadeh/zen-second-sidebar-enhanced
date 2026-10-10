@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-10
+
 ### Added
 
 - **1Password** in the web panel presets, when it's installed. It has no
