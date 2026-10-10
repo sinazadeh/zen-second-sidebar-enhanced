@@ -67,6 +67,29 @@ test("lists extensions with a sidebar page, sorted by name", () => {
   ]);
 });
 
+test("lists extensions without a sidebar page that are given another page", () => {
+  const ids = (panels) => panels.map((panel) => panel.id);
+  assert.deepEqual(
+    ids(getExtensionSidebarPanels({ "No Sidebar@example.com": "popup.html" })),
+    ["Aardvark@example.com", "Bitwarden@example.com", "No Sidebar@example.com"],
+  );
+  const [, , noSidebar] = getExtensionSidebarPanels({
+    "No Sidebar@example.com": "popup.html",
+  });
+  assert.equal(noSidebar.url, "moz-extension://uuid-no-sidebar/popup.html");
+  assert.equal(noSidebar.iconURL, "moz-extension://uuid-no-sidebar/icon.png");
+  // An extension's own sidebar page wins over the one given for it.
+  assert.equal(
+    getExtensionSidebarPanels({ "Aardvark@example.com": "other.html" })[0].url,
+    "moz-extension://uuid-aardvark/sidebar.html",
+  );
+  // Only own properties count as pages.
+  assert.deepEqual(ids(getExtensionSidebarPanels(Object.create({ x: 1 }))), [
+    "Aardvark@example.com",
+    "Bitwarden@example.com",
+  ]);
+});
+
 test("pickIcon prefers the smallest icon of at least 32px", () => {
   assert.equal(pickIcon({ 16: "a", 48: "b", 32: "c", 128: "d" }), "c");
   assert.equal(pickIcon({ 16: "a", 19: "b" }), "b");

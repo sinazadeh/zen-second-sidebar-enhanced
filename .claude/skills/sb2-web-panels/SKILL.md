@@ -103,6 +103,12 @@ before changing any of those.
 
 ## Icons and selectors
 
+- Extension presets (`utils/web_panel_presets.mjs`) are installed extensions
+  with a `sidebar_action` page, plus those `EXTENSION_OVERRIDES` gives a
+  `page` for (1Password has none, so its popup, `popup/index.html`). Pages
+  are resolved with the extension's policy: the `moz-extension://` UUID is
+  random per profile, so never hardcode one.
+
 - Web panel icons: `fetchIconURL` (`utils/icons.mjs`) returns the first
   candidate that actually loads as an image in the window
   (`firstLoadableIcon`): Places' stored copy (`cached-favicon:`, only when
