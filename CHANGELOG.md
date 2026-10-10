@@ -6,6 +6,14 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-10
+
+### Added
+
+- **1Password** in the web panel presets, when it's installed. It has no
+  sidebar page, so the panel opens its toolbar popup, with **Reload when
+  address changes** on, as for Bitwarden.
+
 ## [1.8.0] - 2026-10-09
 
 ### Added

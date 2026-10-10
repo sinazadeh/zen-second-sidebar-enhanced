@@ -28,6 +28,24 @@ addExtension("{446900e4-71c2-419f-a6a7-df9c091e268b}", "uuid-bw", "Bitwarden", {
 addExtension("iconless@example.com", "uuid-iconless", "Iconless", {
   sidebar_action: { default_panel: "sidebar.html" },
 });
+// 1Password has a toolbar button but no sidebar page.
+addExtension(
+  "{d634138d-c276-4fc8-924b-40a0ea21d284}",
+  "uuid-1p",
+  "1Password: Password Manager",
+  {
+    icons: {
+      16: "/images/icons/app_icon-light_bg-color-unlocked-32.png",
+      48: "/images/icons/onepassword-48.png",
+      128: "/images/icons/onepassword-128.png",
+    },
+    browser_action: { default_title: "1Password" },
+  },
+);
+// Neither a sidebar page nor a preset page: not offered.
+addExtension("popup-only@example.com", "uuid-popup", "Popup Only", {
+  browser_action: { default_popup: "popup.html" },
+});
 
 const { getExtensionPresets, getWebsitePresets } =
   await import("../src/second_sidebar/utils/web_panel_presets.mjs");
@@ -68,7 +86,12 @@ test("website presets only set the URL, user agent, favicon and reloading", () =
 });
 
 test("extension presets keep the extension's icon fixed", () => {
-  const [bitwarden, iconless] = getExtensionPresets();
+  const presets = getExtensionPresets();
+  assert.deepEqual(
+    presets.map((preset) => preset.name),
+    ["1Password: Password Manager", "Bitwarden", "Iconless"],
+  );
+  const [, bitwarden, iconless] = presets;
   assert.deepEqual(bitwarden, {
     id: "extension:{446900e4-71c2-419f-a6a7-df9c091e268b}",
     name: "Bitwarden",
@@ -88,6 +111,22 @@ test("extension presets keep the extension's icon fixed", () => {
     userAgent: "default",
     dynamicFavicon: true,
     reloadOnUrlChange: false,
+  });
+});
+
+test("1Password, which has no sidebar page, opens on its popup", () => {
+  const onePassword = getExtensionPresets()[0];
+  assert.deepEqual(onePassword, {
+    id: "extension:{d634138d-c276-4fc8-924b-40a0ea21d284}",
+    name: "1Password: Password Manager",
+    url: "moz-extension://uuid-1p/popup/index.html",
+    iconURL: "moz-extension://uuid-1p/images/icons/onepassword-48.png",
+    settings: {
+      userAgent: "default",
+      dynamicFavicon: false,
+      faviconURL: "moz-extension://uuid-1p/images/icons/onepassword-48.png",
+      reloadOnUrlChange: true,
+    },
   });
 });
 

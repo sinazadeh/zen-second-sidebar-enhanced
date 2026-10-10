@@ -80,6 +80,13 @@ const EXTENSION_OVERRIDES = {
     page: "popup/index.html?uilocation=sidebar#/tabs/vault",
     reloadOnUrlChange: true,
   },
+  // 1Password has no sidebar page, so its popup (600px wide, the default
+  // floating panel width), reloaded like Bitwarden's vault: it reads the
+  // current tab only when it loads, to suggest that site's logins.
+  "{d634138d-c276-4fc8-924b-40a0ea21d284}": {
+    page: "popup/index.html",
+    reloadOnUrlChange: true,
+  },
 };
 
 /**
@@ -99,14 +106,20 @@ export function getWebsitePresets() {
 }
 
 /**
- * Sidebars of installed extensions. Their pages don't set a favicon, so the
+ * Sidebars of installed extensions, and pages of extensions without one
+ * that EXTENSION_OVERRIDES names. Their pages don't set a favicon, so the
  * extension's icon is kept fixed rather than following the page (which
  * would show a generic icon).
  *
  * @returns {WebPanelPreset[]}
  */
 export function getExtensionPresets() {
-  return getExtensionSidebarPanels().map(
+  const pages = Object.fromEntries(
+    Object.entries(EXTENSION_OVERRIDES)
+      .filter(([, { page }]) => page)
+      .map(([id, { page }]) => [id, page]),
+  );
+  return getExtensionSidebarPanels(pages).map(
     ({ id, name, url, baseURL, iconURL }) => {
       const { page, reloadOnUrlChange = false } = EXTENSION_OVERRIDES[id] ?? {};
       return {

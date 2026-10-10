@@ -55,12 +55,17 @@ function getIconURL(policy) {
  * UUID, which is different in every profile, so they're looked up rather
  * than hardcoded.
  *
+ * @param {Object<string, string>} [otherPages] A page to use, keyed by
+ *   extension id, for extensions without a sidebar page (e.g. their popup),
+ *   relative to the extension's base URL.
  * @returns {ExtensionSidebarPanel[]} Sorted by name.
  */
-export function getExtensionSidebarPanels() {
+export function getExtensionSidebarPanels(otherPages = {}) {
   const panels = [];
   for (const policy of WebExtensionPolicyWrapper.getActiveExtensions()) {
-    const panel = policy.extension?.manifest?.sidebar_action?.default_panel;
+    const panel =
+      policy.extension?.manifest?.sidebar_action?.default_panel ??
+      (Object.hasOwn(otherPages, policy.id) ? otherPages[policy.id] : null);
     if (!panel) {
       continue;
     }
