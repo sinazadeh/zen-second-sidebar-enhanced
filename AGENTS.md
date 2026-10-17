@@ -36,6 +36,7 @@ All paths below are relative to `src/second_sidebar/`, except the entry point.
 | `xul/`, `xul/base/`                            | UI components and shared fluent wrappers around XUL/HTML elements.                        |
 | `css/`, `sidebar_decorator.mjs`                | CSS template-string exports, combined and injected into the chrome document.              |
 | `settings/`                                    | Defaults, serialization, persisted settings, and panel state.                             |
+| `settings_page/`                               | The settings page (a chrome:// tab) editing the mirrored sidebar prefs, with a preview.   |
 | `wrappers/`                                    | Adapters for privileged Firefox/Gecko globals and services.                               |
 | `patchers/`                                    | Compatibility patches for Firefox/Zen UI implementation.                                  |
 | `patchers/source_patches.mjs`                  | Text patches for Firefox sources; browser-global-free so Node tests can run them.         |

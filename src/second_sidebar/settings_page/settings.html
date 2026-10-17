@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Second Sidebar settings</title>
+    <link rel="stylesheet" href="settings.css" />
+    <script type="module" src="settings.mjs"></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="intro">
+        <h1>Second Sidebar</h1>
+        <p>
+          Web panels next to your tabs. Changes apply right away, in every
+          window. Each panel has its own settings too: right-click its button
+          and choose <b>Edit web panel</b>.
+        </p>
+      </header>
+
+      <p id="not-running" class="banner" hidden>
+        Second Sidebar isn't running in this window, so some of its settings
+        can't be shown. Restart the browser after installing it, then reload
+        this page.
+      </p>
+
+      <div class="layout">
+        <div id="sections" class="column"></div>
+
+        <aside class="preview-wrap">
+          <div class="preview-label">Preview</div>
+          <div id="preview" class="preview" aria-label="Sidebar preview"></div>
+          <p class="muted small">
+            Hover a panel button in the preview to see its tooltip.
+          </p>
+
+          <section class="card side-card">
+            <h2>Shortcuts and backup</h2>
+            <p class="muted">
+              Keyboard shortcuts and settings export and import are in the
+              sidebar's own settings: right-click the sidebar and choose
+              <b>Sidebar settings</b>.
+            </p>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

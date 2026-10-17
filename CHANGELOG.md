@@ -6,6 +6,16 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Added
+
+- A **settings page**: the sidebar settings in a tab, as cards of switches
+  and buttons with a preview of the sidebar (position, width, auto-hide,
+  container indicator, tooltips, floating panel offset). Changes apply right
+  away, in every window. Open it with **Settings page...** in the sidebar's
+  right-click menu, or the gear button of the mod in Sine, which used to open
+  Sine's settings dialog. Its format follows the settings page of
+  [Tab Groups](https://github.com/oom333/zen-tab-groups) by oom333.
+
 ## [1.9.0] - 2026-10-10
 
 ### Added
