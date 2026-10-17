@@ -58,7 +58,9 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 
 ## Settings
 
-Right-click the sidebar and choose **Sidebar settings**. With Sine, the same settings are also on Sine's mod page: click the gear button of **Zen Second Sidebar Enhanced**. Changes there apply right away, like in the popup. Keyboard shortcuts and settings export/import are only in the popup.
+Right-click the sidebar and choose **Sidebar settings**, or **Settings page...** to open them in a tab: the settings page groups them in cards with switches and a preview of the sidebar, and applies changes right away, in every window. With Sine, the gear button of **Zen Second Sidebar Enhanced** on Sine's mod page opens the settings page too. Keyboard shortcuts and settings export/import are only in the popup.
+
+The settings page's format follows the one [oom333/zen-tab-groups](https://github.com/oom333/zen-tab-groups) made for Tab Groups.
 
 | Section                   | Settings                                                                                                                                                                                                        |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -167,7 +169,7 @@ Use **Export settings** / **Import settings** (sidebar settings popup) to save o
 
 ### Where your data is stored
 
-- Sidebar settings: the `second-sidebar.settings` preference (`about:config`). Each of them except keyboard shortcuts is also copied to its own preference, such as `second-sidebar.position`, which is what Sine's settings page changes (changing one in `about:config` works too).
+- Sidebar settings: the `second-sidebar.settings` preference (`about:config`). Each of them except keyboard shortcuts is also copied to its own preference, such as `second-sidebar.position`, which is what the settings page and Sine's settings dialog change (changing one in `about:config` works too).
 - Web panels and their state (e.g. last URL): `web-panels.json` and `web-panels-state.json` in the `chrome/second-sidebar-data/` folder of your profile (`about:support` → _Profile Folder_). This folder is outside the script itself, so updating or reinstalling the script keeps it.
 
 If one of these can't be read (for example after a crash while saving), the sidebar starts with defaults and keeps a copy of the unreadable data next to it, named `*.corrupt-<date>.json` (or a `second-sidebar.settings.corrupt` preference).

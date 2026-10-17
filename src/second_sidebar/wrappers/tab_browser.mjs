@@ -103,6 +103,26 @@ export class TabBrowserWrapper {
   }
 
   /**
+   * Opens a page with the system principal, for this addon's own chrome://
+   * pages (the settings page).
+   *
+   * @param {string} url
+   * @returns {Tab}
+   */
+  addTrustedTab(url) {
+    return new Tab({ element: this.raw.addTrustedTab(url) });
+  }
+
+  /**
+   * Notified about every tab's browser in this window.
+   *
+   * @param {object} progressListener
+   */
+  addTabsProgressListener(progressListener) {
+    this.raw.addTabsProgressListener(progressListener);
+  }
+
+  /**
    *
    * @param {Tab} tab
    */

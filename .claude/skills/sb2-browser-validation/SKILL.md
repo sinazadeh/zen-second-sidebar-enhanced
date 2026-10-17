@@ -51,6 +51,10 @@ Select manual scenarios according to the change:
   still usable afterward. Open a normal browser window as a control and confirm
   the sidebar still loads there.
 - **Theming**: Light/dark themes, Zen accent surfaces, and conditional theme tokens.
+- **Settings page**: open it from **Settings page...** and from Sine's gear
+  button (a second click selects the same tab); change settings there and in
+  the popup and check each follows the other, in a second window too; check
+  the preview and both color schemes.
 
 Check the Browser Console (`Ctrl+Shift+J` or `Cmd+Shift+J`) for errors. Record the
 browser version (Firefox or Zen), operating system, and scenarios actually exercised.

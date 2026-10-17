@@ -10,6 +10,7 @@ import { SidebarMover } from "./controllers/sidebar_mover.mjs";
 import { SidebarPrefsController } from "./controllers/sidebar_prefs.mjs";
 import { SidebarResizer } from "./controllers/sidebar_resizer.mjs";
 import { SidebarSplitterController } from "./controllers/sidebar_splitter.mjs";
+import { SettingsPageController } from "./controllers/settings_page.mjs";
 import { SidebarToolbarCollapser } from "./controllers/sidebar_toolbar_collapser.mjs";
 import { SidebarElements } from "./sidebar_elements.mjs";
 import { WebPanelDeleteController } from "./controllers/web_panel_delete.mjs";
@@ -26,6 +27,7 @@ export class SidebarControllers {
     this.sidebarMainSettingsController = new SidebarMainSettingsController();
     this.sidebarController = new SidebarController();
     this.sidebarPrefsController = new SidebarPrefsController();
+    this.settingsPageController = new SettingsPageController();
     this.sidebarGeometry = new SidebarGeometry();
     this.sidebarToolbarCollapser = new SidebarToolbarCollapser();
     this.sidebarMover = new SidebarMover();

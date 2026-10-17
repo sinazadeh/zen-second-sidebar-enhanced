@@ -10,6 +10,7 @@ export class SidebarMainMenuPopup extends MenuPopup {
     });
 
     this.settingsItem = new MenuItem().setLabel("Sidebar settings");
+    this.settingsPageItem = new MenuItem().setLabel("Settings page...");
     this.muteAllItem = new MenuItem();
     /** @type {boolean} */
     this.allMuted = false;
@@ -20,6 +21,7 @@ export class SidebarMainMenuPopup extends MenuPopup {
   #compose() {
     this.appendChildren(
       this.settingsItem,
+      this.settingsPageItem,
       this.muteAllItem,
       new MenuSeparator(),
       this.customizeItem,
@@ -64,6 +66,15 @@ export class SidebarMainMenuPopup extends MenuPopup {
    */
   listenSettingsItemClick(callback) {
     this.settingsItem.addEventListener("command", () => {
+      callback();
+    });
+  }
+
+  /**
+   * @param {function():void} callback
+   */
+  listenSettingsPageItemClick(callback) {
+    this.settingsPageItem.addEventListener("command", () => {
       callback();
     });
   }

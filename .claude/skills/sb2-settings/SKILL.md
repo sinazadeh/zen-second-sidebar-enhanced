@@ -20,9 +20,11 @@ Follow an existing setting through these files under `src/second_sidebar/`:
   its mirrored pref (`controllers/sidebar_prefs.mjs`) send it through →
   `controllers/events.mjs` → a `listenEvent` in the receiving controller
   (`controllers/sidebar.mjs`) → `settings/sidebar_settings.mjs`. Also give it
-  a pref in `settings/sidebar_prefs.mjs` and a control in the root
-  `preferences.json` (Sine's mod settings dialog);
-  `tests/sidebar_prefs.test.mjs` fails until the two match `SidebarSettings`,
+  a pref in `settings/sidebar_prefs.mjs`, a control in the root
+  `preferences.json` (Sine's mod settings dialog) and one in
+  `settings_page/layout.mjs` (the settings page, with a title, a sentence and
+  short labels for its values); `tests/sidebar_prefs.test.mjs` and
+  `tests/settings_page.test.mjs` fail until they match `SidebarSettings`,
   and `tests/settings_wiring.test.mjs` until the popup's callback has an
   event. Only settings that need the popup's
   own input handling (keyboard shortcuts) are left out: list a new shortcut
@@ -72,6 +74,16 @@ reverter there too, or discarding changes will leave it applied.
   `WebPanelsState`) - use spread for their flat fields too but keep the
   nested/collection parts explicit; don't force a fully generic schema over
   them.
+
+## The settings page
+
+`settings_page/settings.html` is a chrome:// page opened in a tab
+(`controllers/settings_page.mjs`, from the main menu's **Settings page...**
+and Sine's gear button). It only reads and writes the mirrored prefs, so
+`SidebarPrefsController` applies and saves its changes in every window, as
+for Sine's dialog; keyboard shortcuts and backup stay in the popup. Its
+preview is drawn from the prefs alone. Keep its look in step with Tab
+Groups' settings page, which it's modeled on (credited in the README).
 
 ## Storage
 
