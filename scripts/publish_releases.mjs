@@ -295,17 +295,19 @@ function main() {
     try {
       publish(release, changelog, workDir);
     } catch (error) {
-      failed.push(release);
-      console.error(
-        `Failed to publish ${release.tag}: ${String(error.stderr || error.message).trim()}`,
-      );
+      const message = String(error.stderr || error.message).trim();
+      // A 403 on a version without a tag is the known backfill limitation
+      // explained below, not a bug in the workflow.
+      const needsTag = !tags.has(release.tag) && message.includes("HTTP 403");
+      failed.push({ ...release, needsTag });
+      console.error(`Failed to publish ${release.tag}: ${message}`);
     }
   }
 
   if (failed.length === 0) {
     return;
   }
-  const untagged = failed.filter(({ tag }) => !tags.has(tag));
+  const untagged = failed.filter(({ needsTag }) => needsTag);
   if (untagged.length > 0) {
     // GitHub refuses (HTTP 403) to let the workflow's token create a tag at
     // an older commit whose .github/workflows files differ from main's.
@@ -313,7 +315,11 @@ function main() {
       `\nTo publish ${untagged.length === 1 ? "this version" : "these versions"}, push ${untagged.length === 1 ? "its tag" : "their tags"} from a clone of the repository, then run this workflow again:\n\n${formatTagCommands(untagged)}\n`,
     );
   }
-  process.exitCode = 1;
+  // Versions that only need their tag pushed by hand are reported above but
+  // don't fail the run; any other failure does.
+  if (failed.some(({ needsTag }) => !needsTag)) {
+    process.exitCode = 1;
+  }
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
