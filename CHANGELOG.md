@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-17
+
 ### Added
 
 - A **settings page**: the sidebar settings in a tab, as cards of switches
