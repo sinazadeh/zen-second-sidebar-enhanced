@@ -8,7 +8,7 @@
 > - Web panel setting: `User Agent` — choose what a panel identifies itself as: the browser's own, Firefox Mobile, a Galaxy phone or tablet, an iPhone, or a user agent you type in — see [User agent](#user-agent).
 > - Web panel setting: `Spaces` — show a web panel only in the Zen spaces (workspaces) you pick — see [Spaces](#spaces).
 > - Web panel setting: `Unload after inactivity` — automatically unloads a panel that's been in the background for a set time, without relying on Firefox's own background tab unloader (which isn't reliable for panels living in the hidden window that hosts them).
-> - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden, 1Password) when adding a panel — see [Presets](#presets).
+> - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden, 1Password, iCloud Hide My Email) when adding a panel — see [Presets](#presets).
 > - Tabs, bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links, bookmarks and tabs](#links-bookmarks-and-tabs).
 > - Keyboard shortcuts to open the next or previous web panel — see [Keyboard shortcuts](#keyboard-shortcuts).
 > - Sidebar setting: `Export settings` / `Import settings` — back up or restore the sidebar and all web panel settings as a single JSON file.
@@ -128,8 +128,10 @@ In **Sidebar settings**, under **Links, bookmarks and tabs**, you can hide eithe
 When adding a web panel with **New Web Panel** (**+**), **Preset** offers:
 
 - **Common websites** such as ChatGPT, Claude, Gemini, Gmail, Discord, Slack, WhatsApp, Telegram, Spotify and X. Sites that work better that way (e.g. Telegram, X) open in mobile view, with the **Firefox Mobile** [user agent](#user-agent).
+- **iCloud Hide My Email**, to make and manage the email addresses iCloud+ forwards to your inbox. It opens iCloud.com straight on its Hide My Email window (after you sign in), so it needs no extension.
 - **Installed extensions' sidebars**, such as Bitwarden's. The panel keeps the extension's own icon, as these pages don't set one. Bitwarden opens on its vault with **Reload when address changes** on, so the vault always shows the logins for the site in your current tab.
 - **1Password**, which has no sidebar of its own: the panel opens its toolbar popup, also with **Reload when address changes** on so it suggests logins for the current site. The popup is 600px wide (or 350px with 1Password's **Simple** layout), the default width of a floating panel; in Zen, widen the panel a little if its right edge is cut off.
+- The **iCloud Hide My Email** and **Hide My Email+** extensions, which have only a toolbar popup too: the panel opens it, with **Reload when address changes** on, so the address it makes is labeled with the site in your current tab, and **Autofill** fills it in there. iCloud Hide My Email's popup is 420px wide; Hide My Email+'s is 740px, so widen the panel to about 750px or its right side is cut off.
 
 Picking one fills in its URL; editing the URL afterwards turns it back into a custom one. A preset only sets the URL, user agent, favicon and whether the panel reloads when the address changes. Everything else (size, position, toolbar, unloading...) starts from the usual defaults, and all of it can be changed later in **Edit web panel** (right-click the panel's button).
 

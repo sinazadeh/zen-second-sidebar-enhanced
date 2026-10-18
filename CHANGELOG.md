@@ -6,6 +6,15 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Added
+
+- **iCloud Hide My Email** in the web panel presets: iCloud.com opened on its
+  Hide My Email window, to make and manage addresses without an extension.
+- The **iCloud Hide My Email** and **Hide My Email+** extensions in the
+  presets, when installed. Like 1Password, they have no sidebar page, so the
+  panel opens their popup, with **Reload when address changes** on so a new
+  address is labeled with the current site.
+
 ## [1.11.0] - 2026-10-18
 
 ### Added
