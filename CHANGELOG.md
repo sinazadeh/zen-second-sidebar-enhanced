@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-10-18
+
 ### Added
 
 - **Drag a web panel's button** up or down the sidebar to move it, without
