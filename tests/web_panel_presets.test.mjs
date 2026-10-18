@@ -42,6 +42,25 @@ addExtension(
     browser_action: { default_title: "1Password" },
   },
 );
+// The iCloud Hide My Email add-ons have only a popup too.
+addExtension(
+  "{5f2806a5-f66d-40c6-8fb2-6018753b5626}",
+  "uuid-hme",
+  "iCloud Hide My Email",
+  {
+    icons: { 16: "icon-16.png", 32: "icon-32.png", 128: "icon-128.png" },
+    action: { default_popup: "popup.html", default_icon: "icon-32.png" },
+  },
+);
+addExtension(
+  "{b3b720a0-8bf9-4e1f-b0e2-1e97f6ff708b}",
+  "uuid-hme-plus",
+  "Hide My Email+",
+  {
+    icons: { 16: "icon-16.png", 32: "icon-32.png", 128: "icon-128.png" },
+    action: { default_popup: "popup.html", default_title: "Hide My Email+" },
+  },
+);
 // Neither a sidebar page nor a preset page: not offered.
 addExtension("popup-only@example.com", "uuid-popup", "Popup Only", {
   browser_action: { default_popup: "popup.html" },
@@ -85,13 +104,36 @@ test("website presets only set the URL, user agent, favicon and reloading", () =
   assert.equal(chatgpt.settings.userAgent, "default");
 });
 
+test("iCloud Hide My Email opens on its window, in the desktop site", () => {
+  const hideMyEmail = getWebsitePresets().find(
+    (preset) => preset.name === "iCloud Hide My Email",
+  );
+  assert.deepEqual(hideMyEmail, {
+    id: "website:https://www.icloud.com/icloudplus/hidemyemail",
+    name: "iCloud Hide My Email",
+    // iCloud.com opens Hide My Email's window on this path.
+    url: "https://www.icloud.com/icloudplus/hidemyemail",
+    settings: {
+      userAgent: "default",
+      dynamicFavicon: true,
+      reloadOnUrlChange: false,
+    },
+  });
+});
+
 test("extension presets keep the extension's icon fixed", () => {
   const presets = getExtensionPresets();
   assert.deepEqual(
     presets.map((preset) => preset.name),
-    ["1Password: Password Manager", "Bitwarden", "Iconless"],
+    [
+      "1Password: Password Manager",
+      "Bitwarden",
+      "Hide My Email+",
+      "iCloud Hide My Email",
+      "Iconless",
+    ],
   );
-  const [, bitwarden, iconless] = presets;
+  const [, bitwarden, , , iconless] = presets;
   assert.deepEqual(bitwarden, {
     id: "extension:{446900e4-71c2-419f-a6a7-df9c091e268b}",
     name: "Bitwarden",
@@ -128,6 +170,41 @@ test("1Password, which has no sidebar page, opens on its popup", () => {
       reloadOnUrlChange: true,
     },
   });
+});
+
+test("the iCloud Hide My Email add-ons open on their popups", () => {
+  const presets = getExtensionPresets();
+  for (const [id, host, name] of [
+    [
+      "{5f2806a5-f66d-40c6-8fb2-6018753b5626}",
+      "uuid-hme",
+      "iCloud Hide My Email",
+    ],
+    [
+      "{b3b720a0-8bf9-4e1f-b0e2-1e97f6ff708b}",
+      "uuid-hme-plus",
+      "Hide My Email+",
+    ],
+  ]) {
+    assert.deepEqual(
+      presets.find((preset) => preset.id === `extension:${id}`),
+      {
+        id: `extension:${id}`,
+        name,
+        url: `moz-extension://${host}/popup.html`,
+        iconURL: `moz-extension://${host}/icon-32.png`,
+        settings: {
+          userAgent: "default",
+          dynamicFavicon: false,
+          faviconURL: `moz-extension://${host}/icon-32.png`,
+          // They label the address they make with the current tab's site,
+          // which they read when they load.
+          reloadOnUrlChange: true,
+        },
+      },
+      name,
+    );
+  }
 });
 
 test("settings a preset leaves out keep their defaults", () => {

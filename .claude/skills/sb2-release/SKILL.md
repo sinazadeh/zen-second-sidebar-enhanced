@@ -6,7 +6,9 @@ description: How versions of this fork are released - theme.json version bumps, 
 # Releases
 
 1. Bump `version` in `theme.json`, and set `updatedAt` to the current UTC
-   time (`YYYY-MM-DDTHH:MM:SSZ`).
+   time (`YYYY-MM-DDTHH:MM:SSZ`), or just after the previous release's if
+   that's later (1.11.0 is dated 23:59:59Z, so 1.12.0, made the same day,
+   is 2026-10-19T00:00:00Z).
 2. Move the `[Unreleased]` notes in `CHANGELOG.md` into a new
    `## [<version>] - <date>` section (the same UTC date).
 3. Get both onto `main` (usually by merging the PR that carries them).
@@ -16,7 +18,8 @@ not when `version` is. Until 1.11.0 `theme.json` had none and Sine used the
 repository's last-updated time from GitHub, which any push changes; 1.11.0
 was dated at the end of its day so it would be later than its own pull
 request's pushes. Since then Sine reads `main`'s `theme.json`, so pushes
-don't matter. `tests/theme.test.mjs` checks the format and that its
+don't matter, but a release dated before the one installed is never
+offered. `tests/theme.test.mjs` checks the format and that its
 date matches the latest changelog section.
 
 The **Release** workflow runs whenever `theme.json` changes on `main` and

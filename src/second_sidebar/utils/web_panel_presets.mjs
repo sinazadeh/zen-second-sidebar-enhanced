@@ -46,6 +46,11 @@ const WEBSITES = [
   },
   { name: "Google Keep", url: "https://keep.google.com/" },
   { name: "Google Translate", url: "https://translate.google.com/" },
+  // Opens straight on iCloud+'s Hide My Email window.
+  {
+    name: "iCloud Hide My Email",
+    url: "https://www.icloud.com/icloudplus/hidemyemail",
+  },
   { name: "Instagram", url: "https://www.instagram.com/" },
   { name: "LinkedIn", url: "https://www.linkedin.com/feed/" },
   { name: "Messenger", url: "https://www.messenger.com/" },
@@ -85,6 +90,18 @@ const EXTENSION_OVERRIDES = {
   // current tab only when it loads, to suggest that site's logins.
   "{d634138d-c276-4fc8-924b-40a0ea21d284}": {
     page: "popup/index.html",
+    reloadOnUrlChange: true,
+  },
+  // iCloud Hide My Email (by Dimitrios Dedoussis) and its fork Hide My
+  // Email+ have no sidebar page either, so their popups (420px and 740px
+  // wide), reloaded too: they read the current tab's site when they load,
+  // to label the address they make with it.
+  "{5f2806a5-f66d-40c6-8fb2-6018753b5626}": {
+    page: "popup.html",
+    reloadOnUrlChange: true,
+  },
+  "{b3b720a0-8bf9-4e1f-b0e2-1e97f6ff708b}": {
+    page: "popup.html",
     reloadOnUrlChange: true,
   },
 };
