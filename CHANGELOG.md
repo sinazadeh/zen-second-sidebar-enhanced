@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-10-19
+
 ### Added
 
 - **iCloud Hide My Email** in the web panel presets: iCloud.com opened on its

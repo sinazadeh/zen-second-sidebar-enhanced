@@ -30,8 +30,10 @@ When no version was given, suggest one from the `[Unreleased]` notes
 
 1. Set `version` in `theme.json`, and `updatedAt` to the current UTC time
    (`YYYY-MM-DDTHH:MM:SSZ`): Sine offers updates by it, not by `version`.
+   It must be later than the previous release's `updatedAt`; if that's
+   still ahead of now, use one second after it, and its date in step 2.
 2. Move everything under `## [Unreleased]` into a new
-   `## [<version>] - <today, YYYY-MM-DD>` section right below it, leaving
+   `## [<version>] - <updatedAt's date>` section right below it, leaving
    `## [Unreleased]` empty.
 3. Run `node scripts/publish_releases.mjs --dry-run` and confirm it plans
    exactly this version with these notes.
