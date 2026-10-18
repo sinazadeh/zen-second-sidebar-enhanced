@@ -51,6 +51,14 @@ export const SIDEBAR_MAIN_CSS = `
     .toolbarbutton-1 {
       padding: 0 !important;
     }
+
+    /* Where a dragged web panel button will go */
+    > [sb2-drop="before"] {
+      box-shadow: 0 -3px 0 -1px AccentColor;
+    }
+    > [sb2-drop="after"] {
+      box-shadow: 0 3px 0 -1px AccentColor;
+    }
   }
 
   :root:has(#zen-tabbox-wrapper) {

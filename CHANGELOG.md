@@ -6,6 +6,22 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Added
+
+- **Drag a web panel's button** up or down the sidebar to move it, without
+  **Customize Toolbar...**. A line shows where it will go; the new order is
+  saved and every window follows it.
+- **Esc** as a keyboard shortcut, alone or with modifiers. Pressing it in a
+  shortcut box used to ask to discard the settings (or close **Edit web
+  panel**) instead of recording it. An Esc shortcut runs only when Esc isn't
+  closing a menu or popup or used by the browser.
+
+### Changed
+
+- Clicking the open panel's button closes it when the button is released
+  rather than pressed, so it can be dragged without closing the panel.
+  Opening a panel still happens as soon as you press.
+
 ## [1.10.0] - 2026-10-17
 
 ### Added

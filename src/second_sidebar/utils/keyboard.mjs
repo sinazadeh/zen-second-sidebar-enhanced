@@ -23,6 +23,20 @@ const KEY_LABELS_BY_CODE = {
   Slash: ["/", "?"],
 };
 
+// Marks a field that records a shortcut from the keys pressed in it.
+export const SHORTCUT_INPUT_ATTRIBUTE = "sb2-shortcut-input";
+
+/**
+ * Whether a key event went to a field recording a shortcut, which takes
+ * every key, Escape included: popups that close on Escape leave it alone.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {boolean}
+ */
+export function isShortcutInputEvent(event) {
+  return !!event.target?.closest?.(`[${SHORTCUT_INPUT_ATTRIBUTE}]`);
+}
+
 /**
  * Returns a stable label for a physical key, independent of keyboard layout.
  *

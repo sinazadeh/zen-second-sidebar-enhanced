@@ -24,6 +24,10 @@ import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { VBox } from "./base/vbox.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
+import {
+  SHORTCUT_INPUT_ATTRIBUTE,
+  isShortcutInputEvent,
+} from "../utils/keyboard.mjs";
 
 const ICONS = {
   UNDO: "chrome://global/skin/icons/undo.svg",
@@ -190,6 +194,7 @@ export class SidebarMainPopupSettings extends Panel {
   }
 
   #setupShortcutListeners(input, resetButton, isShortcutBusy) {
+    input.setAttribute(SHORTCUT_INPUT_ATTRIBUTE, "");
     resetButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         input
@@ -199,7 +204,7 @@ export class SidebarMainPopupSettings extends Panel {
       }
     });
 
-    input.addEventListener("keypress", (event) => {
+    const record = (event) => {
       event.preventDefault();
 
       const parts =
@@ -218,6 +223,12 @@ export class SidebarMainPopupSettings extends Panel {
       input
         .setValue(parts.join("+"))
         .dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    input.addEventListener("keypress", record);
+    // Escape gets no keypress once handled on keydown, so it's recorded
+    // there (the popup doesn't close on it from this field).
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") record(event);
     });
   }
 
@@ -775,7 +786,11 @@ export class SidebarMainPopupSettings extends Panel {
       this.#endEditSession();
     };
     this.escapeOnKeyDown = (event) => {
-      if (event.key !== "Escape" || !this.editSessionActive) {
+      if (
+        event.key !== "Escape" ||
+        !this.editSessionActive ||
+        isShortcutInputEvent(event)
+      ) {
         return;
       }
       if (this.#hasOpenPopupAboveEditor()) {
