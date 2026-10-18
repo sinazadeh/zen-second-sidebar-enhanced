@@ -5,20 +5,18 @@ description: How versions of this fork are released - theme.json version bumps, 
 
 # Releases
 
-1. Bump `version` in `theme.json`, and set `updatedAt` (a UTC timestamp,
-   `YYYY-MM-DDTHH:MM:SSZ`; see below for which).
+1. Bump `version` in `theme.json`, and set `updatedAt` to the current UTC
+   time (`YYYY-MM-DDTHH:MM:SSZ`).
 2. Move the `[Unreleased]` notes in `CHANGELOG.md` into a new
    `## [<version>] - <date>` section (the same UTC date).
 3. Get both onto `main` (usually by merging the PR that carries them).
 
 Sine offers an update when `updatedAt` is newer than the installed copy's,
-not when `version` is. Without it in `theme.json` (before 1.11.0), Sine used
-the repository's last-updated time from GitHub, which any push changes. It
-must be later than any time GitHub reports before the merge: a copy whose
-Sine checked between the pull request's last push and the merge stored that
-push's time, and isn't offered a release whose `updatedAt` is earlier. Set
-it to the end of the release day in UTC (`T23:59:59Z`) and merge that day,
-or set it again right before merging. `tests/theme.test.mjs` checks the format and that its
+not when `version` is. Until 1.11.0 `theme.json` had none and Sine used the
+repository's last-updated time from GitHub, which any push changes; 1.11.0
+was dated at the end of its day so it would be later than its own pull
+request's pushes. Since then Sine reads `main`'s `theme.json`, so pushes
+don't matter. `tests/theme.test.mjs` checks the format and that its
 date matches the latest changelog section.
 
 The **Release** workflow runs whenever `theme.json` changes on `main` and
