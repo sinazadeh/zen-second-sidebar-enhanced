@@ -107,4 +107,14 @@ export class CustomizableUIWrapper {
   static getPlacementOfWidget(id) {
     return CustomizableUI.getPlacementOfWidget(id);
   }
+
+  /**
+   * Moves a widget in its area, in every window, and saves the new order.
+   *
+   * @param {string} id
+   * @param {number} position the index of the item to put it before
+   */
+  static moveWidgetWithinArea(id, position) {
+    CustomizableUI.moveWidgetWithinArea(id, position);
+  }
 }

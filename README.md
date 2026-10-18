@@ -48,7 +48,7 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 
 ## Using it
 
-- **Add a web panel** with the **New Web Panel** (**+**) button in the sidebar: enter a URL or pick a [preset](#presets), and optionally a Multi-Account Container. Click a panel's button to open it, and again to close it.
+- **Add a web panel** with the **New Web Panel** (**+**) button in the sidebar: enter a URL or pick a [preset](#presets), and optionally a Multi-Account Container. Click a panel's button to open it, and again to close it. **Drag** a button up or down to move it; the panels keep that order in every window.
 - **Right-click a panel's button** to open its page in a new tab (**Open in New Tab**; Ctrl+click it to open the tab in the background), edit it (**Edit web panel**), make a copy of it (**Duplicate web panel**, with all its settings except its keyboard shortcut — handy for the same site in another container), unload it from memory, mute it, reset its position and size, delete it, or rearrange the sidebar (**Customize Toolbar...**). Middle-click the button to unload the panel.
 - **Right-click the sidebar** for **Sidebar settings** and **Mute all web panels** (or **Unmute all web panels** when they're all muted), which mutes every loaded panel, in every window.
 - **The panel's toolbar** has Back, Forward, Reload, Home, **Pin**/**Unpin** (switch between floating over the page and pinned beside it) and **Unload**. Its **More** menu has **Open in New Tab**, **Copy Page URL**, the [user agent](#user-agent), **Always On Top**, **Temporary** and zoom.
@@ -105,6 +105,8 @@ Firefox has no spaces, so these settings aren't there.
 ## Keyboard shortcuts
 
 None are set by default. Click a shortcut box in the settings and press the keys; shortcuts follow the key's position, so they keep working when you switch keyboard layouts. A shortcut that's already taken (by another web panel or sidebar action) is refused.
+
+**Esc** works too, alone or with modifiers. In a shortcut box it's recorded like any other key, so to close the settings with Esc, leave the box first (Tab). An Esc shortcut runs only when Esc isn't closing something else, such as a menu or popup, or used by Zen or Firefox; a page that closes its own dialog on Esc may still get it as well.
 
 - **Show or hide the sidebar**: **Sidebar settings → Visibility**.
 - **Open/close last active web panel**, **Open next web panel** and **Open previous web panel**: **Sidebar settings**. Next and previous go through the panels in the order of their buttons, wrapping around at the ends; with no panel open, they open the first or the last one.

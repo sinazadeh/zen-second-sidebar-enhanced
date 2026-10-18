@@ -33,6 +33,10 @@ import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-dis
 import { ZenSpacesWrapper } from "../wrappers/zen_spaces.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
+import {
+  SHORTCUT_INPUT_ATTRIBUTE,
+  isShortcutInputEvent,
+} from "../utils/keyboard.mjs";
 
 const ICONS = {
   UNDO: "chrome://global/skin/icons/undo.svg",
@@ -239,7 +243,7 @@ export class WebPanelPopupEdit extends Panel {
       }
     });
 
-    this.shortcutInput.addEventListener("keypress", (event) => {
+    const recordShortcut = (event) => {
       event.preventDefault();
 
       const parts =
@@ -264,6 +268,13 @@ export class WebPanelPopupEdit extends Panel {
       this.shortcutInput
         .setValue(parts.join("+"))
         .dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    this.shortcutInput.setAttribute(SHORTCUT_INPUT_ATTRIBUTE, "");
+    this.shortcutInput.addEventListener("keypress", recordShortcut);
+    // Escape gets no keypress once handled on keydown, so it's recorded
+    // there (the popup doesn't close on it from this field).
+    this.shortcutInput.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") recordShortcut(event);
     });
   }
 
@@ -824,7 +835,11 @@ export class WebPanelPopupEdit extends Panel {
       this.#endEditSession();
     };
     this.escapeOnKeyDown = (event) => {
-      if (event.key !== "Escape" || !this.editSessionActive) {
+      if (
+        event.key !== "Escape" ||
+        !this.editSessionActive ||
+        isShortcutInputEvent(event)
+      ) {
         return;
       }
       if (this.#hasOpenPopupAboveEditor()) {

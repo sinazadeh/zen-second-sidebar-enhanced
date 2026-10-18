@@ -9,7 +9,9 @@ Paths are relative to `src/second_sidebar/`. How events from inside a panel
 reach the main window (keyboard shortcuts, window tracking, the find bar,
 mouse events and modifier-clicks on links) is in
 [the nested window's events](references/nested-window-events.md); read it
-before changing any of those.
+before changing any of those. Pressing buttons, dragging them to reorder and
+recording shortcuts (Esc included) are in
+[buttons and shortcuts](references/buttons-and-shortcuts.md).
 
 ## The panels' window
 

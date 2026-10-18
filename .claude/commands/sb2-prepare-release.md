@@ -28,7 +28,8 @@ When no version was given, suggest one from the `[Unreleased]` notes
 
 ## Phase 2: prepare
 
-1. Set `version` in `theme.json`.
+1. Set `version` in `theme.json`, and `updatedAt` to the current UTC time
+   (`YYYY-MM-DDTHH:MM:SSZ`): Sine offers updates by it, not by `version`.
 2. Move everything under `## [Unreleased]` into a new
    `## [<version>] - <today, YYYY-MM-DD>` section right below it, leaving
    `## [Unreleased]` empty.

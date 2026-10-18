@@ -133,6 +133,12 @@ export class WebPanelController {
       SidebarControllers.webPanelTooltipController.hidePopup();
     });
 
+    // Pressing a button opens its panel at once. The open panel's button
+    // closes it on click instead, as pressing a selected tab keeps it
+    // selected, so it can be dragged to a new place in the sidebar
+    // (SidebarMainController) without closing the panel.
+    let closeOnClick = false;
+
     button.addEventListener("mousedown", (event) => {
       if (
         !isLeftMouseButton(event) ||
@@ -145,11 +151,22 @@ export class WebPanelController {
       clearTimeout(tooltipTimer);
       SidebarControllers.webPanelTooltipController.hidePopup();
 
-      this.switchWebPanel();
+      closeOnClick =
+        this.isActive() && !SidebarControllers.sidebarController.closed();
+      if (!closeOnClick) {
+        this.switchWebPanel();
+      }
     });
 
     button.addEventListener("click", (event) => {
       event.stopPropagation();
+      if (isLeftMouseButton(event)) {
+        if (closeOnClick) {
+          closeOnClick = false;
+          this.switchWebPanel();
+        }
+        return;
+      }
       if (!isMiddleMouseButton(event)) return;
 
       clearTimeout(tooltipTimer);

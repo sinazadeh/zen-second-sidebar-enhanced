@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  SHORTCUT_INPUT_ATTRIBUTE,
   getLayoutIndependentKey,
   getShortcutPartsFromEvent,
   getShortcutPartsFromShortcut,
+  isShortcutInputEvent,
   isShortcutPressed,
 } from "../src/second_sidebar/utils/keyboard.mjs";
 
@@ -93,4 +95,31 @@ test("a shortcut saved with a layout's own key still works in that layout", () =
   const event = keyEvent({ code: "KeyK", key: "л", altKey: true });
   assert.equal(isShortcutPressed("Alt+K", event), true);
   assert.equal(isShortcutPressed("Alt+Л", event), true);
+});
+
+test("Escape can be a shortcut, alone or with modifiers", () => {
+  const escape = keyEvent({ code: "Escape", key: "Escape" });
+  assert.deepEqual(getShortcutPartsFromEvent(escape), ["ESCAPE"]);
+  assert.equal(isShortcutPressed("ESCAPE", escape), true);
+  assert.equal(isShortcutPressed("Ctrl+ESCAPE", escape), false);
+  assert.equal(
+    isShortcutPressed(
+      "Ctrl+ESCAPE",
+      keyEvent({ code: "Escape", key: "Escape", ctrlKey: true }),
+    ),
+    true,
+  );
+});
+
+test("a shortcut field is recognized from any element inside it", () => {
+  const field = {
+    closest: (selector) =>
+      selector === `[${SHORTCUT_INPUT_ATTRIBUTE}]` ? field : null,
+  };
+  const other = { closest: () => null };
+  assert.equal(isShortcutInputEvent({ target: field }), true);
+  assert.equal(isShortcutInputEvent({ target: other }), false);
+  // Events from a window or document have no closest().
+  assert.equal(isShortcutInputEvent({ target: {} }), false);
+  assert.equal(isShortcutInputEvent({ target: null }), false);
 });

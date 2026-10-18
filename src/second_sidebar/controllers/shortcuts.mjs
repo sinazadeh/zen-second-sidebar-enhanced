@@ -22,6 +22,7 @@ export class Shortcuts {
    */
   #onKeypress(event) {
     if (!this.enabled) return;
+    if (event.key === "Escape" && this.#isEscapeTaken(event)) return;
     if (this.trySidebarWidgetShortcut(event)) return;
     if (this.tryLastWebPanelShortcut(event)) return;
     if (this.tryAdjacentWebPanelShortcuts(event)) return;
@@ -64,6 +65,21 @@ export class Shortcuts {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Escape closes menus and popups, the find bar, full screen... A shortcut
+   * on it only gets the presses nothing else used.
+   *
+   * @param {KeyboardEvent} event
+   * @returns {boolean}
+   */
+  #isEscapeTaken(event) {
+    if (event.defaultPrevented) return true;
+    const doc = event.target?.ownerDocument ?? document;
+    return Array.from(doc.querySelectorAll("menupopup, panel")).some((popup) =>
+      ["open", "showing", "hiding"].includes(popup.state),
+    );
   }
 
   enable() {

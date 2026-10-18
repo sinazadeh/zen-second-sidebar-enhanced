@@ -69,6 +69,9 @@ both Zen Browser and standard Firefox, with the sidebar on either side.
   room and cap its height to that room (`--sb2-popup-max-height` in
   `css/popups.mjs`). The `second-sidebar.fit-popups-to-window` pref forces
   this on (`true`) or off (`false`) on any platform.
+- Settings popups close on Escape from a window capture listener; it must
+  leave events from shortcut fields alone (`isShortcutInputEvent`), which
+  record Esc like any key.
 
 ## Zen compatibility checklist
 
