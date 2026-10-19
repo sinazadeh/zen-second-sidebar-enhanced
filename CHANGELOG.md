@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.12.1] - 2026-10-19
+
 ### Fixed
 
 - Sine's gear button for this mod opened Sine's own settings dialog instead
