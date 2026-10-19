@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-10-19
+
 ### Added
 
 - The settings page has the sidebar's keyboard shortcuts and a **Backup**
