@@ -36,7 +36,8 @@ function makeExport() {
 
 test("an export parses back to the same settings", () => {
   const data = makeExport();
-  assert.equal(data.version, EXPORT_VERSION);
+  // With both parts, still the version older Second Sidebars can import.
+  assert.equal(data.version, 2);
 
   const { sidebarSettings, webPanelsSettings } = parseSettingsExport(data);
   assert.deepEqual(sidebarSettings.toObject(), data.sidebarSettings);
@@ -95,9 +96,55 @@ test("files that aren't settings exports are rejected", () => {
     {},
     { sidebarSettings: {}, webPanels: {} },
     { sidebarSettings: [], webPanels: [] },
+    { version: 3 },
+    { webPanels: "a" },
+    { sidebarSettings: null },
   ]) {
     assert.throws(() => parseSettingsExport(data), /does not look like/);
   }
+});
+
+test("a backup can leave out the sidebar settings or the web panels", () => {
+  const { sidebarSettings, webPanelsSettings } =
+    parseSettingsExport(makeExport());
+
+  const sidebarOnly = JSON.parse(
+    JSON.stringify(buildSettingsExport(sidebarSettings, null)),
+  );
+  assert.equal(sidebarOnly.version, EXPORT_VERSION);
+  assert.equal("webPanels" in sidebarOnly, false);
+  const parsedSidebar = parseSettingsExport(sidebarOnly);
+  assert.equal(parsedSidebar.webPanelsSettings, null);
+  assert.equal(parsedSidebar.sidebarSettings.position, "left");
+
+  const panelsOnly = JSON.parse(
+    JSON.stringify(buildSettingsExport(null, webPanelsSettings)),
+  );
+  assert.equal(panelsOnly.version, EXPORT_VERSION);
+  assert.equal("sidebarSettings" in panelsOnly, false);
+  const parsedPanels = parseSettingsExport(panelsOnly);
+  assert.equal(parsedPanels.sidebarSettings, null);
+  assert.deepEqual(
+    parsedPanels.webPanelsSettings.webPanels.map((webPanel) => webPanel.uuid),
+    ["a", "b"],
+  );
+});
+
+test("web panels without sidebar settings get defaults for the sidebar in use", () => {
+  const data = makeExport();
+  delete data.sidebarSettings;
+  delete data.webPanels[0].floatingGeometry;
+  const inEffect = new SidebarSettings({
+    position: "left",
+    defaultFloatingOffset: "large",
+  });
+  const [panel] = parseSettingsExport(data, inEffect).webPanelsSettings
+    .webPanels;
+  assert.equal(panel.floatingGeometry.left, "var(--space-large)");
+  assert.equal(panel.floatingGeometry.right, "unset");
+  // Without them, the sidebar's defaults (on the right).
+  const [defaulted] = parseSettingsExport(data).webPanelsSettings.webPanels;
+  assert.equal(defaulted.floatingGeometry.right, "var(--space-small)");
 });
 
 test("exports from a newer, incompatible format are rejected", () => {

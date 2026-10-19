@@ -230,7 +230,6 @@ export class SidebarController {
       !SidebarElements.sidebarBox.contains(target) &&
       !SidebarElements.sidebarSplitter.contains(target) &&
       !SidebarElements.webPanelPopupEdit.contains(target) &&
-      !SidebarElements.sidebarMainPopupSettings.contains(target) &&
       !SidebarElements.sidebarMainMenuPopup.contains(target) &&
       !SidebarElements.webPanelMenuPopup.contains(target) &&
       !SidebarElements.sidebarCollapseButton.button.contains(target) &&
@@ -549,7 +548,7 @@ export class SidebarController {
 
   saveSettings() {
     // Set while an import is pending a restart (see
-    // SidebarMainSettingsController#importSettings): this window's settings
+    // SettingsPageController#restoreBackup): this window's settings
     // predate the import, so saving them would silently undo it.
     if (this.#settingsSavesSuspended) {
       Logger.debug("Sidebar settings save skipped: import pending restart");

@@ -32,12 +32,14 @@ headless.
 
 ## Recording shortcuts
 
-The shortcut fields (sidebar settings, Edit web panel) record keys on
-`keypress`, and Escape on `keydown`. They carry `SHORTCUT_INPUT_ATTRIBUTE`
-(`utils/keyboard.mjs`), and the popups' Escape handlers, which listen on the
-window in the capture phase to close the popup, ignore events from them
-(`isShortcutInputEvent`): in a shortcut field Esc is a key like any other.
-Recorded named keys are upper case (`ESCAPE`, `F5`).
+Edit web panel's shortcut field records keys on `keypress`, and Escape on
+`keydown`. It carries `SHORTCUT_INPUT_ATTRIBUTE` (`utils/keyboard.mjs`), and
+the popup's Escape handler, which listens on the window in the capture phase
+to close the popup, ignores events from it (`isShortcutInputEvent`): in a
+shortcut field Esc is a key like any other. The settings page's shortcut
+boxes record on `keydown`, Escape included, and stop the event, so the
+window's `Shortcuts` (on `keypress`) never runs while one records. Recorded named keys are
+upper case (`ESCAPE`, `F5`).
 
 ## Running shortcuts
 

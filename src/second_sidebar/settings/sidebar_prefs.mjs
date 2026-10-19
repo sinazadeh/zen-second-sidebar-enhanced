@@ -4,7 +4,7 @@
 // of truth: these prefs are written from it at startup and on every save,
 // and a change made to one of them is applied and saved back
 // (controllers/sidebar_prefs.mjs). Keyboard shortcuts are left out: they
-// need the settings popup's key capture.
+// need the settings page's key capture (SETTINGS_PAGE_SHORTCUTS).
 //
 // Keep this module free of browser globals: tests/sidebar_prefs.test.mjs
 // checks it against SidebarSettings and preferences.json in Node.
@@ -22,7 +22,7 @@ const SIZES = [
 ];
 
 /**
- * In the settings popup's order. An entry with `values` is a string pref
+ * In the settings page's order. An entry with `values` is a string pref
  * limited to those values; one without is a boolean pref.
  *
  * @type {Array<{field: string, pref: string, values?: string[]}>}

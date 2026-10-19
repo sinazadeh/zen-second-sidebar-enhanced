@@ -1,5 +1,5 @@
-// What the settings page shows: one card per section, in the settings
-// popup's order, each control editing one of the mirrored sidebar prefs
+// What the settings page shows: one card per section, in SIDEBAR_PREFS's
+// order, each control editing one of the mirrored sidebar prefs
 // (settings/sidebar_prefs.mjs). tests/settings_page.test.mjs checks that every
 // pref is here once, with the values it accepts.
 //
@@ -208,5 +208,35 @@ export const SETTINGS_PAGE_SECTIONS = [
         text: "Slide a panel's toolbar in and out.",
       },
     ],
+  },
+];
+
+/**
+ * The sidebar's keyboard shortcuts, on their own card: they're kept in the
+ * sidebar settings, not in mirrored prefs (Sine can't record keys), so the
+ * page sets them through the browser window (SettingsPageController).
+ *
+ * @type {Array<{field: string, title: string, text: string}>}
+ */
+export const SETTINGS_PAGE_SHORTCUTS = [
+  {
+    field: "sidebarWidgetShortcut",
+    title: "Show or hide the sidebar",
+    text: "Hides the sidebar, or shows it again.",
+  },
+  {
+    field: "lastWebPanelShortcut",
+    title: "Open or close the last panel",
+    text: "Opens the web panel you used last, or closes the open one.",
+  },
+  {
+    field: "nextWebPanelShortcut",
+    title: "Open the next panel",
+    text: "The one after the open panel, in the order of their buttons, wrapping around. With none open, the first.",
+  },
+  {
+    field: "previousWebPanelShortcut",
+    title: "Open the previous panel",
+    text: "The one before the open panel, wrapping around. With none open, the last.",
   },
 ];

@@ -178,7 +178,6 @@ export const POPUPS_CSS = `
     }
   }
 
-  #sb2-main-popup-settings-backdrop,
   #sb2-web-panel-edit-backdrop {
     position: fixed;
     inset: 0;
@@ -287,7 +286,6 @@ export const POPUPS_CSS = `
     }
   }
 
-  #sb2-main-popup-settings,
   #sb2-web-panel-new,
   #sb2-web-panel-edit {
     width: 400px;
@@ -350,37 +348,5 @@ export const POPUPS_CSS = `
     #sb2-popup-shortcut-items {
       display: none;
     }
-  }
-
-  .sb2-popup:has(#sb2-main-popup-settings-tooltip-menu-list[value="off"]),
-  .sb2-popup:has(#sb2-main-popup-settings-tooltip-menu-list[value="title"]) {
-    #sb2-main-popup-settings-tooltip-items {
-      display: none;
-    }
-  }
-
-  .sb2-popup:has(#sb2-main-popup-settings-auto-hide-sidebar-toggle:not([pressed])) {
-    #sb2-main-popup-settings-auto-hide-sidebar-items {
-      display: none;
-    }
-  }
-
-  .sb2-popup:has(#sb2-main-popup-settings-auto-hide-sidebar-toggle[pressed]) {
-    #sb2-main-popup-settings-sidebar-widget-items {
-      display: none;
-    }
-  }
-
-  /* Firefox has no spaces. */
-  :root:not(:has(#zen-tabbox-wrapper))
-    #sb2-main-popup-settings-new-web-panel-spaces-items {
-    display: none;
-  }
-
-  /* The gap is Zen's, and only an overlay sidebar leaves it empty. */
-  :root:not(:has(#zen-tabbox-wrapper)) #sb2-main-popup-settings-edge-gap-items,
-  .sb2-popup:has(#sb2-main-popup-settings-auto-hide-behavior-menu-list:not([value="overlay"]))
-    #sb2-main-popup-settings-edge-gap-items {
-    display: none;
   }
 `;

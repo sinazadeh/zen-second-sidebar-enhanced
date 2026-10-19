@@ -9,25 +9,34 @@ import { WebPanelsSettings } from "./web_panels_settings.mjs";
 // those already default fine via the settings classes' own constructors).
 // 2: a web panel's `mobile` flag became `userAgent`; WebPanelSettings still
 // reads `mobile` from version 1 files.
-export const EXPORT_VERSION = 2;
+// 3: either part, `sidebarSettings` or `webPanels`, may be left out. A file
+// with both is still written as version 2, which older versions can read.
+export const EXPORT_VERSION = 3;
+const FULL_EXPORT_VERSION = 2;
 
 /**
- * Builds the settings export file's contents: the sidebar settings and every
+ * Builds the settings export file's contents: the sidebar settings, every
  * web panel's settings (not their per-panel state, e.g. lastUrl - see
- * .claude/skills/sb2-settings/SKILL.md on keeping those distinct).
+ * .claude/skills/sb2-settings/SKILL.md on keeping those distinct), or both.
  *
- * @param {SidebarSettings} sidebarSettings
- * @param {WebPanelsSettings} webPanelsSettings
+ * @param {SidebarSettings?} sidebarSettings null to leave them out
+ * @param {WebPanelsSettings?} webPanelsSettings null to leave them out;
+ *   exported in the order of their panels
  * @returns {object}
  */
 export function buildSettingsExport(sidebarSettings, webPanelsSettings) {
   return {
-    version: EXPORT_VERSION,
+    version:
+      sidebarSettings && webPanelsSettings
+        ? FULL_EXPORT_VERSION
+        : EXPORT_VERSION,
     exportedAt: new Date().toISOString(),
-    sidebarSettings: sidebarSettings.toObject(),
-    webPanels: webPanelsSettings.persistentWebPanels.map((webPanel) =>
-      webPanel.toObject(),
-    ),
+    ...(sidebarSettings && { sidebarSettings: sidebarSettings.toObject() }),
+    ...(webPanelsSettings && {
+      webPanels: webPanelsSettings.persistentWebPanels.map((webPanel) =>
+        webPanel.toObject(),
+      ),
+    }),
   };
 }
 
@@ -39,13 +48,19 @@ export function buildSettingsExport(sidebarSettings, webPanelsSettings) {
  * default instead, and is listed in `invalidSettings`.
  *
  * @param {*} data
- * @returns {{sidebarSettings: SidebarSettings, webPanelsSettings: WebPanelsSettings, invalidSettings: string[]}}
+ * @param {SidebarSettings?} [sidebarSettingsInEffect] For a file without
+ *   sidebar settings: the ones its web panels will be used with, whose
+ *   position and floating offset give the panels' defaults.
+ * @returns {{sidebarSettings: SidebarSettings?, webPanelsSettings: WebPanelsSettings?, invalidSettings: string[]}}
+ *   null for a part the file leaves out
  */
-export function parseSettingsExport(data) {
+export function parseSettingsExport(data, sidebarSettingsInEffect = null) {
+  const hasSidebarSettings = isPlainObject(data) && "sidebarSettings" in data;
+  const hasWebPanels = isPlainObject(data) && "webPanels" in data;
   if (
-    !isPlainObject(data) ||
-    !isPlainObject(data.sidebarSettings) ||
-    !Array.isArray(data.webPanels)
+    !(hasSidebarSettings || hasWebPanels) ||
+    (hasSidebarSettings && !isPlainObject(data.sidebarSettings)) ||
+    (hasWebPanels && !Array.isArray(data.webPanels))
   ) {
     throw new Error("file does not look like a Second Sidebar settings export");
   }
@@ -55,8 +70,31 @@ export function parseSettingsExport(data) {
     );
   }
 
+  const invalidSettings = [];
+  const sidebarSettings = hasSidebarSettings
+    ? new SidebarSettings(
+        validSidebarSettings(data.sidebarSettings, invalidSettings),
+      )
+    : null;
+  const webPanelsSettings = hasWebPanels
+    ? parseWebPanels(
+        data.webPanels,
+        sidebarSettings ?? sidebarSettingsInEffect ?? new SidebarSettings({}),
+        invalidSettings,
+      )
+    : null;
+  return { sidebarSettings, webPanelsSettings, invalidSettings };
+}
+
+/**
+ * @param {Array} webPanels an export's `webPanels`
+ * @param {SidebarSettings} sidebarSettings the ones they'll be used with
+ * @param {string[]} invalidSettings
+ * @returns {WebPanelsSettings}
+ */
+function parseWebPanels(webPanels, sidebarSettings, invalidSettings) {
   const uuids = new Set();
-  data.webPanels.forEach((webPanel, index) => {
+  webPanels.forEach((webPanel, index) => {
     const name = `web panel #${index + 1}`;
     if (!isPlainObject(webPanel)) {
       throw new Error(`${name} is not an object`);
@@ -73,10 +111,6 @@ export function parseSettingsExport(data) {
     uuids.add(webPanel.uuid);
   });
 
-  const invalidSettings = [];
-  const sidebarSettings = new SidebarSettings(
-    validSidebarSettings(data.sidebarSettings, invalidSettings),
-  );
   const { position } = sidebarSettings;
   const defaultFloatingOffsetCSS = `var(--space-${sidebarSettings.defaultFloatingOffset})`;
   const defaults = new WebPanelSettings(
@@ -85,8 +119,8 @@ export function parseSettingsExport(data) {
     "",
     "",
   );
-  const webPanelsSettings = new WebPanelsSettings(
-    data.webPanels.map((webPanel, index) =>
+  return new WebPanelsSettings(
+    webPanels.map((webPanel, index) =>
       WebPanelSettings.fromObject(
         position,
         defaultFloatingOffsetCSS,
@@ -99,7 +133,6 @@ export function parseSettingsExport(data) {
       ),
     ),
   );
-  return { sidebarSettings, webPanelsSettings, invalidSettings };
 }
 
 /**

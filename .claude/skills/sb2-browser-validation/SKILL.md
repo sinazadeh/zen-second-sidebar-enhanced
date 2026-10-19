@@ -51,13 +51,16 @@ Select manual scenarios according to the change:
   still usable afterward. Open a normal browser window as a control and confirm
   the sidebar still loads there.
 - **Theming**: Light/dark themes, Zen accent surfaces, and conditional theme tokens.
-- **Settings page**: open it from **Settings page...** and from Sine's gear
+- **Settings page**: open it from **Sidebar settings** and from Sine's gear
   button (a second click selects the same tab), also after reloading
   about:preferences and in one restored from the last session; to run real
   Sine headless, see [Sine test profile](references/sine-test-profile.md).
-  Change settings there and in
-  the popup and check each follows the other, in a second window too; check
-  the preview and both color schemes.
+  Change settings there and in Sine's dialog and check each follows the
+  other, in a second window too; check the preview and both color schemes.
+  Record a shortcut (Esc too), one already taken, and Backspace; check it
+  works in the window. Export each part and both, and import a backup with
+  one part and with both (with a mock `@mozilla.org/filepicker;1` factory
+  and a `DataTransfer` file on `#backup-file` when headless).
 
 Check the Browser Console (`Ctrl+Shift+J` or `Cmd+Shift+J`) for errors. Record the
 browser version (Firefox or Zen), operating system, and scenarios actually exercised.

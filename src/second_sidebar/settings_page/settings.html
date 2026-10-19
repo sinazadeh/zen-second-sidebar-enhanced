@@ -24,8 +24,56 @@
         this page.
       </p>
 
+      <div id="restart-banner" class="banner restart" hidden>
+        <span>
+          Settings imported. Restart the browser to apply them; until then,
+          changes to the sidebar and web panels aren't saved.
+        </span>
+        <button id="restart" class="button primary" type="button">
+          Restart now
+        </button>
+      </div>
+
       <div class="layout">
-        <div id="sections" class="column"></div>
+        <div class="column">
+          <div id="sections" class="column"></div>
+
+          <section class="card">
+            <h2>Keyboard shortcuts</h2>
+            <p class="muted">
+              Click a box and press the keys; Backspace clears it. Shortcuts
+              follow the keys' places on the keyboard, so they keep working when
+              you switch layouts. Each web panel can have one too: right-click
+              its button and choose <b>Edit web panel</b>.
+            </p>
+            <div id="shortcuts" class="options"></div>
+            <p id="shortcut-status" class="status small" role="status"></p>
+          </section>
+
+          <section class="card">
+            <h2>Backup</h2>
+            <p class="muted">
+              Save your settings and web panels to a file, to restore them later
+              or in another profile. You choose what goes in, and what to
+              restore from it.
+            </p>
+            <div class="actions">
+              <button id="backup-export" class="button" type="button">
+                Export…
+              </button>
+              <button id="backup-import" class="button" type="button">
+                Import…
+              </button>
+              <input
+                id="backup-file"
+                type="file"
+                accept=".json,application/json"
+                hidden
+              />
+            </div>
+            <p id="backup-status" class="status small" role="status"></p>
+          </section>
+        </div>
 
         <aside class="preview-wrap">
           <div class="preview-label">Preview</div>
@@ -33,17 +81,39 @@
           <p class="muted small">
             Hover a panel button in the preview to see its tooltip.
           </p>
-
-          <section class="card side-card">
-            <h2>Shortcuts and backup</h2>
-            <p class="muted">
-              Keyboard shortcuts and settings export and import are in the
-              sidebar's own settings: right-click the sidebar and choose
-              <b>Sidebar settings</b>.
-            </p>
-          </section>
         </aside>
       </div>
     </main>
+
+    <!-- Asks what to export, or what to restore from a backup. -->
+    <dialog id="backup-dialog" class="dialog">
+      <form method="dialog">
+        <h2 id="backup-dialog-title"></h2>
+        <p id="backup-dialog-text" class="muted"></p>
+        <div class="options">
+          <label class="option" id="backup-sidebar">
+            <span class="option-text">
+              <span class="option-title">Sidebar settings</span>
+              <span class="muted"></span>
+            </span>
+            <input type="checkbox" class="switch" checked />
+          </label>
+          <label class="option" id="backup-web-panels">
+            <span class="option-text">
+              <span class="option-title">Web panels</span>
+              <span class="muted"></span>
+            </span>
+            <input type="checkbox" class="switch" checked />
+          </label>
+        </div>
+        <p id="backup-dialog-note" class="muted small"></p>
+        <div class="dialog-actions">
+          <button value="cancel" class="button">Cancel</button>
+          <button value="ok" class="button primary" id="backup-dialog-ok">
+            OK
+          </button>
+        </div>
+      </form>
+    </dialog>
   </body>
 </html>

@@ -1,8 +1,10 @@
-// The settings popups' changes are wired to events through the tables in
-// controllers/web_panel_fields.mjs and controllers/sidebar_fields.mjs. The
-// popups, events.mjs and WebPanelController can't be imported in Node, so
-// their sources are read instead: a callback missing from a table would
-// throw in the browser the first time its control is changed.
+// Settings changes are wired to events through the tables in
+// controllers/web_panel_fields.mjs (Edit web panel) and
+// controllers/sidebar_fields.mjs (the mirrored prefs and keyboard
+// shortcuts). The popup, events.mjs and WebPanelController can't be
+// imported in Node, so their sources are read instead: a callback missing
+// from a table would throw in the browser the first time its control is
+// changed.
 
 import "./gecko_stubs.mjs";
 
@@ -151,11 +153,7 @@ test("callbacks send what the hand-written ones did", () => {
   });
 });
 
-test("every sidebar settings callback has an event", () => {
-  assert.deepEqual(
-    listenChangesCallbacks("xul/sidebar_main_popup_settings.mjs").sort(),
-    [...Object.keys(SIDEBAR_FIELD_EVENTS), "visibility"].sort(),
-  );
+test("SIDEBAR_FIELD_EVENTS names real events", () => {
   const events = eventKeys("SidebarEvents");
   for (const [field, event] of Object.entries(SIDEBAR_FIELD_EVENTS)) {
     assert.ok(events.includes(event), `${field}: ${event}`);

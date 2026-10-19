@@ -95,7 +95,7 @@ export class SidebarPrefsController {
         sidebarWidgetShortcut: settings.sidebarWidgetShortcut,
       });
     } else if (SIDEBAR_FIELD_EVENTS[field]) {
-      // As the settings popup sends it (SidebarMainSettingsController).
+      // As SettingsPageController#setShortcut sends a shortcut.
       sendLocalEvent(SidebarEvents[SIDEBAR_FIELD_EVENTS[field]], {
         value: settings[field],
       });

@@ -11,7 +11,7 @@
 > - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden, 1Password, iCloud Hide My Email) when adding a panel — see [Presets](#presets).
 > - Tabs, bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links, bookmarks and tabs](#links-bookmarks-and-tabs).
 > - Keyboard shortcuts to open the next or previous web panel — see [Keyboard shortcuts](#keyboard-shortcuts).
-> - Sidebar setting: `Export settings` / `Import settings` — back up or restore the sidebar and all web panel settings as a single JSON file.
+> - Backup: save the sidebar settings, your web panels or both to one JSON file, and choose what to restore from one — see [Backup](#backup).
 > - [Sine](https://github.com/CosmoCreeper/Sine) mod support (`theme.json`) alongside fx-autoconfig, so the script can be installed without manually copying files.
 > - Windows GPU compositing fix so web panels don't render as a blank frame when switching.
 
@@ -58,21 +58,21 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 
 ## Settings
 
-Right-click the sidebar and choose **Sidebar settings**, or **Settings page...** to open them in a tab: the settings page groups them in cards with switches and a preview of the sidebar, and applies changes right away, in every window. With Sine, the gear button of **Zen Second Sidebar Enhanced** on Sine's mod page opens the settings page too. Keyboard shortcuts and settings export/import are only in the popup.
+Right-click the sidebar and choose **Sidebar settings** to open the settings page in a tab. It groups the settings in cards with switches and a preview of the sidebar, and applies changes right away, in every window; the sidebar's keyboard shortcuts and [backup](#backup) are there too. With Sine, the gear button of **Zen Second Sidebar Enhanced** on Sine's mod page opens it as well.
 
 The settings page's format follows the one [oom333/zen-tab-groups](https://github.com/oom333/zen-tab-groups) made for Tab Groups.
 
-| Section                   | Settings                                                                                                                                                                                                        |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General                   | **Position** (left or right) • **Width** • **Allow window dragging**                                                                                                                                            |
-| Visibility                | **Auto-hide sidebar** and its **Auto-hide behavior** (inline or overlay) • **Keep gap at window edge** (Zen, with overlay) • **Hide web panel when sidebar is hidden** • a shortcut to show or hide the sidebar |
-| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **New panels show in** (Zen: all spaces, or the current one) • **Show geometry hint** while moving or resizing      |
-| Shortcuts                 | **Open/close last active web panel** • **Open next web panel** • **Open previous web panel** (see [Keyboard shortcuts](#keyboard-shortcuts))                                                                    |
-| Web panel button          | **Container indicator** • **Tooltip** (off, title, URL, or both) • **Show full URL in tooltip**                                                                                                                 |
-| Web panel toolbar         | **Auto-hide back button** • **Auto-hide forward button**                                                                                                                                                        |
-| Links, bookmarks and tabs | Show **Open…** and **Preview… in Second Sidebar** in right-click menus • **Preview on click with** (see [below](#links-bookmarks-and-tabs))                                                                     |
-| Animations                | **Animate sidebar** • **Animate web panel toolbar**                                                                                                                                                             |
-| Backup                    | **Export settings** and **Import settings** (see [Backup](#backup))                                                                                                                                             |
+| Section                   | Settings                                                                                                                                                                                                   |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| General                   | **Position** (left or right) • **Width** • **Allow window dragging**                                                                                                                                       |
+| Visibility                | **Auto-hide sidebar** and its **Auto-hide behavior** (inline or overlay) • **Keep gap at window edge** (Zen, with overlay) • **Hide web panel when sidebar is hidden**                                     |
+| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **New panels show in** (Zen: all spaces, or the current one) • **Show geometry hint** while moving or resizing |
+| Web panel button          | **Container indicator** • **Tooltip** (off, title, URL, or both) • **Show full URL in tooltip**                                                                                                            |
+| Web panel toolbar         | **Auto-hide back button** • **Auto-hide forward button**                                                                                                                                                   |
+| Links, bookmarks and tabs | Show **Open…** and **Preview… in Second Sidebar** in right-click menus • **Preview on click with** (see [below](#links-bookmarks-and-tabs))                                                                |
+| Animations                | **Animate sidebar** • **Animate web panel toolbar**                                                                                                                                                        |
+| Keyboard shortcuts        | **Show or hide the sidebar** • **Open or close the last panel** • **Open the next panel** • **Open the previous panel** (see [Keyboard shortcuts](#keyboard-shortcuts))                                    |
+| Backup                    | **Export…** and **Import…**, choosing what goes in the file and what to restore from it (see [Backup](#backup))                                                                                            |
 
 Each web panel has its own settings in **Edit web panel** (right-click its button):
 
@@ -98,21 +98,20 @@ In Zen, a web panel shows in all your spaces (workspaces) unless you limit it: i
 - While you customize the toolbar, every panel's button shows, so you can still move them.
 - If all the spaces a panel was limited to are deleted, it shows in every space again.
 
-New panels show in every space. To start them in the space you're in instead (when you add one, or open a link, tab or bookmark in the sidebar), set **Sidebar settings → New panels show in** to **Current Space**.
+New panels show in every space. To start them in the space you're in instead (when you add one, or open a link, tab or bookmark in the sidebar), set **Sidebar settings → New panels show in** to **Current space**.
 
 Firefox has no spaces, so these settings aren't there.
 
 ## Keyboard shortcuts
 
-None are set by default. Click a shortcut box in the settings and press the keys; shortcuts follow the key's position, so they keep working when you switch keyboard layouts. A shortcut that's already taken (by another web panel or sidebar action) is refused.
+None are set by default. Click a shortcut box and press the keys; shortcuts follow the key's position, so they keep working when you switch keyboard layouts. A shortcut that's already taken (by another web panel or sidebar action) is refused. On the settings page, Backspace clears a box, and so does its **✕** button.
 
-**Esc** works too, alone or with modifiers. In a shortcut box it's recorded like any other key, so to close the settings with Esc, leave the box first (Tab). An Esc shortcut runs only when Esc isn't closing something else, such as a menu or popup, or used by Zen or Firefox; a page that closes its own dialog on Esc may still get it as well.
+**Esc** works too, alone or with modifiers. In a shortcut box it's recorded like any other key, so to close **Edit web panel** with Esc, leave the box first (Tab). An Esc shortcut runs only when Esc isn't closing something else, such as a menu or popup, or used by Zen or Firefox; a page that closes its own dialog on Esc may still get it as well.
 
-- **Show or hide the sidebar**: **Sidebar settings → Visibility**.
-- **Open/close last active web panel**, **Open next web panel** and **Open previous web panel**: **Sidebar settings**. Next and previous go through the panels in the order of their buttons, wrapping around at the ends; with no panel open, they open the first or the last one.
+- **Show or hide the sidebar**, **Open or close the last panel** (the one you used last), **Open the next panel** and **Open the previous panel**: the settings page's **Keyboard shortcuts** card (**Sidebar settings**). Next and previous go through the panels in the order of their buttons, wrapping around at the ends; with no panel open, they open the first or the last one.
 - **Open or close one web panel**: **Edit web panel → Keyboard shortcut**.
 
-They work in the browser window and inside web panels, but not while a settings popup is open. Pick keys Zen or Firefox don't already use, or the browser's own shortcut may run as well.
+They work in the browser window and inside web panels, but not while **Edit web panel** is open. Pick keys Zen or Firefox don't already use, or the browser's own shortcut may run as well.
 
 ## Links, bookmarks and tabs
 
@@ -169,7 +168,12 @@ The panel reloads when you change it. The **More** menu in the panel's toolbar h
 
 ## Backup
 
-Use **Export settings** / **Import settings** (sidebar settings popup) to save or restore the sidebar and every web panel's settings as one JSON file. This covers configuration only, not per-panel state like the last-opened URL. Importing checks the file, writes its settings to disk and offers to restart the browser, which is when they take effect. Until the restart, other changes to the sidebar or web panels aren't saved, so they can't overwrite the import.
+The settings page's **Backup** card saves your settings to a JSON file and restores them from one.
+
+- **Export…** asks what to save: the **sidebar settings** (everything on the settings page, keyboard shortcuts included), your **web panels** (each with its own settings, in the order of their buttons), or both.
+- **Import…** checks the file, shows what's in it and asks what to restore. Restoring web panels replaces all of yours with the backup's; restoring only the sidebar settings leaves your panels as they are.
+
+A backup covers configuration only, not per-panel state like the last-opened URL. Imported settings take effect when the browser restarts (the page offers **Restart now**). Until then, other changes to the sidebar or web panels aren't saved, so they can't overwrite the import. Backups made by older versions import as they are; older versions can import a backup only if it has both parts.
 
 ### Where your data is stored
 
@@ -194,7 +198,7 @@ The Browser Console (`Ctrl+Shift+J` / `Cmd+Shift+J`) logs the sidebar's startup 
 - **Installed with Sine, but the sidebar never appears and the console shows nothing about it:** check that `sine.allow-unsafe-js` is `true` in `about:config` (see [Installation](#sine)). Without it, Sine silently never loads scripts from mods added by repository.
 - **It stopped working after installing Sine on another profile:** Sine and fx-autoconfig each replace a single bootstrap file shared by every profile of the same browser installation, so setting up one of them can turn off the other for all profiles. Use the same loader on every profile of that installation (for example, install Second Sidebar through Sine here too).
 - **A warning says a patch "no longer applies":** a browser update changed Firefox code this script adjusts, and the related feature may misbehave. Please [open an issue](https://github.com/sinazadeh/zen-second-sidebar-enhanced/issues/new?template=bug_report.yml) with the warning and your browser version.
-- **Settings popups are cut off at the bottom of the screen:** on Wayland, popups open towards whichever side of the sidebar button (or right-click) has more room, and scroll to fit. Firefox keeps popups on screen by itself elsewhere, so this is automatic only on Wayland; set `second-sidebar.fit-popups-to-window` to `true` in `about:config` to turn it on anyway, or `false` to turn it off. If the Save button is still out of reach, please report it with your OS and window manager.
+- **Popups are cut off at the bottom of the screen:** on Wayland, popups open towards whichever side of the sidebar button (or right-click) has more room, and scroll to fit. Firefox keeps popups on screen by itself elsewhere, so this is automatic only on Wayland; set `second-sidebar.fit-popups-to-window` to `true` in `about:config` to turn it on anyway, or `false` to turn it off. If the Save button is still out of reach, please report it with your OS and window manager.
 
 ## Contributing
 
