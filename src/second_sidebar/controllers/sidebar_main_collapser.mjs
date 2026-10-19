@@ -285,7 +285,6 @@ export class SidebarMainCollapser {
   isPanelOpened() {
     return (
       SidebarElements.sidebarMainMenuPopup.isPanelOpen() ||
-      SidebarElements.sidebarMainPopupSettings.isPanelOpen() ||
       SidebarElements.webPanelMenuPopup.isPanelOpen() ||
       SidebarElements.webPanelPopupNew.isPanelOpen() ||
       SidebarElements.webPanelPopupEdit.isPanelOpen() ||
@@ -301,7 +300,6 @@ export class SidebarMainCollapser {
     const target = new XULElement({ element: event.target });
     return (
       SidebarElements.sidebarMainMenuPopup.contains(target) ||
-      SidebarElements.sidebarMainPopupSettings.contains(target) ||
       SidebarElements.webPanelMenuPopup.contains(target) ||
       SidebarElements.webPanelPopupNew.contains(target) ||
       SidebarElements.webPanelPopupEdit.contains(target) ||

@@ -1,5 +1,5 @@
 ---
-description: Add a sidebar or web panel setting end to end - model, popup control, reverter, events, controller, prefs mirror, tests, docs - then review it.
+description: Add a sidebar or web panel setting end to end - model, settings page or Edit web panel control, reverter, events, controller, prefs mirror, tests, docs - then review it.
 argument-hint: "<setting description, default value, sidebar or web panel>"
 ---
 
@@ -18,14 +18,15 @@ command.
 ## Phase 1: plan
 
 1. Read [sb2-settings](../skills/sb2-settings/SKILL.md), and
-   [sb2-ui-layout](../skills/sb2-ui-layout/SKILL.md) for the popup control.
+   [sb2-ui-layout](../skills/sb2-ui-layout/SKILL.md) for an Edit web panel
+   control.
 2. Decide whether it's a sidebar setting or a web panel setting, and for a
    web panel setting whether it's also offered when creating a panel.
 3. Find the existing setting closest to it and follow it through every file
-   the skill lists. Write the plan as a checklist of files, including the
-   change reverter, the `WEB_PANEL_FIELDS` or `SIDEBAR_FIELD_EVENTS` entry,
-   and for a sidebar setting the mirrored pref and `preferences.json`
-   control.
+   the skill lists. Write the plan as a checklist of files, including for a
+   web panel setting the change reverter and the `WEB_PANEL_FIELDS` entry,
+   and for a sidebar setting the mirrored pref, the `SIDEBAR_FIELD_EVENTS`
+   entry, the settings page control and the `preferences.json` control.
 4. If the name, default, value range or label isn't clear from the
    request, ask before writing code.
 

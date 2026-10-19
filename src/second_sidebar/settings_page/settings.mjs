@@ -1,13 +1,19 @@
 // The settings page (settings.html, opened in a tab by
 // controllers/settings_page.mjs). Each control edits one of the mirrored
 // sidebar prefs, as Sine's settings dialog does; SidebarPrefsController
-// applies and saves the change in every window.
+// applies and saves the change in every window. Keyboard shortcuts and
+// backups need the sidebar itself, which the browser window offers as
+// `SecondSidebarSettingsPage` (SettingsPageController).
 
+import { SETTINGS_PAGE_SECTIONS, SETTINGS_PAGE_SHORTCUTS } from "./layout.mjs";
+import {
+  SHORTCUT_INPUT_ATTRIBUTE,
+  getShortcutPartsFromEvent,
+} from "../utils/keyboard.mjs";
 import {
   getSidebarPref,
   isValidSidebarPrefValue,
 } from "../settings/sidebar_prefs.mjs";
-import { SETTINGS_PAGE_SECTIONS } from "./layout.mjs";
 
 const PREF_DOMAIN = "second-sidebar.";
 // Opened outside the browser (as a file), the page keeps its values here.
@@ -296,20 +302,434 @@ function renderPreview() {
   preview.replaceChildren(h("div", { class: "p-page" }), sidebar, panel);
 }
 
+/* ---------- the sidebar ---------- */
+
+/**
+ * What the sidebar offers this page: the one in the window this tab is in,
+ * or else in any window.
+ *
+ * @returns {object?} SettingsPageController's `SecondSidebarSettingsPage`
+ */
+function sidebar() {
+  if (!inBrowser) {
+    return null;
+  }
+  const own = window.browsingContext?.topChromeWindow;
+  if (own?.SecondSidebarSettingsPage) {
+    return own.SecondSidebarSettingsPage;
+  }
+  for (const win of Services.wm.getEnumerator("navigator:browser")) {
+    if (win.SecondSidebarSettingsPage) {
+      return win.SecondSidebarSettingsPage;
+    }
+  }
+  return null;
+}
+
+/**
+ * @param {string} id a status line's id
+ * @param {string} text "" to clear it
+ * @param {{error?: boolean}} [options]
+ */
+function setStatus(id, text, { error = false } = {}) {
+  const status = document.getElementById(id);
+  status.textContent = text;
+  status.classList.toggle("error", error);
+}
+
+/* ---------- keyboard shortcuts ---------- */
+
+// Keys that only go with another one.
+const MODIFIER_KEYS = [
+  "Alt",
+  "AltGraph",
+  "CapsLock",
+  "Control",
+  "Meta",
+  "OS",
+  "Shift",
+];
+
+/**
+ * @param {string} field
+ * @param {string} shortcut "" for none
+ */
+function saveShortcut(field, shortcut) {
+  try {
+    sidebar().setShortcut(field, shortcut);
+    setStatus("shortcut-status", "");
+  } catch (error) {
+    console.error("Second Sidebar: failed to set a shortcut", error);
+    setStatus(
+      "shortcut-status",
+      "The shortcut couldn't be saved. See the Browser Console for details.",
+      { error: true },
+    );
+  }
+}
+
+/**
+ * Records the keys pressed in a shortcut box, as Edit web panel does:
+ * Escape too, and by the keys' places on the keyboard.
+ *
+ * @param {KeyboardEvent} event
+ * @param {string} field
+ */
+function recordShortcut(event, field) {
+  if (MODIFIER_KEYS.includes(event.key)) {
+    return; // Wait for the key they go with.
+  }
+  if (
+    event.key === "Tab" &&
+    !event.altKey &&
+    !event.ctrlKey &&
+    !event.metaKey
+  ) {
+    return; // Leaves the box.
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  const plain =
+    !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
+  if (plain && (event.key === "Backspace" || event.key === "Delete")) {
+    saveShortcut(field, "");
+    return;
+  }
+  const api = sidebar();
+  if (!api) {
+    return;
+  }
+  const shortcut = getShortcutPartsFromEvent(event).join("+");
+  if (api.isShortcutBusy(field, shortcut, event)) {
+    setStatus(
+      "shortcut-status",
+      `${shortcut} is already a shortcut of the sidebar or of a web panel.`,
+      { error: true },
+    );
+    return;
+  }
+  saveShortcut(field, shortcut);
+}
+
+function renderShortcuts() {
+  const container = document.getElementById("shortcuts");
+  if (!container.childElementCount) {
+    container.append(
+      ...SETTINGS_PAGE_SHORTCUTS.map((control) =>
+        h(
+          "div",
+          { class: "option", "data-shortcut": control.field },
+          h(
+            "span",
+            { class: "option-text" },
+            h("span", { class: "option-title" }, control.title),
+            h("span", { class: "muted" }, control.text),
+          ),
+          h(
+            "span",
+            { class: "shortcut" },
+            h("input", {
+              type: "text",
+              readonly: true,
+              [SHORTCUT_INPUT_ATTRIBUTE]: true,
+              placeholder: "Not set",
+              "aria-label": control.title,
+              onkeydown: (event) => recordShortcut(event, control.field),
+              onfocus: (event) => (event.target.placeholder = "Press keys…"),
+              onblur: (event) => (event.target.placeholder = "Not set"),
+            }),
+            h(
+              "button",
+              {
+                type: "button",
+                title: "Clear",
+                "aria-label": `Clear: ${control.title}`,
+                onclick: () => saveShortcut(control.field, ""),
+              },
+              "✕",
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  // Updated in place, so a box keeps the focus.
+  const api = sidebar();
+  const shortcuts = api?.getShortcuts() ?? {};
+  for (const control of SETTINGS_PAGE_SHORTCUTS) {
+    const row = container.querySelector(`[data-shortcut="${control.field}"]`);
+    const shortcut = shortcuts[control.field] ?? "";
+    const input = row.querySelector("input");
+    input.value = shortcut;
+    input.disabled = !api;
+    row.querySelector("button").hidden = !shortcut;
+  }
+}
+
+/* ---------- backup ---------- */
+
+// A backup is a few kilobytes; anything much bigger isn't one.
+const MAX_BACKUP_SIZE = 10 * 1024 * 1024;
+
+const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
+
+/**
+ * @param {{sidebar: boolean, webPanels: boolean}} parts
+ * @param {number} webPanels how many
+ * @returns {string} e.g. "the sidebar settings and 3 web panels"
+ */
+function describeParts(parts, webPanels) {
+  return [
+    parts.sidebar && "the sidebar settings",
+    parts.webPanels && plural(webPanels, "web panel"),
+  ]
+    .filter(Boolean)
+    .join(" and ");
+}
+
+const backupDialog = document.getElementById("backup-dialog");
+
+/**
+ * Asks which parts of the settings to export, or to restore from a backup.
+ *
+ * @param {object} options
+ * @param {string} options.title
+ * @param {string} options.text
+ * @param {string?} options.sidebar what the sidebar settings switch does,
+ *   null to leave it out
+ * @param {string?} options.webPanels the same for web panels
+ * @param {string} options.note
+ * @param {string} options.ok the button's label
+ * @returns {Promise<{sidebar: boolean, webPanels: boolean}?>} the parts
+ *   chosen, null if cancelled
+ */
+function askParts({ title, text, sidebar, webPanels, note, ok }) {
+  document.getElementById("backup-dialog-title").textContent = title;
+  document.getElementById("backup-dialog-text").textContent = text;
+  document.getElementById("backup-dialog-note").textContent = note;
+  const okButton = document.getElementById("backup-dialog-ok");
+  okButton.textContent = ok;
+  const switches = Object.entries({
+    sidebar: ["backup-sidebar", sidebar],
+    webPanels: ["backup-web-panels", webPanels],
+  }).map(([part, [id, description]]) => {
+    const row = document.getElementById(id);
+    row.hidden = description === null;
+    row.querySelector(".muted").textContent = description ?? "";
+    const input = row.querySelector("input");
+    input.checked = description !== null;
+    return [part, input];
+  });
+  // At least one, or there's nothing to do.
+  const update = () =>
+    (okButton.disabled = !switches.some(([, input]) => input.checked));
+  for (const [, input] of switches) {
+    input.onchange = update;
+  }
+  update();
+
+  backupDialog.returnValue = "";
+  backupDialog.showModal();
+  return new Promise((resolve) =>
+    backupDialog.addEventListener(
+      "close",
+      () =>
+        resolve(
+          backupDialog.returnValue === "ok"
+            ? Object.fromEntries(
+                switches.map(([part, input]) => [part, input.checked]),
+              )
+            : null,
+        ),
+      { once: true },
+    ),
+  );
+}
+
+/**
+ * Where to save a backup, picked in the browser's Save dialog (a chrome://
+ * page can't start a download with <a download>).
+ *
+ * @param {string} name the suggested file name
+ * @returns {Promise<string?>} its path, null if cancelled
+ */
+function pickSaveFile(name) {
+  const { nsIFilePicker } = Ci;
+  const picker = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+  picker.init(
+    window.browsingContext,
+    "Export Second Sidebar settings",
+    nsIFilePicker.modeSave,
+  );
+  picker.defaultString = name;
+  picker.defaultExtension = "json";
+  picker.appendFilter("JSON", "*.json");
+  return new Promise((resolve) =>
+    picker.open((result) =>
+      resolve(result === nsIFilePicker.returnCancel ? null : picker.file.path),
+    ),
+  );
+}
+
+async function exportBackup() {
+  const api = sidebar();
+  if (!api) {
+    return;
+  }
+  const count = api.exportSettings({ sidebar: false, webPanels: true })
+    .webPanels.length;
+  const parts = await askParts({
+    title: "Export settings",
+    text: "Choose what to save in the backup.",
+    sidebar: "The settings on this page, keyboard shortcuts included.",
+    webPanels: count
+      ? `Your ${plural(count, "web panel")}, each with its own settings, in the order of their buttons.`
+      : "You have no web panels yet.",
+    note: "",
+    ok: "Export…",
+  });
+  if (!parts) {
+    return;
+  }
+  let path;
+  try {
+    const data = api.exportSettings(parts);
+    path = await pickSaveFile(
+      `second-sidebar-settings-${new Date().toISOString().slice(0, 10)}.json`,
+    );
+    if (!path) {
+      return;
+    }
+    await IOUtils.writeUTF8(path, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("Second Sidebar: failed to export settings", error);
+    setStatus(
+      "backup-status",
+      "The backup couldn't be saved. See the Browser Console for details.",
+      { error: true },
+    );
+    return;
+  }
+  setStatus(
+    "backup-status",
+    `Exported ${describeParts(parts, count)} to ${PathUtils.filename(path)}.`,
+  );
+}
+
+/**
+ * @param {File} file
+ */
+async function importBackup(file) {
+  const api = sidebar();
+  if (!api) {
+    return;
+  }
+  let data;
+  let contents;
+  try {
+    if (file.size > MAX_BACKUP_SIZE) {
+      throw new Error("it's too big to be a backup");
+    }
+    data = JSON.parse(await file.text());
+    contents = api.readBackup(data);
+  } catch (error) {
+    setStatus("backup-status", `Can't import ${file.name}: ${error.message}.`, {
+      error: true,
+    });
+    return;
+  }
+
+  const { invalidSettings } = contents;
+  let note =
+    "They apply after the browser restarts. Until then, changes to the sidebar and web panels aren't saved.";
+  if (invalidSettings.length > 0) {
+    console.warn(
+      "Second Sidebar: the backup has settings with invalid values, which get their defaults:",
+      invalidSettings,
+    );
+    note = `${
+      invalidSettings.length === 1
+        ? "One setting in it has a value this version can't use; it gets its default"
+        : `${invalidSettings.length} settings in it have values this version can't use; they get their defaults`
+    } (listed in the Browser Console). ${note}`;
+  }
+  const exportedAt = Date.parse(data.exportedAt);
+  const parts = await askParts({
+    title: "Import settings",
+    text: `Choose what to restore from ${file.name}${
+      Number.isNaN(exportedAt)
+        ? ""
+        : `, saved ${new Date(exportedAt).toLocaleString()}`
+    }.`,
+    sidebar: contents.sidebar
+      ? "Replace the settings on this page and the keyboard shortcuts with the backup's."
+      : null,
+    webPanels:
+      contents.webPanels === null
+        ? null
+        : `Replace your web panels with the backup's ${plural(contents.webPanels, "web panel")}.`,
+    note,
+    ok: "Import",
+  });
+  if (!parts) {
+    return;
+  }
+  try {
+    await api.restoreBackup(data, parts);
+  } catch (error) {
+    console.error("Second Sidebar: failed to import settings", error);
+    setStatus(
+      "backup-status",
+      "The settings couldn't be written. See the Browser Console for details. Restart the browser before changing any settings: until then, changes to the sidebar and web panels aren't saved.",
+      { error: true },
+    );
+    return;
+  }
+  setStatus(
+    "backup-status",
+    `Imported ${describeParts(parts, contents.webPanels ?? 0)} from ${file.name}.`,
+  );
+  document.getElementById("restart-banner").hidden = false;
+}
+
 /* ---------- page ---------- */
 
 function render() {
   renderSections();
+  renderShortcuts();
   renderPreview();
 }
 
 const missing = SETTINGS_PAGE_SECTIONS.flatMap((s) => s.controls).some(
   (control) => read(control.pref) === undefined,
 );
-document.getElementById("not-running").hidden = !inBrowser || !missing;
+document.getElementById("not-running").hidden =
+  !inBrowser || (!missing && sidebar() !== null);
+
+for (const id of ["backup-export", "backup-import"]) {
+  document.getElementById(id).disabled = !sidebar();
+}
+document
+  .getElementById("backup-export")
+  .addEventListener("click", exportBackup);
+const backupFile = document.getElementById("backup-file");
+document
+  .getElementById("backup-import")
+  .addEventListener("click", () => backupFile.click());
+backupFile.addEventListener("change", () => {
+  const [file] = backupFile.files;
+  // Picking the same file again must fire "change" again.
+  backupFile.value = "";
+  if (file) {
+    importBackup(file);
+  }
+});
+document
+  .getElementById("restart")
+  .addEventListener("click", () => sidebar()?.restart());
 
 if (inBrowser) {
-  // Changes made elsewhere: another window, the sidebar's popup, Sine.
+  // Changes made elsewhere: another window or settings page, Sine.
   const observer = { observe: () => render() };
   Services.prefs.addObserver(PREF_DOMAIN, observer);
   window.addEventListener(

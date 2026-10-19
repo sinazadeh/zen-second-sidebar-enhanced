@@ -14,9 +14,9 @@ const readJSON = async (path) =>
 const sinePrefs = await readJSON("../preferences.json");
 const theme = await readJSON("../theme.json");
 
-// Keyboard shortcuts need the settings popup's key capture, so they have no
-// pref of their own.
-const POPUP_ONLY_FIELDS = [
+// Keyboard shortcuts need the settings page's key capture, so they have no
+// pref of their own (the page sets them through SettingsPageController).
+const SHORTCUT_FIELDS = [
   "sidebarWidgetShortcut",
   "lastWebPanelShortcut",
   "nextWebPanelShortcut",
@@ -27,7 +27,7 @@ const controls = sinePrefs.filter((pref) => pref.type !== "separator");
 
 test("every sidebar setting except keyboard shortcuts has a pref", () => {
   const fields = Object.keys(defaults).filter(
-    (field) => !POPUP_ONLY_FIELDS.includes(field),
+    (field) => !SHORTCUT_FIELDS.includes(field),
   );
   assert.deepEqual(
     SIDEBAR_PREFS.map((entry) => entry.field).sort(),

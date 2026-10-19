@@ -1,9 +1,16 @@
+import "./gecko_stubs.mjs";
+
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-const { SETTINGS_PAGE_SECTIONS } =
+const { SETTINGS_PAGE_SECTIONS, SETTINGS_PAGE_SHORTCUTS } =
   await import("../src/second_sidebar/settings_page/layout.mjs");
+const { SidebarSettings } =
+  await import("../src/second_sidebar/settings/sidebar_settings.mjs");
+const { SIDEBAR_FIELD_EVENTS } =
+  await import("../src/second_sidebar/controllers/sidebar_fields.mjs");
 const { SIDEBAR_PREFS } =
   await import("../src/second_sidebar/settings/sidebar_prefs.mjs");
 
@@ -20,8 +27,7 @@ test("the settings page has one control per sidebar pref", () => {
   );
 });
 
-test("the settings page lists the prefs in the settings popup's order", () => {
-  // SIDEBAR_PREFS follows the popup, and the page follows both.
+test("the settings page lists the prefs in SIDEBAR_PREFS's order", () => {
   assert.deepEqual(
     controls.map((control) => control.pref),
     SIDEBAR_PREFS.map((entry) => entry.pref),
@@ -72,4 +78,44 @@ test("the settings page and the files it loads exist", async () => {
     "utf8",
   );
   assert.match(controller, /"\.\.\/settings_page\/settings\.html"/);
+});
+
+test("the shortcuts card has each of the sidebar's keyboard shortcuts", () => {
+  const fields = SETTINGS_PAGE_SHORTCUTS.map((shortcut) => shortcut.field);
+  assert.deepEqual(
+    [...fields].sort(),
+    Object.keys(new SidebarSettings({}))
+      .filter((field) => field.endsWith("Shortcut"))
+      .sort(),
+  );
+  for (const shortcut of SETTINGS_PAGE_SHORTCUTS) {
+    assert.ok(shortcut.title && shortcut.text, shortcut.field);
+    // How SettingsPageController#setShortcut applies it.
+    assert.ok(
+      shortcut.field === "sidebarWidgetShortcut" ||
+        shortcut.field in SIDEBAR_FIELD_EVENTS,
+      shortcut.field,
+    );
+  }
+
+  // SettingsPageController can't be imported in Node: its table of them,
+  // and the busy checks it names, are read from the sources.
+  const read = (path) =>
+    readFileSync(
+      new URL(`../src/second_sidebar/${path}`, import.meta.url),
+      "utf8",
+    );
+  const table = read("controllers/settings_page.mjs").match(
+    /const SHORTCUT_FIELDS = \{([^}]*)\};/,
+  );
+  assert.ok(table, "SHORTCUT_FIELDS");
+  const entries = [...table[1].matchAll(/(\w+): "(\w+)"/g)];
+  assert.deepEqual(
+    entries.map(([, field]) => field).sort(),
+    [...fields].sort(),
+  );
+  const shortcuts = read("controllers/shortcuts.mjs");
+  for (const [, , method] of entries) {
+    assert.match(shortcuts, new RegExp(`\\n {2}${method}\\(`), method);
+  }
 });

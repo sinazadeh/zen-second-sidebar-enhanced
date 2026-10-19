@@ -6,6 +6,21 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-10-19
+
+### Added
+
+- The settings page has the sidebar's keyboard shortcuts and a **Backup**
+  card. **Export…** asks whether to save the sidebar settings, your web
+  panels or both; **Import…** shows what a backup holds and asks what to
+  restore from it. Backups keep web panels in the order of their buttons.
+
+### Changed
+
+- **Sidebar settings** (right-click the sidebar) opens the settings page,
+  which now has every sidebar setting. The settings popup and the separate
+  **Settings page...** item are gone.
+
 ## [1.12.1] - 2026-10-19
 
 ### Fixed

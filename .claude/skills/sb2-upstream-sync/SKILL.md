@@ -72,15 +72,21 @@ upstream improvements automatically. If upstream ever changes how
 re-apply the loader-portability treatment on top of upstream's version
 rather than taking upstream's as-is.
 
-The settings popups' callbacks are generated here from `WEB_PANEL_FIELDS`
-(`controllers/web_panel_fields.mjs`) and `SIDEBAR_FIELD_EVENTS`
-(`controllers/sidebar_fields.mjs`), which also bind the simple web panel
-settings in `WebPanelsController#bindFields` and give the mirrored prefs
-their events. When upstream adds a setting's callback to
-`controllers/web_panel_edit.mjs` or `controllers/sidebar_main_settings.mjs`,
-or a `#bindSimpleSetting` call to `web_panels.mjs`, add a table entry
-instead of keeping theirs; `tests/settings_wiring.test.mjs` fails until the
-popup's new callback has one.
+Edit web panel's callbacks are generated here from `WEB_PANEL_FIELDS`
+(`controllers/web_panel_fields.mjs`), which also binds the simple web panel
+settings in `WebPanelsController#bindFields`; `SIDEBAR_FIELD_EVENTS`
+(`controllers/sidebar_fields.mjs`) gives the mirrored sidebar prefs their
+events. When upstream adds a setting's callback to
+`controllers/web_panel_edit.mjs`, or a `#bindSimpleSetting` call to
+`web_panels.mjs`, add a table entry instead of keeping theirs;
+`tests/settings_wiring.test.mjs` fails until the popup's new callback has
+one.
+
+The fork removed upstream's sidebar settings popup
+(`xul/sidebar_main_popup_settings.mjs`, `controllers/sidebar_main_settings.mjs`):
+the settings page replaces it. Keep their deletion in a merge, and bring a
+sidebar setting upstream adds to the page instead, through the steps in
+[sb2-settings](../sb2-settings/SKILL.md).
 
 Upstream's web panel `mobile` setting (a toggle sending a fixed mobile
 user agent) is `userAgent`/`customUserAgent` here, with its choices in

@@ -873,7 +873,7 @@ export class WebPanelsController {
 
   saveSettings() {
     // Set while an import is pending a restart (see
-    // SidebarMainSettingsController#importSettings): this window's panels
+    // SettingsPageController#restoreBackup): this window's panels
     // predate the import, so saving them would silently undo it.
     if (this.#settingsSavesSuspended) {
       Logger.debug("Web panels settings save skipped: import pending restart");

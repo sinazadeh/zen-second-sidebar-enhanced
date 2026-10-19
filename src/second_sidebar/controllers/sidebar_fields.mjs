@@ -1,13 +1,13 @@
 // How each sidebar setting change reaches every window's sidebar. Keep this
 // module free of browser globals (events are named by their key in
 // SidebarEvents): tests/settings_wiring.test.mjs checks it in Node against
-// the settings popup's callbacks, the events and the mirrored prefs.
+// the settings, the events and the mirrored prefs.
 
 /**
  * The event, in SidebarEvents, that applies each sidebar setting, sent as
- * `{ value }` by the settings popup (SidebarMainSettingsController) and for a
- * change to its mirrored pref (SidebarPrefsController). Keyed by setting,
- * which is also the popup's callback name.
+ * `{ value }` for a change to its mirrored pref (SidebarPrefsController) or,
+ * for a keyboard shortcut, by SettingsPageController#setShortcut. Keyed by
+ * setting.
  *
  * @type {Object<string, string>}
  */
@@ -37,7 +37,8 @@ export const SIDEBAR_FIELD_EVENTS = {
 
 /**
  * The settings sent together in one EDIT_SIDEBAR_VISIBILITY event (with
- * sidebarWidgetShortcut), in the popup's `visibility` callback's order.
+ * sidebarWidgetShortcut), in SidebarController#setVisibilitySettings's
+ * order.
  */
 export const VISIBILITY_FIELDS = [
   "autoHideSidebar",

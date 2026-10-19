@@ -14,7 +14,6 @@ import { SidebarBoxArea } from "./xul/sidebar_box_area.mjs";
 import { SidebarCollapseButton } from "./xul/sidebar_collapse_button.mjs";
 import { SidebarMain } from "./xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "./xul/sidebar_main_menupopup.mjs";
-import { SidebarMainPopupSettings } from "./xul/sidebar_main_popup_settings.mjs";
 import { SidebarResizer } from "./xul/sidebar_resizer.mjs";
 import { SidebarSplitter } from "./xul/sidebar_splitter.mjs";
 import { SidebarToolbar } from "./xul/sidebar_toolbar.mjs";
@@ -115,7 +114,6 @@ export class SidebarElements {
     this.webPanelPopupEdit = new WebPanelPopupEdit();
     this.webPanelPopupMore = new WebPanelPopupMore();
     this.webPanelPopupDelete = new WebPanelPopupDelete();
-    this.sidebarMainPopupSettings = new SidebarMainPopupSettings();
     this.sidebarMainMenuPopup = new SidebarMainMenuPopup();
 
     const mainPopupSet = new XULElement({
@@ -128,7 +126,6 @@ export class SidebarElements {
       this.webPanelPopupEdit,
       this.webPanelPopupDelete,
       this.sidebarMainMenuPopup,
-      this.sidebarMainPopupSettings,
     );
     this.sidebarToolbar.moreButton.appendChild(this.webPanelPopupMore);
   }

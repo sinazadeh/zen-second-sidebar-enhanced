@@ -24,7 +24,7 @@ Open `AGENTS.md`, then each matching skill before judging the code:
 
 | Diff touches                                                        | Skill                                               |
 | ------------------------------------------------------------------- | --------------------------------------------------- |
-| `settings/`, settings popups, `preferences.json`, `events.mjs`      | `.claude/skills/sb2-settings/SKILL.md`              |
+| `settings/`, `settings_page/`, `preferences.json`, `events.mjs`     | `.claude/skills/sb2-settings/SKILL.md`              |
 | `controllers/web_panel*.mjs`, `xul/web_panels_browser.mjs`, tabs    | `.claude/skills/sb2-web-panels/SKILL.md`            |
 | `src/second_sidebar.uc.mjs`, `theme.json`, asset or file resolution | `.claude/skills/sb2-loader-portability/SKILL.md`    |
 | `patchers/`, `utils/files.mjs`                                      | `.claude/skills/sb2-source-patches/SKILL.md`        |

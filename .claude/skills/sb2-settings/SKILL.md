@@ -1,6 +1,6 @@
 ---
 name: sb2-settings
-description: Adding or changing Second Sidebar settings end to end - sidebar settings and their mirrored prefs, web panel edit settings, change reverters, settings classes, storage, cross-window events and settings import/export. Use when adding, renaming or removing a setting, or changing settings/, the settings popups, preferences.json, events.mjs or settings import/export.
+description: Adding or changing Second Sidebar settings end to end - sidebar settings and their mirrored prefs, the settings page, web panel edit settings, change reverters, settings classes, storage, cross-window events and settings import/export. Use when adding, renaming or removing a setting, or changing settings/, settings_page/, the Edit web panel popup, preferences.json, events.mjs or settings import/export.
 ---
 
 # Settings
@@ -14,23 +14,22 @@ changing the export format or anything that writes settings.
 
 Follow an existing setting through these files under `src/second_sidebar/`:
 
-- Sidebar: `xul/sidebar_main_popup_settings.mjs` → an entry in
-  `SIDEBAR_FIELD_EVENTS` (`controllers/sidebar_fields.mjs`), which both the
-  popup's callbacks (`controllers/sidebar_main_settings.mjs`) and a change to
-  its mirrored pref (`controllers/sidebar_prefs.mjs`) send it through →
+- Sidebar: `settings/sidebar_settings.mjs` → a pref in
+  `settings/sidebar_prefs.mjs` → an entry in `SIDEBAR_FIELD_EVENTS`
+  (`controllers/sidebar_fields.mjs`), which a change to the pref
+  (`controllers/sidebar_prefs.mjs`) is sent through →
   `controllers/events.mjs` → a `listenEvent` in the receiving controller
-  (`controllers/sidebar.mjs`) → `settings/sidebar_settings.mjs`. Also give it
-  a pref in `settings/sidebar_prefs.mjs`, a control in the root
-  `preferences.json` (Sine's mod settings dialog) and one in
+  (`controllers/sidebar.mjs`). Give it a control in
   `settings_page/layout.mjs` (the settings page, with a title, a sentence and
-  short labels for its values); `tests/sidebar_prefs.test.mjs` and
-  `tests/settings_page.test.mjs` fail until they match `SidebarSettings`,
-  and `tests/settings_wiring.test.mjs` until the popup's callback has an
-  event. Only settings that need the popup's
-  own input handling (keyboard shortcuts) are left out: list a new shortcut
-  in `POPUP_ONLY_FIELDS` there instead, and in
-  `Shortcuts#getSidebarShortcuts` (`controllers/shortcuts.mjs`) so it's
-  checked against the other shortcuts.
+  short labels for its values) and in the root `preferences.json` (Sine's mod
+  settings dialog); `tests/sidebar_prefs.test.mjs`,
+  `tests/settings_page.test.mjs` and `tests/settings_wiring.test.mjs` fail
+  until they all match `SidebarSettings`. Keyboard shortcuts have no pref
+  (Sine can't record keys): a new one goes in `SHORTCUT_FIELDS` in that
+  test, in `SETTINGS_PAGE_SHORTCUTS` (`settings_page/layout.mjs`), in
+  `SHORTCUT_FIELDS` with its busy check (`controllers/settings_page.mjs`)
+  and in `Shortcuts#getSidebarShortcuts` (`controllers/shortcuts.mjs`), so
+  it's checked against the other shortcuts.
 - Panel editing: `xul/web_panel_popup_edit.mjs` → an entry in
   `WEB_PANEL_FIELDS` (`controllers/web_panel_fields.mjs`: its event, the
   values in the popup callback's order, and its `WebPanelController` setter)
@@ -40,12 +39,12 @@ Follow an existing setting through these files under `src/second_sidebar/`:
   new-panel popup/controller when the setting should be available during
   creation.
 
-Both settings dialogs apply changes live, and Save persists them. Closing
+Edit web panel applies changes live, and Save persists them. Closing
 without saving (Cancel, Escape, clicking outside) asks for confirmation when
 something changed, then rolls each changed field back through the popup's
 `#getChangeReverters()` list (upstream code, so keep it close to upstream's
-shape to ease merges). When adding a setting to either popup, add its
-reverter there too, or discarding changes will leave it applied.
+shape to ease merges). When adding a setting to it, add its reverter there
+too, or discarding changes will leave it applied.
 
 ## Wiring web panel settings
 
@@ -77,17 +76,11 @@ reverter there too, or discarding changes will leave it applied.
 
 ## The settings page
 
-`settings_page/settings.html` is a chrome:// page opened in a tab
-(`controllers/settings_page.mjs`, from the main menu's **Settings page...**
-and Sine's gear button). It only reads and writes the mirrored prefs, so
-`SidebarPrefsController` applies and saves its changes in every window, as
-for Sine's dialog; keyboard shortcuts and backup stay in the popup. Its
-preview is drawn from the prefs alone. Keep its look in step with Tab
-Groups' settings page, which it's modeled on (credited in the README).
-The gear is taken over by a capture click listener on each about:preferences
-document, remembered by document: `browser.contentWindow` is the tab's window
-proxy, the same for every page the tab loads, so keying on it missed a
-reloaded or session-restored page.
+`settings_page/` is the only place the sidebar settings are edited (the fork
+removed upstream's settings popup), opened by **Sidebar settings** and Sine's
+gear. Its settings write the mirrored prefs; shortcuts and backups go
+through the browser window. Read [the settings page](references/settings-page.md)
+before changing it.
 
 ## Storage
 
