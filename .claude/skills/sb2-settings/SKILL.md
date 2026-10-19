@@ -84,6 +84,10 @@ and Sine's gear button). It only reads and writes the mirrored prefs, so
 for Sine's dialog; keyboard shortcuts and backup stay in the popup. Its
 preview is drawn from the prefs alone. Keep its look in step with Tab
 Groups' settings page, which it's modeled on (credited in the README).
+The gear is taken over by a capture click listener on each about:preferences
+document, remembered by document: `browser.contentWindow` is the tab's window
+proxy, the same for every page the tab loads, so keying on it missed a
+reloaded or session-restored page.
 
 ## Storage
 

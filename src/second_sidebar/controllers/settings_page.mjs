@@ -17,7 +17,7 @@ const SINE_MOD_ID = "zen-second-sidebar";
  * Sine's mod list, instead of Sine's own settings dialog.
  */
 export class SettingsPageController {
-  /** @type {WeakSet<Window>} settings pages already hooked */
+  /** @type {WeakSet<Document>} settings pages already hooked */
   #hooked = new WeakSet();
 
   constructor() {
@@ -68,21 +68,26 @@ export class SettingsPageController {
    * @param {object} browser a <browser> element
    */
   #hookSettingsPage(browser) {
-    let win;
+    let page;
     try {
-      win = browser.contentWindow;
+      page = browser.contentDocument;
     } catch {
       return; // A page in a content process: not about:preferences.
     }
+    // The page's document, not browser.contentWindow: that's the tab's
+    // window proxy, the same object for every page the tab loads, so after
+    // a reload, or in a tab restored from the last session (which gives its
+    // address before its page has loaded), the new page was taken for
+    // hooked and Sine's own dialog opened.
     if (
-      !win ||
-      this.#hooked.has(win) ||
-      !/^about:(preferences|settings)/.test(String(win.location?.href))
+      !page ||
+      this.#hooked.has(page) ||
+      !/^about:(preferences|settings)/.test(page.documentURI)
     ) {
       return;
     }
-    this.#hooked.add(win);
-    win.addEventListener(
+    this.#hooked.add(page);
+    page.addEventListener(
       "click",
       (event) => {
         const button = event.target.closest?.(".sineItemConfigureButton");

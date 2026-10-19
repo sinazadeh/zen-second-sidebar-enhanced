@@ -52,7 +52,10 @@ Select manual scenarios according to the change:
   the sidebar still loads there.
 - **Theming**: Light/dark themes, Zen accent surfaces, and conditional theme tokens.
 - **Settings page**: open it from **Settings page...** and from Sine's gear
-  button (a second click selects the same tab); change settings there and in
+  button (a second click selects the same tab), also after reloading
+  about:preferences and in one restored from the last session; to run real
+  Sine headless, see [Sine test profile](references/sine-test-profile.md).
+  Change settings there and in
   the popup and check each follows the other, in a second window too; check
   the preview and both color schemes.
 

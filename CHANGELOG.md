@@ -6,6 +6,12 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Fixed
+
+- Sine's gear button for this mod opened Sine's own settings dialog instead
+  of the settings page after **about:preferences** was reloaded, or when it
+  was a tab restored from the last session.
+
 ## [1.12.0] - 2026-10-19
 
 ### Added
