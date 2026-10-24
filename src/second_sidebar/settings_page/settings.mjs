@@ -20,6 +20,17 @@ const PREF_DOMAIN = "second-sidebar.";
 const inBrowser = typeof Services !== "undefined";
 const sampleValues = new Map();
 
+// A system-principal chrome:// page cannot directly navigate a new content
+// tab to an https: URL. Let the browser window open these known web links;
+// ordinary anchors remain the fallback when the page is opened as a file.
+for (const link of document.querySelectorAll(".support-link")) {
+  link.addEventListener("click", (event) => {
+    if (sidebar()?.openSupportPage(link.href)) {
+      event.preventDefault();
+    }
+  });
+}
+
 // Padding of the sidebar and offset of floating panels for each size, in
 // the preview.
 const SIZE_PIXELS = {

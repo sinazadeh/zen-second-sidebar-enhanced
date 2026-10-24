@@ -6,6 +6,13 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.1] - 2026-10-24
+
+### Added
+
+- Links below the settings-page introduction to star the project on GitHub or
+  sponsor its continued development.
+
 ## [1.13.0] - 2026-10-19
 
 ### Added

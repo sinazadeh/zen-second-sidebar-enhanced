@@ -21,6 +21,10 @@ const SETTINGS_PAGE_URL = new URL(
 ).href;
 // This mod's id in Sine (theme.json).
 const SINE_MOD_ID = "zen-second-sidebar";
+const SUPPORT_URLS = new Set([
+  "https://github.com/sinazadeh/zen-second-sidebar-enhanced",
+  "https://github.com/sponsors/sinazadeh",
+]);
 
 // The sidebar's keyboard shortcuts, each with the Shortcuts method saying
 // whether a key combination is already taken by something else.
@@ -58,6 +62,7 @@ export class SettingsPageController {
     this.#hookSineSettingsButton();
     window.SecondSidebarSettingsPage = Object.freeze({
       getShortcuts: () => this.getShortcuts(),
+      openSupportPage: (url) => this.openSupportPage(url),
       isShortcutBusy: (field, shortcut, event) =>
         this.isShortcutBusy(field, shortcut, event),
       setShortcut: (field, shortcut) => this.setShortcut(field, shortcut),
@@ -78,6 +83,24 @@ export class SettingsPageController {
     );
     gBrowser.selectedTab =
       existing ?? gBrowser.addTrustedTab(SETTINGS_PAGE_URL);
+  }
+
+  /**
+   * Opens one of the settings page's known web links in a content tab.
+   *
+   * @param {string} url
+   * @returns {boolean} whether the URL was opened
+   */
+  openSupportPage(url) {
+    const browserWindow = new WindowWrapper().raw;
+    if (
+      !SUPPORT_URLS.has(url) ||
+      typeof browserWindow.openTrustedLinkIn !== "function"
+    ) {
+      return false;
+    }
+    browserWindow.openTrustedLinkIn(url, "tab", { relatedToCurrent: true });
+    return true;
   }
 
   /**

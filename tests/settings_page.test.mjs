@@ -18,6 +18,9 @@ const PAGE_DIR = new URL(
   "../src/second_sidebar/settings_page/",
   import.meta.url,
 );
+const theme = JSON.parse(
+  await readFile(new URL("../theme.json", import.meta.url), "utf8"),
+);
 const controls = SETTINGS_PAGE_SECTIONS.flatMap((section) => section.controls);
 
 test("the settings page has one control per sidebar pref", () => {
@@ -78,6 +81,26 @@ test("the settings page and the files it loads exist", async () => {
     "utf8",
   );
   assert.match(controller, /"\.\.\/settings_page\/settings\.html"/);
+});
+
+test("the settings page links to the project and its configured sponsor", async () => {
+  const [html, pageScript, controller] = await Promise.all([
+    readFile(new URL("settings.html", PAGE_DIR), "utf8"),
+    readFile(new URL("settings.mjs", PAGE_DIR), "utf8"),
+    readFile(
+      new URL(
+        "../src/second_sidebar/controllers/settings_page.mjs",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+  assert.match(html, new RegExp(`href="${theme.homepage}"`));
+  assert.match(html, /href="https:\/\/github\.com\/sponsors\/sinazadeh"/);
+  assert.equal((html.match(/rel="noopener noreferrer"/g) ?? []).length, 2);
+  assert.match(pageScript, /sidebar\(\)\?\.openSupportPage\(link\.href\)/);
+  assert.match(controller, /!SUPPORT_URLS\.has\(url\)/);
+  assert.match(controller, /browserWindow\.openTrustedLinkIn\(url, "tab"/);
 });
 
 test("the shortcuts card has each of the sidebar's keyboard shortcuts", () => {

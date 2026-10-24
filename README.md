@@ -19,6 +19,8 @@ A Zen userChrome.js script that brings a second sidebar with web panels like in 
 
 Everything you can do with web panels and the sidebar is listed under [Using it](#using-it) and [Settings](#settings). Changes in this fork are listed in the [changelog](CHANGELOG.md).
 
+Finding this useful? [Star the project](https://github.com/sinazadeh/zen-second-sidebar-enhanced) or [sponsor its continued development](https://github.com/sponsors/sinazadeh).
+
 <img width="2200" height="2131" alt="promo-rounded" src="https://github.com/user-attachments/assets/020ee8cf-1f3d-4184-98fe-889be89d6145" />
 
 ## Installation
