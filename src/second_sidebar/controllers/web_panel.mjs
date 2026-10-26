@@ -171,11 +171,17 @@ export class WebPanelController {
 
       clearTimeout(tooltipTimer);
       SidebarControllers.webPanelTooltipController.hidePopup();
-
-      if (this.isActive()) {
-        SidebarControllers.sidebarController.close();
+      if (
+        SidebarControllers.sidebarController.getWebPanelMiddleClickAction() ===
+        "unload"
+      ) {
+        if (this.isActive()) {
+          SidebarControllers.sidebarController.close();
+        }
+        this.unload();
+      } else {
+        this.openInNewTab(true);
       }
-      this.unload();
     });
 
     return button;

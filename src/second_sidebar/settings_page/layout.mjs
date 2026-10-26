@@ -124,6 +124,15 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Web panel button",
     controls: [
       {
+        pref: "second-sidebar.web-panel-middle-click-action",
+        title: "Middle-click action",
+        text: "What pressing a panel button with the middle mouse button does.",
+        choices: [
+          ["open-tab", "Open tab", "Open in a background tab"],
+          ["unload", "Unload", "Unload from memory"],
+        ],
+      },
+      {
         pref: "second-sidebar.container-indicator",
         title: "Container indicator",
         text: "A line in the container's color on buttons of panels in a container.",

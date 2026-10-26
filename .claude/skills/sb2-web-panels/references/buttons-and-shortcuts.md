@@ -9,7 +9,10 @@ Paths are relative to `src/second_sidebar/`.
 which closes it on **click**: pressing it must not close the panel, so it
 can be dragged, as pressing a selected tab keeps it selected. A drag fires
 no click, so dragging a closed panel's button opens it (like dragging a tab
-selects it) and dragging the open one leaves it open. Middle-click unloads.
+selects it) and dragging the open one leaves it open. Middle-click opens the
+panel's current page in a background tab, in the panel's container, by default;
+the sidebar's `webPanelMiddleClickAction` setting can make it unload instead.
+An unloaded panel opened in a tab uses the page it would load.
 
 ## Reordering
 

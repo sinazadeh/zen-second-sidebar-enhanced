@@ -220,6 +220,23 @@
   },
   {
     "type": "dropdown",
+    "property": "second-sidebar.web-panel-middle-click-action",
+    "label": "Middle-click action",
+    "placeholder": false,
+    "defaultValue": "open-tab",
+    "options": [
+      {
+        "value": "open-tab",
+        "label": "Open in Background Tab"
+      },
+      {
+        "value": "unload",
+        "label": "Unload from Memory"
+      }
+    ]
+  },
+  {
+    "type": "dropdown",
     "property": "second-sidebar.container-indicator",
     "label": "Container indicator",
     "placeholder": false,

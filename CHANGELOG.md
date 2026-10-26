@@ -6,6 +6,14 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.2] - 2026-10-26
+
+### Added
+
+- **Middle-click action** under **Sidebar settings → Web panel button**:
+  choose whether middle-clicking a panel button opens its current page in a
+  background tab, in the panel's container (the default), or unloads it.
+
 ## [1.13.1] - 2026-10-24
 
 ### Added

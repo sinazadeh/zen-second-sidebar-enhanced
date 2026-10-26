@@ -52,6 +52,8 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON: "edit_sidebar_auto_hide_back_button",
   EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON:
     "edit_sidebar_auto_hide_forward_button",
+  EDIT_SIDEBAR_WEB_PANEL_MIDDLE_CLICK_ACTION:
+    "edit_sidebar_web_panel_middle_click_action",
   EDIT_SIDEBAR_CONTAINER_BORDER: "edit_sidebar_container_border",
   EDIT_SIDEBAR_TOOLTIP: "edit_sidebar_tooltip",
   EDIT_SIDEBAR_TOOLTIP_FULL_URL: "edit_sidebar_tooltip_full_url",

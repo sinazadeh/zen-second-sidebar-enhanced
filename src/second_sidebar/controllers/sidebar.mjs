@@ -20,6 +20,7 @@ export class SidebarController {
   constructor() {
     this.#setupListeners();
 
+    this.webPanelMiddleClickAction = "open-tab";
     this.containerBorder = "left";
     this.autoHideSidebar = false;
     this.autoHideEdgeGap = true;
@@ -140,6 +141,13 @@ export class SidebarController {
       const value = event.detail.value;
       this.setContainerBorder(value);
     });
+
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_WEB_PANEL_MIDDLE_CLICK_ACTION,
+      (event) => {
+        this.setWebPanelMiddleClickAction(event.detail.value);
+      },
+    );
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_TOOLTIP, (event) => {
       const value = event.detail.value;
@@ -336,6 +344,20 @@ export class SidebarController {
   }
 
   /**
+   * @returns {string}
+   */
+  getWebPanelMiddleClickAction() {
+    return this.webPanelMiddleClickAction;
+  }
+
+  /**
+   * @param {string} value
+   */
+  setWebPanelMiddleClickAction(value) {
+    this.webPanelMiddleClickAction = value;
+  }
+
+  /**
    *
    * @param {string} value
    */
@@ -483,6 +505,7 @@ export class SidebarController {
     SidebarElements.sidebarToolbar.setAutoHideForwardButton(
       settings.autoHideForwardButton,
     );
+    this.setWebPanelMiddleClickAction(settings.webPanelMiddleClickAction);
     this.setContainerBorder(settings.containerBorder);
     this.setWebPanelTooltip(settings.tooltip);
     this.setWebPanelTooltipFullUrl(settings.tooltipFullUrl);
@@ -525,6 +548,7 @@ export class SidebarController {
         SidebarElements.sidebarToolbar.getAutoHideBackButton(),
       autoHideForwardButton:
         SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
+      webPanelMiddleClickAction: this.webPanelMiddleClickAction,
       containerBorder: this.containerBorder,
       tooltip: this.tooltip,
       tooltipFullUrl: this.tooltipFullUrl,

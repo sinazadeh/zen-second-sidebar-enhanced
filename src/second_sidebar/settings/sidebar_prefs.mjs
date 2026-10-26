@@ -66,6 +66,11 @@ export const SIDEBAR_PREFS = [
   },
   { field: "enableSidebarBoxHint", pref: "second-sidebar.show-geometry-hint" },
   {
+    field: "webPanelMiddleClickAction",
+    pref: "second-sidebar.web-panel-middle-click-action",
+    values: ["open-tab", "unload"],
+  },
+  {
     field: "containerBorder",
     pref: "second-sidebar.container-indicator",
     values: ["off", "left", "right", "top", "bottom", "around"],

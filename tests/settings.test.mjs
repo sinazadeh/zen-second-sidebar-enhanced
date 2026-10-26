@@ -22,6 +22,7 @@ test("SidebarSettings fills fields missing from older saves with defaults", () =
   assert.equal(settings.padding, "small");
   assert.equal(settings.autoHideSidebar, false);
   assert.equal(settings.hideToolbarAnimated, true);
+  assert.equal(settings.webPanelMiddleClickAction, "open-tab");
   assert.equal(settings.nextWebPanelShortcut, "");
   assert.equal(settings.previousWebPanelShortcut, "");
 });

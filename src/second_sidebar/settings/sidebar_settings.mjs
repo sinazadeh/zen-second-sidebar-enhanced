@@ -15,6 +15,7 @@ export class SidebarSettings {
    * @param {boolean} params.autoHideBackButton
    * @param {boolean} params.autoHideForwardButton
    * @param {string} params.containerBorder
+   * @param {string} params.webPanelMiddleClickAction
    * @param {string} params.tooltip
    * @param {boolean} params.tooltipFullUrl
    * @param {boolean} params.autoHideSidebar
@@ -42,6 +43,7 @@ export class SidebarSettings {
     autoHideBackButton = false,
     autoHideForwardButton = false,
     containerBorder = "left",
+    webPanelMiddleClickAction = "open-tab",
     tooltip = "titleandurl",
     tooltipFullUrl = false,
     autoHideSidebar = false,
@@ -68,6 +70,7 @@ export class SidebarSettings {
     this.autoHideBackButton = autoHideBackButton;
     this.autoHideForwardButton = autoHideForwardButton;
     this.containerBorder = containerBorder;
+    this.webPanelMiddleClickAction = webPanelMiddleClickAction;
     this.autoHideSidebar = autoHideSidebar;
     this.autoHideSidebarBehavior = autoHideSidebarBehavior;
     this.autoHideEdgeGap = autoHideEdgeGap;
