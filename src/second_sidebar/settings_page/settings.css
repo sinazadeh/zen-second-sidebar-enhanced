@@ -96,6 +96,10 @@ input {
   font-size: 13px;
   font-weight: 600;
 }
+.startup-cache-note a {
+  color: inherit;
+  text-decoration: underline;
+}
 
 .support-link {
   display: inline-flex;

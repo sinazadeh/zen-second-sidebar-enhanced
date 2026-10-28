@@ -23,6 +23,7 @@ const SETTINGS_PAGE_URL = new URL(
 // This mod's id in Sine (theme.json).
 const SINE_MOD_ID = "zen-second-sidebar";
 const SUPPORT_URLS = new Set([
+  "about:support",
   "https://github.com/sinazadeh/zen-second-sidebar-enhanced",
   "https://github.com/sponsors/sinazadeh",
 ]);
@@ -154,7 +155,7 @@ export class SettingsPageController {
   }
 
   /**
-   * Opens one of the settings page's known web links in a content tab.
+   * Opens one of the settings page's known links in a content tab.
    *
    * @param {string} url
    * @returns {boolean} whether the URL was opened

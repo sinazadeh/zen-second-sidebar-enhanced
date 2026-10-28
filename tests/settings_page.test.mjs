@@ -119,14 +119,23 @@ test("the settings page links to the project and its configured sponsor", async 
 });
 
 test("the settings page recommends clearing the startup cache after updates", async () => {
-  const [html, css] = await Promise.all([
+  const [html, css, controller] = await Promise.all([
     readFile(new URL("settings.html", PAGE_DIR), "utf8"),
     readFile(new URL("settings.css", PAGE_DIR), "utf8"),
+    readFile(
+      new URL(
+        "../src/second_sidebar/controllers/settings_page.mjs",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
   ]);
   assert.match(
     html,
     /class="startup-cache-note"[\s\S]*clear the startup cache after each update/,
   );
+  assert.match(html, /href="about:support"/);
+  assert.match(controller, /SUPPORT_URLS = new Set\(\[\s*"about:support"/);
   assert.match(css, /\.intro \.startup-cache-note[\s\S]*--warning-text/);
 });
 

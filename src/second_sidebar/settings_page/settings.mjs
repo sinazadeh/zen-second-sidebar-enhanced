@@ -18,7 +18,9 @@ let currentSettings = sampleSettings;
 // A system-principal chrome:// page cannot directly navigate a new content
 // tab to an https: URL. Let the browser window open these known web links;
 // ordinary anchors remain the fallback when the page is opened as a file.
-for (const link of document.querySelectorAll(".support-link")) {
+for (const link of document.querySelectorAll(
+  ".support-link, .settings-page-link",
+)) {
   link.addEventListener("click", (event) => {
     if (sidebar()?.openSupportPage(link.href)) {
       event.preventDefault();

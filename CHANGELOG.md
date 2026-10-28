@@ -6,6 +6,13 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.8] - 2026-10-28
+
+### Added
+
+- The startup-cache reminder links directly to `about:support`, where Zen's
+  startup cache can be cleared.
+
 ## [1.13.7] - 2026-10-28
 
 ### Added
