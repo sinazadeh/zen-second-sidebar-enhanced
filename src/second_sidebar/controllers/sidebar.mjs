@@ -24,6 +24,7 @@ export class SidebarController {
     this.containerBorder = "left";
     this.autoHideSidebar = false;
     this.autoHideEdgeGap = true;
+    this.autoHideOverlayGap = "small";
     this.lastWebPanelShortcut = "";
     this.nextWebPanelShortcut = "";
     this.previousWebPanelShortcut = "";
@@ -170,6 +171,10 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_EDGE_GAP, (event) => {
       this.setAutoHideEdgeGap(event.detail.value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_OVERLAY_GAP, (event) => {
+      this.setAutoHideOverlayGap(event.detail.value);
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT, (event) => {
@@ -444,6 +449,21 @@ export class SidebarController {
   }
 
   /**
+   * How far a Zen overlay sidebar sits inward from its normal edge. This
+   * leaves the page edge (and, on the right, its scrollbar) reachable.
+   *
+   * @param {string} value
+   */
+  setAutoHideOverlayGap(value) {
+    this.autoHideOverlayGap = value;
+    SidebarElements.sidebarMain.setAttribute("overlay-gap", value);
+    SidebarElements.sidebarMain.setProperty(
+      "--sb2-auto-hide-overlay-gap",
+      value === "off" ? "0px" : `var(--space-${value})`,
+    );
+  }
+
+  /**
    *
    * @returns {boolean}
    */
@@ -516,6 +536,7 @@ export class SidebarController {
       settings.sidebarWidgetShortcut,
     );
     this.setAutoHideEdgeGap(settings.autoHideEdgeGap);
+    this.setAutoHideOverlayGap(settings.autoHideOverlayGap);
     this.lastWebPanelShortcut = settings.lastWebPanelShortcut;
     this.nextWebPanelShortcut = settings.nextWebPanelShortcut;
     this.previousWebPanelShortcut = settings.previousWebPanelShortcut;
@@ -555,6 +576,7 @@ export class SidebarController {
       autoHideSidebar: this.autoHideSidebar,
       autoHideSidebarBehavior: this.autoHideSidebarBehavior,
       autoHideEdgeGap: this.autoHideEdgeGap,
+      autoHideOverlayGap: this.autoHideOverlayGap,
       sidebarWidgetHideWebPanel: this.sidebarWidgetHideWebPanel,
       sidebarWidgetShortcut: this.sidebarWidgetShortcut,
       lastWebPanelShortcut: this.lastWebPanelShortcut,
@@ -580,6 +602,5 @@ export class SidebarController {
     }
     const settings = this.dumpSettings();
     settings.save();
-    SidebarControllers.sidebarPrefsController.writePrefs(settings);
   }
 }

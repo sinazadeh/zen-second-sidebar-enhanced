@@ -15,7 +15,7 @@ their buttons (CustomizableUI placements), since `dumpSettings()` keeps
 creation order. `parseSettingsExport` validates the
 whole file (web panel uuids/urls, duplicate uuids, newer `version`) before
 anything is written. A setting whose value isn't of its default's type, or a
-sidebar setting outside its `SIDEBAR_PREFS` values, gets its default and is
+sidebar setting outside its `SIDEBAR_SETTING_VALUES`, gets its default and is
 listed in `invalidSettings`, which the import reports; fields the settings
 class doesn't have (an old `mobile`) are passed through for it to read. A
 list setting (a web panel's `spaces`) must be a list of strings. Web panels

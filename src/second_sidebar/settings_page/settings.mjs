@@ -1,24 +1,19 @@
 // The settings page (settings.html, opened in a tab by
-// controllers/settings_page.mjs). Each control edits one of the mirrored
-// sidebar prefs, as Sine's settings dialog does; SidebarPrefsController
-// applies and saves the change in every window. Keyboard shortcuts and
-// backups need the sidebar itself, which the browser window offers as
-// `SecondSidebarSettingsPage` (SettingsPageController).
+// controllers/settings_page.mjs). It applies settings through the browser
+// window's `SecondSidebarSettingsPage` API; the controller sends each change
+// to every window and saves the main SidebarSettings object.
 
 import { SETTINGS_PAGE_SECTIONS, SETTINGS_PAGE_SHORTCUTS } from "./layout.mjs";
 import {
   SHORTCUT_INPUT_ATTRIBUTE,
   getShortcutPartsFromEvent,
 } from "../utils/keyboard.mjs";
-import {
-  getSidebarPref,
-  isValidSidebarPrefValue,
-} from "../settings/sidebar_prefs.mjs";
+import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 
-const PREF_DOMAIN = "second-sidebar.";
 // Opened outside the browser (as a file), the page keeps its values here.
 const inBrowser = typeof Services !== "undefined";
-const sampleValues = new Map();
+const sampleSettings = new SidebarSettings({}).toObject();
+let currentSettings = sampleSettings;
 
 // A system-principal chrome:// page cannot directly navigate a new content
 // tab to an https: URL. Let the browser window open these known web links;
@@ -89,48 +84,30 @@ function h(tag, props = {}, ...children) {
 }
 
 /**
- * @param {string} pref
- * @returns {string | boolean | undefined} undefined when the pref is missing
- *   or holds something the sidebar doesn't support
+ * @param {string} field
+ * @returns {string | boolean | undefined}
  */
-function read(pref) {
-  const entry = getSidebarPref(pref);
-  let value;
-  if (!inBrowser) {
-    value = sampleValues.get(pref);
-  } else {
-    try {
-      value = entry.values
-        ? Services.prefs.getStringPref(pref)
-        : Services.prefs.getBoolPref(pref);
-    } catch {
-      value = undefined;
-    }
-  }
-  return isValidSidebarPrefValue(entry, value) ? value : undefined;
+function read(field) {
+  return currentSettings?.[field];
 }
 
 /**
- * @param {string} pref
+ * @param {string} field
  * @param {string | boolean} value
  */
-function write(pref, value) {
+function write(field, value) {
   if (!inBrowser) {
-    sampleValues.set(pref, value);
+    sampleSettings[field] = value;
     render();
     return;
   }
-  if (typeof value === "boolean") {
-    Services.prefs.setBoolPref(pref, value);
-  } else {
-    Services.prefs.setStringPref(pref, value);
-  }
+  sidebar()?.setSetting(field, value);
 }
 
 /* ---------- controls ---------- */
 
 function renderControl(control) {
-  const value = read(control.pref);
+  const value = read(control.field);
   const text = h(
     "span",
     { class: "option-text" },
@@ -151,7 +128,7 @@ function renderControl(control) {
         type: "checkbox",
         class: "switch",
         checked: value === true,
-        onchange: (e) => write(control.pref, e.target.checked),
+        onchange: (e) => write(control.field, e.target.checked),
       }),
     );
   }
@@ -170,7 +147,7 @@ function renderControl(control) {
             class: choice === value ? "selected" : "",
             "aria-pressed": String(choice === value),
             title: longLabel ?? null,
-            onclick: () => write(control.pref, choice),
+            onclick: () => write(control.field, choice),
           },
           label,
         ),
@@ -181,7 +158,7 @@ function renderControl(control) {
 
 function renderSections() {
   const focused = document.activeElement;
-  const focusKey = focused?.closest?.(".option")?.dataset.pref;
+  const focusKey = focused?.closest?.(".option")?.dataset.field;
   document.getElementById("sections").replaceChildren(
     ...SETTINGS_PAGE_SECTIONS.map((section) =>
       h(
@@ -194,7 +171,7 @@ function renderSections() {
           { class: "options" },
           section.controls.map((control) => {
             const el = renderControl(control);
-            el.dataset.pref = control.pref;
+            el.dataset.field = control.field;
             return el;
           }),
         ),
@@ -204,7 +181,7 @@ function renderSections() {
   // Keep keyboard focus on the control that was just changed.
   if (focusKey) {
     const option = document.querySelector(
-      `.option[data-pref="${CSS.escape(focusKey)}"]`,
+      `.option[data-field="${CSS.escape(focusKey)}"]`,
     );
     option?.querySelector("input, button.selected, button")?.focus();
   }
@@ -227,21 +204,19 @@ function tooltipContent(panel, mode, fullUrl) {
 }
 
 function renderPreview() {
-  const position = read("second-sidebar.position") ?? "right";
-  const pad = SIZE_PIXELS[read("second-sidebar.width") ?? "small"];
-  const offset =
-    SIZE_PIXELS[read("second-sidebar.default-floating-offset") ?? "small"];
-  const autoHide = read("second-sidebar.auto-hide") === true;
-  const overlay =
-    autoHide && read("second-sidebar.auto-hide-behavior") === "overlay";
-  const gap = overlay && read("second-sidebar.auto-hide-edge-gap") !== false;
-  const indicator = read("second-sidebar.container-indicator") ?? "off";
-  const tooltip = read("second-sidebar.tooltip") ?? "titleandurl";
-  const fullUrl = read("second-sidebar.tooltip-full-url") === true;
-  const newAfterPlus =
-    read("second-sidebar.new-web-panel-position") === "after";
-  const hideBack = read("second-sidebar.auto-hide-back-button") === true;
-  const hideForward = read("second-sidebar.auto-hide-forward-button") === true;
+  const position = read("position") ?? "right";
+  const pad = SIZE_PIXELS[read("padding") ?? "small"];
+  const offset = SIZE_PIXELS[read("defaultFloatingOffset") ?? "small"];
+  const autoHide = read("autoHideSidebar") === true;
+  const overlay = autoHide && read("autoHideSidebarBehavior") === "overlay";
+  const gap = overlay && read("autoHideEdgeGap") !== false;
+  const overlayGap = overlay ? (read("autoHideOverlayGap") ?? "small") : "off";
+  const indicator = read("containerBorder") ?? "off";
+  const tooltip = read("tooltip") ?? "titleandurl";
+  const fullUrl = read("tooltipFullUrl") === true;
+  const newAfterPlus = read("newWebPanelPosition") === "after";
+  const hideBack = read("autoHideBackButton") === true;
+  const hideForward = read("autoHideForwardButton") === true;
 
   const preview = document.getElementById("preview");
   preview.className = `preview ${position}`;
@@ -249,6 +224,10 @@ function renderPreview() {
   preview.style.setProperty("--pad", `${pad}px`);
   preview.style.setProperty("--button", `${button}px`);
   preview.style.setProperty("--offset", `${offset}px`);
+  preview.style.setProperty(
+    "--overlay-gap",
+    `${SIZE_PIXELS[overlayGap] ?? 0}px`,
+  );
 
   const buttons = PREVIEW_PANELS.map((panel, i) =>
     h(
@@ -279,7 +258,7 @@ function renderPreview() {
   const sidebar = h(
     "div",
     {
-      class: `p-sidebar${autoHide ? " auto-hide" : ""}${overlay ? " overlay" : ""}${gap ? " gap" : ""}`,
+      class: `p-sidebar${autoHide ? " auto-hide" : ""}${overlay ? " overlay" : ""}${gap ? " gap" : ""}${overlayGap !== "off" ? " clearance" : ""}`,
       title: autoHide
         ? "Hidden until you move the mouse to this edge of the window"
         : null,
@@ -706,16 +685,14 @@ async function importBackup(file) {
 /* ---------- page ---------- */
 
 function render() {
+  currentSettings = inBrowser ? sidebar()?.getSettings() : sampleSettings;
   renderSections();
   renderShortcuts();
   renderPreview();
 }
 
-const missing = SETTINGS_PAGE_SECTIONS.flatMap((s) => s.controls).some(
-  (control) => read(control.pref) === undefined,
-);
 document.getElementById("not-running").hidden =
-  !inBrowser || (!missing && sidebar() !== null);
+  !inBrowser || sidebar() !== null;
 
 for (const id of ["backup-export", "backup-import"]) {
   document.getElementById(id).disabled = !sidebar();
@@ -739,15 +716,10 @@ document
   .getElementById("restart")
   .addEventListener("click", () => sidebar()?.restart());
 
-if (inBrowser) {
-  // Changes made elsewhere: another window or settings page, Sine.
-  const observer = { observe: () => render() };
-  Services.prefs.addObserver(PREF_DOMAIN, observer);
-  window.addEventListener(
-    "unload",
-    () => Services.prefs.removeObserver(PREF_DOMAIN, observer),
-    { once: true },
-  );
+if (inBrowser && sidebar()) {
+  // Changes made in another settings page or browser window.
+  const stopListening = sidebar().onSettingsChanged(() => render());
+  window.addEventListener("unload", stopListening, { once: true });
 }
 
 render();

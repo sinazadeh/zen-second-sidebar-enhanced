@@ -494,6 +494,22 @@ div.option {
   right: 14px;
 }
 
+.preview.left .p-sidebar.overlay.clearance {
+  left: calc(8px + var(--overlay-gap));
+}
+
+.preview.right .p-sidebar.overlay.clearance {
+  right: calc(8px + var(--overlay-gap));
+}
+
+.preview.left .p-sidebar.overlay.gap.clearance {
+  left: calc(14px + var(--overlay-gap));
+}
+
+.preview.right .p-sidebar.overlay.gap.clearance {
+  right: calc(14px + var(--overlay-gap));
+}
+
 .p-button {
   position: relative;
   width: var(--button);

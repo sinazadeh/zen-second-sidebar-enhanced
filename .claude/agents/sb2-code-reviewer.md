@@ -24,7 +24,7 @@ Open `AGENTS.md`, then each matching skill before judging the code:
 
 | Diff touches                                                        | Skill                                               |
 | ------------------------------------------------------------------- | --------------------------------------------------- |
-| `settings/`, `settings_page/`, `preferences.json`, `events.mjs`     | `.claude/skills/sb2-settings/SKILL.md`              |
+| `settings/`, `settings_page/`, `events.mjs`                         | `.claude/skills/sb2-settings/SKILL.md`              |
 | `controllers/web_panel*.mjs`, `xul/web_panels_browser.mjs`, tabs    | `.claude/skills/sb2-web-panels/SKILL.md`            |
 | `src/second_sidebar.uc.mjs`, `theme.json`, asset or file resolution | `.claude/skills/sb2-loader-portability/SKILL.md`    |
 | `patchers/`, `utils/files.mjs`                                      | `.claude/skills/sb2-source-patches/SKILL.md`        |
@@ -42,15 +42,15 @@ that area.
 2. **Multi-window behavior**: events reach every window, so per-panel
    listeners must ignore uuids the window doesn't have; permanent panels are
    shared, temporary ones exist only in the window that made them.
-3. **Lifecycle**: registrations with global services (observers, prefs)
+3. **Lifecycle**: registrations with global services (observers)
    removed on the window's `unload`; timers per panel (`KeyedTimeouts`);
    panel tabs unloaded only through `WebPanelController#unload`/`close()`,
    with `removeTab` inside `safeCall`.
 4. **Settings plumbing**: a new setting needs its model and
    `fromObject`/`toObject`, popup control, change reverter, event, receiving
    controller, its `WEB_PANEL_FIELDS` or `SIDEBAR_FIELD_EVENTS` entry, and
-   for sidebar settings the mirrored pref and `preferences.json` control. Writes go through
-   `saveSettings()` so an import's save suspension holds.
+   for sidebar settings its validation and settings-page control. Writes go
+   through `saveSettings()` so an import's save suspension holds.
 5. **Invariants** from the skills you opened. Cite the skill and the rule.
 6. **Logging and errors**: `Logger.debug` for per-action logs, plain
    `console.log` only for one-time lifecycle messages, `console.warn`/`error`

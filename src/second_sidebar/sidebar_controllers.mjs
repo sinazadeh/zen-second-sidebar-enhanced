@@ -6,7 +6,6 @@ import { SidebarGeometry } from "./controllers/sidebar_geometry.mjs";
 import { SidebarMainCollapser } from "./controllers/sidebar_main_collapser.mjs";
 import { SidebarMainController } from "./controllers/sidebar_main.mjs";
 import { SidebarMover } from "./controllers/sidebar_mover.mjs";
-import { SidebarPrefsController } from "./controllers/sidebar_prefs.mjs";
 import { SidebarResizer } from "./controllers/sidebar_resizer.mjs";
 import { SidebarSplitterController } from "./controllers/sidebar_splitter.mjs";
 import { SettingsPageController } from "./controllers/settings_page.mjs";
@@ -24,7 +23,6 @@ export class SidebarControllers {
     this.sidebarMainController = new SidebarMainController();
     this.sidebarMainCollapser = new SidebarMainCollapser();
     this.sidebarController = new SidebarController();
-    this.sidebarPrefsController = new SidebarPrefsController();
     this.settingsPageController = new SettingsPageController();
     this.sidebarGeometry = new SidebarGeometry();
     this.sidebarToolbarCollapser = new SidebarToolbarCollapser();

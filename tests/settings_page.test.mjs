@@ -11,8 +11,8 @@ const { SidebarSettings } =
   await import("../src/second_sidebar/settings/sidebar_settings.mjs");
 const { SIDEBAR_FIELD_EVENTS } =
   await import("../src/second_sidebar/controllers/sidebar_fields.mjs");
-const { SIDEBAR_PREFS } =
-  await import("../src/second_sidebar/settings/sidebar_prefs.mjs");
+const { SIDEBAR_SETTING_VALUES } =
+  await import("../src/second_sidebar/settings/sidebar_validation.mjs");
 
 const PAGE_DIR = new URL(
   "../src/second_sidebar/settings_page/",
@@ -23,34 +23,30 @@ const theme = JSON.parse(
 );
 const controls = SETTINGS_PAGE_SECTIONS.flatMap((section) => section.controls);
 
-test("the settings page has one control per sidebar pref", () => {
+test("the settings page has one control per non-shortcut sidebar setting", () => {
+  const fields = Object.keys(new SidebarSettings({})).filter(
+    (field) => !field.endsWith("Shortcut"),
+  );
   assert.deepEqual(
-    controls.map((control) => control.pref).sort(),
-    SIDEBAR_PREFS.map((entry) => entry.pref).sort(),
+    controls.map((control) => control.field).sort(),
+    fields.sort(),
   );
 });
 
-test("the settings page lists the prefs in SIDEBAR_PREFS's order", () => {
-  assert.deepEqual(
-    controls.map((control) => control.pref),
-    SIDEBAR_PREFS.map((entry) => entry.pref),
-  );
-});
-
-test("each control offers exactly the values its pref accepts", () => {
-  for (const entry of SIDEBAR_PREFS) {
-    const control = controls.find((c) => c.pref === entry.pref);
-    if (entry.values) {
+test("each control offers exactly the values its setting accepts", () => {
+  for (const control of controls) {
+    const values = SIDEBAR_SETTING_VALUES[control.field];
+    if (values) {
       assert.deepEqual(
         control.choices?.map(([value]) => value),
-        entry.values,
-        entry.pref,
+        values,
+        control.field,
       );
       for (const [value, label] of control.choices) {
-        assert.ok(label, `${entry.pref}: ${value} needs a label`);
+        assert.ok(label, `${control.field}: ${value} needs a label`);
       }
     } else {
-      assert.equal(control.choices, undefined, `${entry.pref} is a switch`);
+      assert.equal(control.choices, undefined, `${control.field} is a switch`);
     }
   }
 });
@@ -61,8 +57,8 @@ test("every section and control has a title and a description", () => {
     assert.ok(section.controls.length, section.title);
   }
   for (const control of controls) {
-    assert.ok(control.title, control.pref);
-    assert.ok(control.text, control.pref);
+    assert.ok(control.title, control.field);
+    assert.ok(control.text, control.field);
   }
 });
 
@@ -81,6 +77,23 @@ test("the settings page and the files it loads exist", async () => {
     "utf8",
   );
   assert.match(controller, /"\.\.\/settings_page\/settings\.html"/);
+});
+
+test("the settings page edits SidebarSettings through the browser API", async () => {
+  const [pageScript, controller] = await Promise.all([
+    readFile(new URL("settings.mjs", PAGE_DIR), "utf8"),
+    readFile(
+      new URL(
+        "../src/second_sidebar/controllers/settings_page.mjs",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+  assert.doesNotMatch(pageScript, /Services\.prefs/);
+  assert.match(pageScript, /sidebar\(\)\?\.setSetting\(field, value\)/);
+  assert.match(controller, /setSetting\(field, value\)/);
+  assert.match(controller, /isValidSidebarSettingValue\(field, value\)/);
 });
 
 test("the settings page links to the project and its configured sponsor", async () => {

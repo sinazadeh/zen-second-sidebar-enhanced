@@ -21,6 +21,7 @@ export class SidebarSettings {
    * @param {boolean} params.autoHideSidebar
    * @param {string} params.autoHideSidebarBehavior
    * @param {boolean} params.autoHideEdgeGap
+   * @param {string} params.autoHideOverlayGap
    * @param {boolean} params.sidebarWidgetHideWebPanel
    * @param {string} params.sidebarWidgetShortcut
    * @param {string} params.lastWebPanelShortcut
@@ -49,6 +50,7 @@ export class SidebarSettings {
     autoHideSidebar = false,
     autoHideSidebarBehavior = "inline",
     autoHideEdgeGap = true,
+    autoHideOverlayGap = "small",
     sidebarWidgetHideWebPanel = false,
     sidebarWidgetShortcut = "",
     lastWebPanelShortcut = "",
@@ -74,6 +76,7 @@ export class SidebarSettings {
     this.autoHideSidebar = autoHideSidebar;
     this.autoHideSidebarBehavior = autoHideSidebarBehavior;
     this.autoHideEdgeGap = autoHideEdgeGap;
+    this.autoHideOverlayGap = autoHideOverlayGap;
     this.sidebarWidgetHideWebPanel = sidebarWidgetHideWebPanel;
     this.sidebarWidgetShortcut = sidebarWidgetShortcut;
     this.lastWebPanelShortcut = lastWebPanelShortcut;

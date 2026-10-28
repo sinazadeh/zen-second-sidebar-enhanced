@@ -1,7 +1,6 @@
-// What the settings page shows: one card per section, in SIDEBAR_PREFS's
-// order, each control editing one of the mirrored sidebar prefs
-// (settings/sidebar_prefs.mjs). tests/settings_page.test.mjs checks that every
-// pref is here once, with the values it accepts.
+// What the settings page shows: one card per section. The tests check that
+// every non-shortcut SidebarSettings field is here once, with the values it
+// accepts.
 //
 // Keep this module free of browser globals: the Node tests import it.
 
@@ -14,13 +13,14 @@ const SIZES = [
   ["xlarge", "XL", "Extra large"],
   ["xxlarge", "XXL", "Extra extra large"],
 ];
+const OPTIONAL_SIZES = [["off", "Off"], ...SIZES];
 
 /**
  * @typedef {object} SettingsPageControl
- * @property {string} pref The mirrored pref it edits.
+ * @property {string} field The SidebarSettings field it edits.
  * @property {string} title
  * @property {string} text One sentence saying what it does.
- * @property {Array<[string, string, string?]>} [choices] For a string pref:
+ * @property {Array<[string, string, string?]>} [choices] For a string field:
  *   its values with a short label (and a longer one for the tooltip). A
  *   control without choices is a switch.
  * @property {boolean} [zenOnly] Only does something in Zen.
@@ -34,7 +34,7 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Sidebar",
     controls: [
       {
-        pref: "second-sidebar.position",
+        field: "position",
         title: "Position",
         text: "The side of the window the sidebar is on.",
         choices: [
@@ -43,13 +43,13 @@ export const SETTINGS_PAGE_SECTIONS = [
         ],
       },
       {
-        pref: "second-sidebar.width",
+        field: "padding",
         title: "Width",
         text: "How much room the sidebar and its panel buttons take.",
         choices: SIZES,
       },
       {
-        pref: "second-sidebar.allow-window-dragging",
+        field: "allowWindowDragging",
         title: "Allow window dragging",
         text: "Move the window by dragging the sidebar's empty space.",
       },
@@ -59,12 +59,12 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Visibility",
     controls: [
       {
-        pref: "second-sidebar.auto-hide",
+        field: "autoHideSidebar",
         title: "Auto-hide sidebar",
         text: "Hide the sidebar until you move the mouse to its edge of the window.",
       },
       {
-        pref: "second-sidebar.auto-hide-behavior",
+        field: "autoHideSidebarBehavior",
         title: "Auto-hide behavior",
         text: "Inline makes room for the sidebar when it shows; overlay shows it on top of the page.",
         choices: [
@@ -73,13 +73,20 @@ export const SETTINGS_PAGE_SECTIONS = [
         ],
       },
       {
-        pref: "second-sidebar.auto-hide-edge-gap",
-        title: "Keep gap at window edge",
-        text: "With overlay, keep the sidebar off the window's edge, like Zen's own sidebar.",
+        field: "autoHideEdgeGap",
+        title: "Keep page gap at window edge",
+        text: "With overlay, keep Zen's gap around the page so its outer border stays visible.",
         zenOnly: true,
       },
       {
-        pref: "second-sidebar.hide-web-panel-when-hidden",
+        field: "autoHideOverlayGap",
+        title: "Overlay sidebar clearance",
+        text: "How far an overlay sidebar sits inward, leaving the page edge and scrollbar reachable.",
+        choices: OPTIONAL_SIZES,
+        zenOnly: true,
+      },
+      {
+        field: "sidebarWidgetHideWebPanel",
         title: "Hide web panel when sidebar is hidden",
         text: "Close the open panel along with the sidebar.",
       },
@@ -89,13 +96,13 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Web panel",
     controls: [
       {
-        pref: "second-sidebar.default-floating-offset",
+        field: "defaultFloatingOffset",
         title: "Default floating panel offset",
         text: "How far floating panels sit from the sidebar and the window's edges.",
         choices: SIZES,
       },
       {
-        pref: "second-sidebar.new-web-panel-position",
+        field: "newWebPanelPosition",
         title: "New panel position",
         text: "Where a new panel's button goes.",
         choices: [
@@ -104,7 +111,7 @@ export const SETTINGS_PAGE_SECTIONS = [
         ],
       },
       {
-        pref: "second-sidebar.new-web-panel-spaces",
+        field: "newWebPanelSpaces",
         title: "New panels show in",
         text: "The spaces a new panel shows in. Each panel can change it later.",
         choices: [
@@ -114,7 +121,7 @@ export const SETTINGS_PAGE_SECTIONS = [
         zenOnly: true,
       },
       {
-        pref: "second-sidebar.show-geometry-hint",
+        field: "enableSidebarBoxHint",
         title: "Show geometry hint",
         text: "Show a panel's size and position while you move or resize it.",
       },
@@ -124,7 +131,7 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Web panel button",
     controls: [
       {
-        pref: "second-sidebar.web-panel-middle-click-action",
+        field: "webPanelMiddleClickAction",
         title: "Middle-click action",
         text: "What pressing a panel button with the middle mouse button does.",
         choices: [
@@ -133,7 +140,7 @@ export const SETTINGS_PAGE_SECTIONS = [
         ],
       },
       {
-        pref: "second-sidebar.container-indicator",
+        field: "containerBorder",
         title: "Container indicator",
         text: "A line in the container's color on buttons of panels in a container.",
         choices: [
@@ -146,7 +153,7 @@ export const SETTINGS_PAGE_SECTIONS = [
         ],
       },
       {
-        pref: "second-sidebar.tooltip",
+        field: "tooltip",
         title: "Tooltip",
         text: "What shows when you hover a panel's button.",
         choices: [
@@ -157,7 +164,7 @@ export const SETTINGS_PAGE_SECTIONS = [
         ],
       },
       {
-        pref: "second-sidebar.tooltip-full-url",
+        field: "tooltipFullUrl",
         title: "Show full URL in tooltip",
         text: "The whole address, instead of just the site.",
       },
@@ -167,12 +174,12 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Web panel toolbar",
     controls: [
       {
-        pref: "second-sidebar.auto-hide-forward-button",
+        field: "autoHideForwardButton",
         title: "Auto-hide forward button",
         text: "Show it only when there's a page to go forward to.",
       },
       {
-        pref: "second-sidebar.auto-hide-back-button",
+        field: "autoHideBackButton",
         title: "Auto-hide back button",
         text: "Show it only when there's a page to go back to.",
       },
@@ -182,17 +189,17 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Links, bookmarks and tabs",
     controls: [
       {
-        pref: "second-sidebar.show-open-menu-items",
+        field: "showOpenInSidebarItems",
         title: "Show “Open in Second Sidebar”",
         text: "In the right-click menus of links, bookmarks and tabs.",
       },
       {
-        pref: "second-sidebar.show-preview-menu-items",
+        field: "showPreviewInSidebarItems",
         title: "Show “Preview in Second Sidebar”",
         text: "Opens it in a temporary panel instead.",
       },
       {
-        pref: "second-sidebar.link-click-modifier",
+        field: "linkClickModifier",
         title: "Preview on click with",
         text: "Click a link while holding these keys to preview it in a temporary panel.",
         choices: [
@@ -207,12 +214,12 @@ export const SETTINGS_PAGE_SECTIONS = [
     title: "Animations",
     controls: [
       {
-        pref: "second-sidebar.animate-sidebar",
+        field: "hideSidebarAnimated",
         title: "Animate sidebar",
         text: "Slide the sidebar in and out.",
       },
       {
-        pref: "second-sidebar.animate-web-panel-toolbar",
+        field: "hideToolbarAnimated",
         title: "Animate web panel toolbar",
         text: "Slide a panel's toolbar in and out.",
       },
@@ -222,8 +229,8 @@ export const SETTINGS_PAGE_SECTIONS = [
 
 /**
  * The sidebar's keyboard shortcuts, on their own card: they're kept in the
- * sidebar settings, not in mirrored prefs (Sine can't record keys), so the
- * page sets them through the browser window (SettingsPageController).
+ * sidebar settings; the page sets them through the browser window's
+ * SettingsPageController.
  *
  * @type {Array<{field: string, title: string, text: string}>}
  */

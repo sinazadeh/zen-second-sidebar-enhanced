@@ -88,9 +88,9 @@ All paths below are relative to `src/second_sidebar/`, except the entry point.
   usage; the underlying issue is documented in `urlbar_input_patcher.mjs`.
 - Use `controllers/events.mjs` for cross-window actions; per-panel listeners
   must ignore uuids the window doesn't have.
-- Registrations with Firefox's global services (the observer service,
-  prefs) outlive the window that made them, so remove them on its `unload`
-  (`WebPanelsBrowser#unobserveAll`, `SidebarPrefsController#init`).
+- Registrations with Firefox's global observer service outlive the window
+  that made them, so remove them on its `unload`
+  (`WebPanelsBrowser#unobserveAll`).
   Listeners, timers and `ResizeObserver`s on the window's own objects go away
   with it and need no teardown.
 - Never paste a settings value into page-side code: settings can come from an

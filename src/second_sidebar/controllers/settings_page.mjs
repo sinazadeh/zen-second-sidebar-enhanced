@@ -6,21 +6,20 @@ import {
 
 import { AppStartupWrapper } from "../wrappers/app_startup.mjs";
 import { CustomizableUIWrapper } from "../wrappers/customizable_ui.mjs";
-import { SIDEBAR_FIELD_EVENTS } from "./sidebar_fields.mjs";
+import { SIDEBAR_FIELD_EVENTS, VISIBILITY_FIELDS } from "./sidebar_fields.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
+import { isValidSidebarSettingValue } from "../settings/sidebar_validation.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 
 // Next to this addon's other files, whichever loader served them
 // (chrome://sine/content/... or fx-autoconfig's chrome:// alias), so the page
-// gets chrome privileges and can edit the mirrored sidebar prefs.
+// gets chrome privileges and can call back into the browser window.
 const SETTINGS_PAGE_URL = new URL(
   "../settings_page/settings.html",
   import.meta.url,
 ).href;
-// This mod's id in Sine (theme.json).
-const SINE_MOD_ID = "zen-second-sidebar";
 const SUPPORT_URLS = new Set([
   "https://github.com/sinazadeh/zen-second-sidebar-enhanced",
   "https://github.com/sponsors/sinazadeh",
@@ -44,23 +43,19 @@ const SHORTCUT_FIELDS = {
 
 /**
  * Opens the settings page (settings_page/settings.html) in a tab: from the
- * sidebar's right-click menu, and from the settings button of this mod in
- * Sine's mod list, instead of Sine's own settings dialog.
- *
- * The page edits the mirrored sidebar prefs itself. What needs this
- * window's sidebar (keyboard shortcuts, backups) it asks of the methods
- * below, which every browser window offers it as `SecondSidebarSettingsPage`.
+ * sidebar's right-click menu. It asks the methods below to edit settings,
+ * keyboard shortcuts and backups; every browser window offers them as
+ * `SecondSidebarSettingsPage`.
  */
 export class SettingsPageController {
-  /** @type {WeakSet<Document>} settings pages already hooked */
-  #hooked = new WeakSet();
-
   constructor() {
     SidebarElements.sidebarMainMenuPopup.listenSettingsItemClick(() =>
       this.open(),
     );
-    this.#hookSineSettingsButton();
     window.SecondSidebarSettingsPage = Object.freeze({
+      getSettings: () => this.getSettings(),
+      setSetting: (field, value) => this.setSetting(field, value),
+      onSettingsChanged: (callback) => this.onSettingsChanged(callback),
       getShortcuts: () => this.getShortcuts(),
       openSupportPage: (url) => this.openSupportPage(url),
       isShortcutBusy: (field, shortcut, event) =>
@@ -71,6 +66,73 @@ export class SettingsPageController {
       restoreBackup: (data, parts) => this.restoreBackup(data, parts),
       restart: () => AppStartupWrapper.restart(),
     });
+  }
+
+  /** @returns {object} the sidebar settings currently in effect */
+  getSettings() {
+    return SidebarControllers.sidebarController.dumpSettings().toObject();
+  }
+
+  /**
+   * Applies one non-shortcut setting in every browser window and saves it.
+   *
+   * @param {string} field
+   * @param {string | boolean} value
+   */
+  setSetting(field, value) {
+    if (Object.hasOwn(SHORTCUT_FIELDS, field)) {
+      throw new Error(`Use setShortcut for ${field}`);
+    }
+    if (!isValidSidebarSettingValue(field, value)) {
+      throw new TypeError(`Invalid sidebar setting ${field}`);
+    }
+    const settings = SidebarControllers.sidebarController.dumpSettings();
+    if (settings[field] === value) {
+      return;
+    }
+    settings[field] = value;
+    if (VISIBILITY_FIELDS.includes(field)) {
+      sendEvents(SidebarEvents.EDIT_SIDEBAR_VISIBILITY, {
+        autoHideSidebar: settings.autoHideSidebar,
+        autoHideSidebarBehavior: settings.autoHideSidebarBehavior,
+        sidebarWidgetHideWebPanel: settings.sidebarWidgetHideWebPanel,
+        sidebarWidgetShortcut: settings.sidebarWidgetShortcut,
+      });
+    } else {
+      const event = SIDEBAR_FIELD_EVENTS[field];
+      if (!event) {
+        throw new Error(`No event applies sidebar setting ${field}`);
+      }
+      sendEvents(SidebarEvents[event], { value });
+    }
+    SidebarControllers.sidebarController.saveSettings();
+  }
+
+  /**
+   * Calls `callback` whenever this window receives a sidebar setting event.
+   * Returns a function that removes the listeners.
+   *
+   * @param {function(): void} callback
+   * @returns {function(): void}
+   */
+  onSettingsChanged(callback) {
+    if (typeof callback !== "function") {
+      throw new TypeError("A settings listener is a function");
+    }
+    const eventTypes = new Set([
+      SidebarEvents.EDIT_SIDEBAR_VISIBILITY,
+      ...Object.values(SIDEBAR_FIELD_EVENTS).map(
+        (event) => SidebarEvents[event],
+      ),
+    ]);
+    for (const type of eventTypes) {
+      window.addEventListener(type, callback);
+    }
+    return () => {
+      for (const type of eventTypes) {
+        window.removeEventListener(type, callback);
+      }
+    };
   }
 
   /** Selects the settings page's tab, or opens one. */
@@ -250,68 +312,5 @@ export class SettingsPageController {
     await webPanelsSettings?.save();
     sidebarSettings?.save();
     return invalidSettings;
-  }
-
-  // Sine lists mods in about:preferences. Every page this window loads is
-  // checked; the listener goes away with the window.
-  #hookSineSettingsButton() {
-    const gBrowser = new WindowWrapper().gBrowser;
-    const hook = (browser) => this.#hookSettingsPage(browser);
-    gBrowser.addTabsProgressListener({
-      onLocationChange(browser, webProgress) {
-        if (webProgress?.isTopLevel) {
-          hook(browser);
-        }
-      },
-      onStateChange(browser, webProgress, _request, flags) {
-        if (
-          webProgress?.isTopLevel &&
-          flags & Ci.nsIWebProgressListener.STATE_STOP
-        ) {
-          hook(browser);
-        }
-      },
-    });
-    for (const tab of gBrowser.tabs) {
-      hook(gBrowser.getBrowserForTab(tab).getXUL());
-    }
-  }
-
-  /**
-   * @param {object} browser a <browser> element
-   */
-  #hookSettingsPage(browser) {
-    let page;
-    try {
-      page = browser.contentDocument;
-    } catch {
-      return; // A page in a content process: not about:preferences.
-    }
-    // The page's document, not browser.contentWindow: that's the tab's
-    // window proxy, the same object for every page the tab loads, so after
-    // a reload, or in a tab restored from the last session (which gives its
-    // address before its page has loaded), the new page was taken for
-    // hooked and Sine's own dialog opened.
-    if (
-      !page ||
-      this.#hooked.has(page) ||
-      !/^about:(preferences|settings)/.test(page.documentURI)
-    ) {
-      return;
-    }
-    this.#hooked.add(page);
-    page.addEventListener(
-      "click",
-      (event) => {
-        const button = event.target.closest?.(".sineItemConfigureButton");
-        const modId = button?.closest(".sineItem")?.getAttribute("mod-id");
-        if (modId === SINE_MOD_ID) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          this.open();
-        }
-      },
-      true,
-    );
   }
 }

@@ -1,6 +1,6 @@
 ---
 name: sb2-settings
-description: Adding or changing Second Sidebar settings end to end - sidebar settings and their mirrored prefs, the settings page, web panel edit settings, change reverters, settings classes, storage, cross-window events and settings import/export. Use when adding, renaming or removing a setting, or changing settings/, settings_page/, the Edit web panel popup, preferences.json, events.mjs or settings import/export.
+description: Adding or changing Second Sidebar settings end to end - the settings page, validation, web panel edit settings, change reverters, settings classes, storage, cross-window events and settings import/export. Use when adding, renaming or removing a setting, or changing settings/, settings_page/, the Edit web panel popup, events.mjs or settings import/export.
 ---
 
 # Settings
@@ -14,19 +14,17 @@ changing the export format or anything that writes settings.
 
 Follow an existing setting through these files under `src/second_sidebar/`:
 
-- Sidebar: `settings/sidebar_settings.mjs` → a pref in
-  `settings/sidebar_prefs.mjs` → an entry in `SIDEBAR_FIELD_EVENTS`
-  (`controllers/sidebar_fields.mjs`), which a change to the pref
-  (`controllers/sidebar_prefs.mjs`) is sent through →
+- Sidebar: `settings/sidebar_settings.mjs` → fixed choices, when applicable,
+  in `settings/sidebar_validation.mjs` → an entry in
+  `SIDEBAR_FIELD_EVENTS` (`controllers/sidebar_fields.mjs`) →
   `controllers/events.mjs` → a `listenEvent` in the receiving controller
   (`controllers/sidebar.mjs`). Give it a control in
-  `settings_page/layout.mjs` (the settings page, with a title, a sentence and
-  short labels for its values) and in the root `preferences.json` (Sine's mod
-  settings dialog); `tests/sidebar_prefs.test.mjs`,
-  `tests/settings_page.test.mjs` and `tests/settings_wiring.test.mjs` fail
-  until they all match `SidebarSettings`. Keyboard shortcuts have no pref
-  (Sine can't record keys): a new one goes in `SHORTCUT_FIELDS` in that
-  test, in `SETTINGS_PAGE_SHORTCUTS` (`settings_page/layout.mjs`), in
+  `settings_page/layout.mjs` with a title, a sentence and short labels for
+  its choices. `SettingsPageController#setSetting` validates, broadcasts and
+  saves it. `tests/sidebar_validation.test.mjs`,
+  `tests/settings_page.test.mjs` and `tests/settings_wiring.test.mjs` keep
+  those layers matched to `SidebarSettings`. A new keyboard shortcut goes in
+  `SETTINGS_PAGE_SHORTCUTS` (`settings_page/layout.mjs`), in
   `SHORTCUT_FIELDS` with its busy check (`controllers/settings_page.mjs`)
   and in `Shortcuts#getSidebarShortcuts` (`controllers/shortcuts.mjs`), so
   it's checked against the other shortcuts.
@@ -77,21 +75,16 @@ too, or discarding changes will leave it applied.
 ## The settings page
 
 `settings_page/` is the only place the sidebar settings are edited (the fork
-removed upstream's settings popup), opened by **Sidebar settings** and Sine's
-gear. Its settings write the mirrored prefs; shortcuts and backups go
-through the browser window. Read [the settings page](references/settings-page.md)
-before changing it.
+removed upstream's settings popup and Sine preferences), opened by
+**Sidebar settings**. All controls go through the browser window. Read
+[the settings page](references/settings-page.md) before changing it.
 
 ## Storage
 
-- Sidebar settings are a JSON string preference (`second-sidebar.settings`).
-  Each one except the keyboard shortcuts is mirrored to its own
-  `second-sidebar.*` pref for Sine's settings dialog: `SidebarPrefsController`
-  writes them from the JSON at startup and on every save, and applies and
-  saves a valid change made to one (invalid values are written back). The
-  JSON stays the source of truth, so importing settings doesn't touch the
-  mirrored prefs until the restart rewrites them.
-  Web panel settings and state are JSON files in the profile's
+- Sidebar settings are stored only in the JSON string preference
+  `second-sidebar.settings`; the settings page edits it through
+  `SettingsPageController`, and there are no per-setting mirrored prefs or
+  Sine settings controls. Web panel settings and state are JSON files in the profile's
   `chrome/second-sidebar-data/` (`web-panels.json`, `web-panels-state.json`,
   via `FileSettings` in `settings/settings.mjs`); the older
   `second-sidebar.web-panels`/`second-sidebar.web-panels-state` prefs are only

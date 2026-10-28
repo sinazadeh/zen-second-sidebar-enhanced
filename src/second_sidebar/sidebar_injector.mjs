@@ -36,7 +36,6 @@ export class SidebarInjector {
 
     console.log("Applying settings...");
     SidebarControllers.sidebarController.loadSettings(sidebarSettings);
-    SidebarControllers.sidebarPrefsController.init(sidebarSettings);
     SidebarControllers.webPanelsController.loadSettingsAndState(
       webPanelsSettings,
       webPanelsState,

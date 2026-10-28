@@ -21,8 +21,9 @@ services stays a manual check, and you say so instead of mocking a browser.
   exercises inside that test, so a missing stub fails loudly.
 - Settings classes round-trip through `fromObject`/`toObject`; cover
   defaults for missing fields, since older saved data and imports rely on
-  them. `tests/sidebar_prefs.test.mjs` already checks that every sidebar
-  setting has a pref and a `preferences.json` control.
+  them. `tests/sidebar_validation.test.mjs` and
+  `tests/settings_page.test.mjs` check every sidebar setting's validation
+  and settings-page control.
 - Source patch tests (`tests/source_patches.test.mjs`) run the patches in
   `patchers/source_patches.mjs` against sample source text; keep that module
   free of browser globals.

@@ -25,8 +25,8 @@ command.
 3. Find the existing setting closest to it and follow it through every file
    the skill lists. Write the plan as a checklist of files, including for a
    web panel setting the change reverter and the `WEB_PANEL_FIELDS` entry,
-   and for a sidebar setting the mirrored pref, the `SIDEBAR_FIELD_EVENTS`
-   entry, the settings page control and the `preferences.json` control.
+   and for a sidebar setting its validation, the `SIDEBAR_FIELD_EVENTS`
+   entry and the settings page control.
 4. If the name, default, value range or label isn't clear from the
    request, ask before writing code.
 
@@ -40,8 +40,8 @@ closest existing setting's shape. Give a web panel setting a `setter` in
 
 Run these in parallel:
 
-- [`sb2-test-writer`](../agents/sb2-test-writer.md): round-trip and default
-  tests for the new field, and the prefs mirror test for a sidebar setting.
+- [`sb2-test-writer`](../agents/sb2-test-writer.md): round-trip, default,
+  validation and settings-page tests for the new field.
 - [`sb2-docs-updater`](../agents/sb2-docs-updater.md): the README entry for
   the setting and a `CHANGELOG.md` note under `[Unreleased]`.
 
@@ -54,4 +54,4 @@ verified blocker and major findings.
 
 List the files changed, check results, and the manual scenarios to run:
 changing the setting live, discarding the change (it must roll back), Save,
-a second window, a restart, and for sidebar settings Sine's settings dialog.
+a second window and a restart.

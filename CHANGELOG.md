@@ -6,6 +6,26 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.3] - 2026-10-28
+
+### Added
+
+- **Overlay sidebar clearance** under **Sidebar settings → Visibility** lets
+  Zen users choose how far an auto-hidden overlay sidebar sits inward, from
+  **Off** through seven gap sizes. The default **Small** clearance leaves the
+  page edge and scrollbar reachable.
+
+### Changed
+
+- **Keep gap at window edge** is now named **Keep page gap at window edge** to
+  clarify that it preserves Zen's spacing around the page and prevents the
+  page's outer border from being clipped in overlay mode.
+- Sidebar settings are now edited only through **Sidebar settings**. The Sine
+  preferences dialog, its gear-button interception and the individual
+  `second-sidebar.*` preferences that mirrored each setting have been removed;
+  the main `second-sidebar.settings` preference remains the stored source of
+  truth.
+
 ## [1.13.2] - 2026-10-26
 
 ### Added

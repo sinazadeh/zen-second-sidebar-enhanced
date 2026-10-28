@@ -1,6 +1,6 @@
 // Settings changes are wired to events through the tables in
 // controllers/web_panel_fields.mjs (Edit web panel) and
-// controllers/sidebar_fields.mjs (the mirrored prefs and keyboard
+// controllers/sidebar_fields.mjs (settings-page fields and keyboard
 // shortcuts). The popup, events.mjs and WebPanelController can't be
 // imported in Node, so their sources are read instead: a callback missing
 // from a table would throw in the browser the first time its control is
@@ -16,8 +16,6 @@ const { WEB_PANEL_FIELDS, buildWebPanelEditCallbacks } =
   await import("../src/second_sidebar/controllers/web_panel_fields.mjs");
 const { SIDEBAR_FIELD_EVENTS, VISIBILITY_FIELDS } =
   await import("../src/second_sidebar/controllers/sidebar_fields.mjs");
-const { SIDEBAR_PREFS } =
-  await import("../src/second_sidebar/settings/sidebar_prefs.mjs");
 const { SidebarSettings } =
   await import("../src/second_sidebar/settings/sidebar_settings.mjs");
 
@@ -160,18 +158,12 @@ test("SIDEBAR_FIELD_EVENTS names real events", () => {
   }
 });
 
-test("every sidebar setting and mirrored pref reaches an event", () => {
+test("every sidebar setting reaches an event", () => {
   // sidebarWidgetShortcut goes with the visibility settings.
   const viaVisibility = [...VISIBILITY_FIELDS, "sidebarWidgetShortcut"];
   for (const field of Object.keys(new SidebarSettings({}))) {
     assert.ok(
       field in SIDEBAR_FIELD_EVENTS || viaVisibility.includes(field),
-      field,
-    );
-  }
-  for (const { field } of SIDEBAR_PREFS) {
-    assert.ok(
-      field in SIDEBAR_FIELD_EVENTS || VISIBILITY_FIELDS.includes(field),
       field,
     );
   }

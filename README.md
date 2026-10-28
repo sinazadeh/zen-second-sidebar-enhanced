@@ -60,21 +60,21 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 
 ## Settings
 
-Right-click the sidebar and choose **Sidebar settings** to open the settings page in a tab. It groups the settings in cards with switches and a preview of the sidebar, and applies changes right away, in every window; the sidebar's keyboard shortcuts and [backup](#backup) are there too. With Sine, the gear button of **Zen Second Sidebar Enhanced** on Sine's mod page opens it as well.
+Right-click the sidebar and choose **Sidebar settings** to open the settings page in a tab. It groups the settings in cards with switches and a preview of the sidebar, and applies changes right away, in every window; the sidebar's keyboard shortcuts and [backup](#backup) are there too.
 
 The settings page's format follows the one [oom333/zen-tab-groups](https://github.com/oom333/zen-tab-groups) made for Tab Groups.
 
-| Section                   | Settings                                                                                                                                                                                                   |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General                   | **Position** (left or right) • **Width** • **Allow window dragging**                                                                                                                                       |
-| Visibility                | **Auto-hide sidebar** and its **Auto-hide behavior** (inline or overlay) • **Keep gap at window edge** (Zen, with overlay) • **Hide web panel when sidebar is hidden**                                     |
-| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **New panels show in** (Zen: all spaces, or the current one) • **Show geometry hint** while moving or resizing |
-| Web panel button          | **Middle-click action** (open in a background tab or unload) • **Container indicator** • **Tooltip** (off, title, URL, or both) • **Show full URL in tooltip**                                             |
-| Web panel toolbar         | **Auto-hide back button** • **Auto-hide forward button**                                                                                                                                                   |
-| Links, bookmarks and tabs | Show **Open…** and **Preview… in Second Sidebar** in right-click menus • **Preview on click with** (see [below](#links-bookmarks-and-tabs))                                                                |
-| Animations                | **Animate sidebar** • **Animate web panel toolbar**                                                                                                                                                        |
-| Keyboard shortcuts        | **Show or hide the sidebar** • **Open or close the last panel** • **Open the next panel** • **Open the previous panel** (see [Keyboard shortcuts](#keyboard-shortcuts))                                    |
-| Backup                    | **Export…** and **Import…**, choosing what goes in the file and what to restore from it (see [Backup](#backup))                                                                                            |
+| Section                   | Settings                                                                                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| General                   | **Position** (left or right) • **Width** • **Allow window dragging**                                                                                                                                                     |
+| Visibility                | **Auto-hide sidebar** and its **Auto-hide behavior** (inline or overlay) • **Keep page gap at window edge** and adjustable **Overlay sidebar clearance** (Zen, with overlay) • **Hide web panel when sidebar is hidden** |
+| Web panel                 | **Default floating panel offset** • **New panel position** (before or after the + button) • **New panels show in** (Zen: all spaces, or the current one) • **Show geometry hint** while moving or resizing               |
+| Web panel button          | **Middle-click action** (open in a background tab or unload) • **Container indicator** • **Tooltip** (off, title, URL, or both) • **Show full URL in tooltip**                                                           |
+| Web panel toolbar         | **Auto-hide back button** • **Auto-hide forward button**                                                                                                                                                                 |
+| Links, bookmarks and tabs | Show **Open…** and **Preview… in Second Sidebar** in right-click menus • **Preview on click with** (see [below](#links-bookmarks-and-tabs))                                                                              |
+| Animations                | **Animate sidebar** • **Animate web panel toolbar**                                                                                                                                                                      |
+| Keyboard shortcuts        | **Show or hide the sidebar** • **Open or close the last panel** • **Open the next panel** • **Open the previous panel** (see [Keyboard shortcuts](#keyboard-shortcuts))                                                  |
+| Backup                    | **Export…** and **Import…**, choosing what goes in the file and what to restore from it (see [Backup](#backup))                                                                                                          |
 
 Each web panel has its own settings in **Edit web panel** (right-click its button):
 
@@ -179,7 +179,7 @@ A backup covers configuration only, not per-panel state like the last-opened URL
 
 ### Where your data is stored
 
-- Sidebar settings: the `second-sidebar.settings` preference (`about:config`). Each of them except keyboard shortcuts is also copied to its own preference, such as `second-sidebar.position`, which is what the settings page and Sine's settings dialog change (changing one in `about:config` works too).
+- Sidebar settings: the `second-sidebar.settings` preference (`about:config`), edited through **Sidebar settings**.
 - Web panels and their state (e.g. last URL): `web-panels.json` and `web-panels-state.json` in the `chrome/second-sidebar-data/` folder of your profile (`about:support` → _Profile Folder_). This folder is outside the script itself, so updating or reinstalling the script keeps it.
 
 If one of these can't be read (for example after a crash while saving), the sidebar starts with defaults and keeps a copy of the unreadable data next to it, named `*.corrupt-<date>.json` (or a `second-sidebar.settings.corrupt` preference).

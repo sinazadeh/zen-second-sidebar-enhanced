@@ -51,11 +51,9 @@ the code.
   fx-autoconfig already restricts `.uc.mjs` loading to); dropping it would
   make Sine dynamically import this script into every chrome window,
   including ones lacking `gBrowser`/the sidebar's expected DOM.
-  Its `preferences` field names the root `preferences.json`, which Sine
-  turns into the mod's settings (gear) dialog; each control there edits one
-  of the mirrored sidebar prefs (see "Storage" in
-  [sb2-settings](../sb2-settings/SKILL.md)). Sine only picks the file up when it installs or
-  updates the mod, i.e. after a `version` bump.
+  This mod deliberately has no `preferences` field: sidebar configuration is
+  edited only through its own **Sidebar settings** page, not Sine's mod
+  settings dialog.
 - **Default branch is `main`** (renamed from `master`; upstream still uses
   `master`). Sine reads a mod added without `/tree/<branch>` from `main`,
   so the plain `<owner>/<repo>` works. Older Sine installs added as

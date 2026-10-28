@@ -59,6 +59,7 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_TOOLTIP_FULL_URL: "edit_sidebar_tooltip_full_url",
   EDIT_SIDEBAR_VISIBILITY: "edit_sidebar_visibility",
   EDIT_SIDEBAR_AUTO_HIDE_EDGE_GAP: "edit_sidebar_auto_hide_edge_gap",
+  EDIT_SIDEBAR_AUTO_HIDE_OVERLAY_GAP: "edit_sidebar_auto_hide_overlay_gap",
   EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT: "edit_sidebar_last_web_panel_shortcut",
   EDIT_SIDEBAR_NEXT_WEB_PANEL_SHORTCUT: "edit_sidebar_next_web_panel_shortcut",
   EDIT_SIDEBAR_PREVIOUS_WEB_PANEL_SHORTCUT:

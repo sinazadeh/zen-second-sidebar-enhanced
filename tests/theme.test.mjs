@@ -5,6 +5,10 @@ import { test } from "node:test";
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const theme = JSON.parse(await read("theme.json"));
 
+test("Sine does not expose a separate preferences dialog", () => {
+  assert.equal("preferences" in theme, false);
+});
+
 test("updatedAt is a full UTC timestamp", () => {
   // Sine offers an update when updatedAt is newer than the installed copy's,
   // not when version is, so two releases on one day must still differ.

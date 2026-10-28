@@ -73,7 +73,7 @@ export const SIDEBAR_MAIN_CSS = `
     /* An overlay sidebar (auto-hide set to overlay) is out of the flow, so
        nothing takes the place of the gap Zen keeps at the window edge: keep
        it as padding instead, unless the user wants the page to reach the
-       edge (edge-gap="false", "Keep gap at window edge"). The sidebar is
+       edge (edge-gap="false", "Keep page gap at window edge"). The sidebar is
        positioned against the padding box, so it still sits at the window
        edge and slides out of sight. Zen drops its gap in DOM fullscreen, so
        this does too. */
@@ -119,6 +119,35 @@ export const SIDEBAR_MAIN_CSS = `
       border-radius: 0 var(--sb2-zen-radius) var(--sb2-zen-radius) 0;
       border-inline-start: none;
       box-shadow: 2px 0 8px color-mix(in srgb, black 12%, transparent);
+    }
+
+    /* Overlay clearance is additional to Zen's page-edge separation. The
+       latter preserves the page border; this inset keeps that edge and its
+       scrollbar reachable while the sidebar is expanded. */
+    #sb2-wrapper[position="right"] #sb2-main[overlay="true"] {
+      right: var(--sb2-auto-hide-overlay-gap, 0px);
+    }
+
+    #sb2-wrapper[position="left"] #sb2-main[overlay="true"] {
+      left: var(--sb2-auto-hide-overlay-gap, 0px);
+    }
+
+    #sb2-wrapper[position="right"] #sb2-main[overlay="true"]:not([edge-gap="false"]) {
+      right: calc(
+        var(--zen-element-separation, 6px) +
+          var(--sb2-auto-hide-overlay-gap, 0px)
+      );
+    }
+
+    #sb2-wrapper[position="left"] #sb2-main[overlay="true"]:not([edge-gap="false"]) {
+      left: calc(
+        var(--zen-element-separation, 6px) +
+          var(--sb2-auto-hide-overlay-gap, 0px)
+      );
+    }
+
+    #sb2-main[overlay="true"]:not([overlay-gap="off"]) {
+      border-radius: var(--sb2-zen-radius);
     }
 
     /* Zen keeps its compact sidebar outside #zen-tabbox-wrapper while it is

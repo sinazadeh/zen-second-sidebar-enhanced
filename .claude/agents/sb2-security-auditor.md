@@ -30,10 +30,10 @@ or loader changes, `.claude/skills/sb2-source-patches/SKILL.md` and
   `new Function`, `javascript:` URLs, `innerHTML` in chrome documents) is a
   finding.
 - **Untrusted input.** Treat imported settings files, web panel URLs,
-  mirrored prefs edited through Sine's dialog or `about:config`, and page
-  link clicks as attacker-controlled. `parseSettingsExport` must validate the
-  whole file before anything is written; invalid mirrored prefs must be
-  rejected and written back; URL schemes that can reach privileged content
+  settings-page values and page link clicks as attacker-controlled.
+  `parseSettingsExport` must validate the whole file before anything is
+  written; `SettingsPageController#setSetting` must reject invalid fields and
+  values; URL schemes that can reach privileged content
   (`chrome:`, `resource:`, `about:` pages, `file:`, `javascript:`, `data:`)
   need a deliberate decision wherever a panel URL is loaded.
 - **Loading context.** Panel tabs must keep their container identity and a

@@ -165,8 +165,8 @@ export class SidebarMainCollapser {
         ((isRight && screenX > rightEdge - TRIGGER_WIDTH) ||
           (isLeft && screenX < leftEdge + TRIGGER_WIDTH))) ||
       (!collapsed &&
-        ((isRight && screenX > rightEdge - sidebarRect.width) ||
-          (isLeft && screenX < leftEdge + sidebarRect.width)));
+        ((isRight && screenX > leftEdge + sidebarRect.left) ||
+          (isLeft && screenX < leftEdge + sidebarRect.right)));
 
     const hitTest = {
       isRight,
@@ -237,10 +237,13 @@ export class SidebarMainCollapser {
     if (!Logger.enabled) {
       return;
     }
-    const zoneWidth = collapsed ? TRIGGER_WIDTH : sidebarRect.width;
-    const zone = isRight
-      ? [rightEdge - zoneWidth, rightEdge]
-      : [leftEdge, leftEdge + zoneWidth];
+    const zone = collapsed
+      ? isRight
+        ? [rightEdge - TRIGGER_WIDTH, rightEdge]
+        : [leftEdge, leftEdge + TRIGGER_WIDTH]
+      : isRight
+        ? [leftEdge + sidebarRect.left, rightEdge]
+        : [leftEdge, leftEdge + sidebarRect.right];
     const sidebar = [leftEdge + sidebarRect.left, leftEdge + sidebarRect.right];
     const range = ([start, end]) => `${Math.round(start)}-${Math.round(end)}`;
     const target = event.target;

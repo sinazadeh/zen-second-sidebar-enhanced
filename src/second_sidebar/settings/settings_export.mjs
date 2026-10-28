@@ -1,4 +1,7 @@
-import { SIDEBAR_PREFS, isValidSidebarPrefValue } from "./sidebar_prefs.mjs";
+import {
+  SIDEBAR_SETTING_VALUES,
+  isValidSidebarSettingValue,
+} from "./sidebar_validation.mjs";
 
 import { SidebarSettings } from "./sidebar_settings.mjs";
 import { WebPanelSettings } from "./web_panel_settings.mjs";
@@ -145,14 +148,11 @@ function parseWebPanels(webPanels, sidebarSettings, invalidSettings) {
  */
 function validSidebarSettings(object, invalid) {
   const valid = validFields(object, new SidebarSettings({}), "", invalid);
-  // Those with a fixed set of values (Position, Width...) must be one of them.
-  for (const entry of SIDEBAR_PREFS) {
-    if (
-      entry.field in valid &&
-      !isValidSidebarPrefValue(entry, valid[entry.field])
-    ) {
-      delete valid[entry.field];
-      invalid.push(entry.field);
+  // String enums (Position, Width...) must be one of their offered values.
+  for (const field of Object.keys(SIDEBAR_SETTING_VALUES)) {
+    if (field in valid && !isValidSidebarSettingValue(field, valid[field])) {
+      delete valid[field];
+      invalid.push(field);
     }
   }
   return valid;

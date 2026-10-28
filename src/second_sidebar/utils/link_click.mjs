@@ -5,7 +5,7 @@
 // modifier. A plain Alt+click is free in Firefox but is Glance's default
 // trigger in Zen, which takes it before this addon sees it.
 //
-// Keep this module free of browser globals: settings/sidebar_prefs.mjs
+// Keep this module free of browser globals: settings/sidebar_validation.mjs
 // imports it, and tests run both in Node.
 
 export const LINK_CLICK_MODIFIERS = ["off", "altshift", "alt"];

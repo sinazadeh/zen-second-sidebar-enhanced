@@ -3,6 +3,7 @@ export const COMMON_CSS = `
 
   :root {
     --sb2-main-padding: var(--space-small);
+    --sb2-auto-hide-overlay-gap: var(--space-small);
     --sb2-main-web-panel-buttons-position: start;
     --sb2-zen-radius: var(--zen-border-radius, var(--border-radius-medium));
     /* Transparent on purpose: the sidebar and a pinned panel sit on Zen's own
