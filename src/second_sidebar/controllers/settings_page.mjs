@@ -20,6 +20,8 @@ const SETTINGS_PAGE_URL = new URL(
   "../settings_page/settings.html",
   import.meta.url,
 ).href;
+// This mod's id in Sine (theme.json).
+const SINE_MOD_ID = "zen-second-sidebar";
 const SUPPORT_URLS = new Set([
   "https://github.com/sinazadeh/zen-second-sidebar-enhanced",
   "https://github.com/sponsors/sinazadeh",
@@ -42,16 +44,20 @@ const SHORTCUT_FIELDS = {
  */
 
 /**
- * Opens the settings page (settings_page/settings.html) in a tab: from the
- * sidebar's right-click menu. It asks the methods below to edit settings,
- * keyboard shortcuts and backups; every browser window offers them as
- * `SecondSidebarSettingsPage`.
+ * Opens the settings page (settings_page/settings.html) in a tab from the
+ * sidebar's right-click menu or this mod's gear in Sine. It asks the methods
+ * below to edit settings, keyboard shortcuts and backups; every browser
+ * window offers them as `SecondSidebarSettingsPage`.
  */
 export class SettingsPageController {
+  /** @type {WeakSet<Document>} Sine settings pages already hooked */
+  #hooked = new WeakSet();
+
   constructor() {
     SidebarElements.sidebarMainMenuPopup.listenSettingsItemClick(() =>
       this.open(),
     );
+    this.#hookSineSettingsButton();
     window.SecondSidebarSettingsPage = Object.freeze({
       getSettings: () => this.getSettings(),
       setSetting: (field, value) => this.setSetting(field, value),
@@ -312,5 +318,66 @@ export class SettingsPageController {
     await webPanelsSettings?.save();
     sidebarSettings?.save();
     return invalidSettings;
+  }
+
+  // Sine lists mods in about:preferences. Every page this window loads is
+  // checked; the listener goes away with the window.
+  #hookSineSettingsButton() {
+    const gBrowser = new WindowWrapper().gBrowser;
+    const hook = (browser) => this.#hookSettingsPage(browser);
+    gBrowser.addTabsProgressListener({
+      onLocationChange(browser, webProgress) {
+        if (webProgress?.isTopLevel) {
+          hook(browser);
+        }
+      },
+      onStateChange(browser, webProgress, _request, flags) {
+        if (
+          webProgress?.isTopLevel &&
+          flags & Ci.nsIWebProgressListener.STATE_STOP
+        ) {
+          hook(browser);
+        }
+      },
+    });
+    for (const tab of gBrowser.tabs) {
+      hook(gBrowser.getBrowserForTab(tab).getXUL());
+    }
+  }
+
+  /**
+   * Redirects this mod's Sine gear to the real settings page. The manifest's
+   * empty preferences.json exists only so Sine renders that gear.
+   *
+   * @param {object} browser a <browser> element
+   */
+  #hookSettingsPage(browser) {
+    let page;
+    try {
+      page = browser.contentDocument;
+    } catch {
+      return; // A page in a content process: not about:preferences.
+    }
+    if (
+      !page ||
+      this.#hooked.has(page) ||
+      !/^about:(preferences|settings)/.test(page.documentURI)
+    ) {
+      return;
+    }
+    this.#hooked.add(page);
+    page.addEventListener(
+      "click",
+      (event) => {
+        const button = event.target.closest?.(".sineItemConfigureButton");
+        const modId = button?.closest(".sineItem")?.getAttribute("mod-id");
+        if (modId === SINE_MOD_ID) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          this.open();
+        }
+      },
+      true,
+    );
   }
 }

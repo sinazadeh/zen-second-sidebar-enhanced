@@ -47,17 +47,17 @@ All paths below are relative to `src/second_sidebar/`, except the entry point.
 
 ## Skills: where the detail lives
 
-| Before you…                                                                                | Read                                                                     |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| add or change a setting, settings storage, cross-window events, or settings import/export  | [sb2-settings](.claude/skills/sb2-settings/SKILL.md)                     |
-| touch `theme.json`, startup, asset or file paths, or debug "installed but nothing appears" | [sb2-loader-portability](.claude/skills/sb2-loader-portability/SKILL.md) |
-| change web panel lifecycle, the panels' window, shortcuts, link clicks, icons or selectors | [sb2-web-panels](.claude/skills/sb2-web-panels/SKILL.md)                 |
-| change CSS, layout, geometry, collapse behavior, popups or theming                         | [sb2-ui-layout](.claude/skills/sb2-ui-layout/SKILL.md)                   |
-| change a patcher, `patchers/source_patches.mjs` or `utils/files.mjs`                       | [sb2-source-patches](.claude/skills/sb2-source-patches/SKILL.md)         |
-| merge upstream or resolve a sync pull request                                              | [sb2-upstream-sync](.claude/skills/sb2-upstream-sync/SKILL.md)           |
-| prepare a release, or change the changelog's structure or the Release workflow             | [sb2-release](.claude/skills/sb2-release/SKILL.md)                       |
-| edit `.github/workflows/`, lint or format config, or `scripts/`                            | [sb2-ci-workflows](.claude/skills/sb2-ci-workflows/SKILL.md)             |
-| validate in a real browser, or write a pull request's manual-validation notes              | [sb2-browser-validation](.claude/skills/sb2-browser-validation/SKILL.md) |
+| Before you…                                                                                                             | Read                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| add or change a setting, settings storage, cross-window events, or settings import/export                               | [sb2-settings](.claude/skills/sb2-settings/SKILL.md)                     |
+| touch `theme.json`, the Sine preferences marker, startup, asset or file paths, or debug "installed but nothing appears" | [sb2-loader-portability](.claude/skills/sb2-loader-portability/SKILL.md) |
+| change web panel lifecycle, the panels' window, shortcuts, link clicks, icons or selectors                              | [sb2-web-panels](.claude/skills/sb2-web-panels/SKILL.md)                 |
+| change CSS, layout, geometry, collapse behavior, popups or theming                                                      | [sb2-ui-layout](.claude/skills/sb2-ui-layout/SKILL.md)                   |
+| change a patcher, `patchers/source_patches.mjs` or `utils/files.mjs`                                                    | [sb2-source-patches](.claude/skills/sb2-source-patches/SKILL.md)         |
+| merge upstream or resolve a sync pull request                                                                           | [sb2-upstream-sync](.claude/skills/sb2-upstream-sync/SKILL.md)           |
+| prepare a release, or change the changelog's structure or the Release workflow                                          | [sb2-release](.claude/skills/sb2-release/SKILL.md)                       |
+| edit `.github/workflows/`, lint or format config, or `scripts/`                                                         | [sb2-ci-workflows](.claude/skills/sb2-ci-workflows/SKILL.md)             |
+| validate in a real browser, or write a pull request's manual-validation notes                                           | [sb2-browser-validation](.claude/skills/sb2-browser-validation/SKILL.md) |
 
 ## Conventions for every change
 

@@ -75,8 +75,8 @@ too, or discarding changes will leave it applied.
 ## The settings page
 
 `settings_page/` is the only place the sidebar settings are edited (the fork
-removed upstream's settings popup and Sine preferences), opened by
-**Sidebar settings**. All controls go through the browser window. Read
+removed upstream's settings popup and Sine's duplicate controls), opened by
+**Sidebar settings** or Sine's gear. All controls go through the browser window. Read
 [the settings page](references/settings-page.md) before changing it.
 
 ## Storage
@@ -84,7 +84,9 @@ removed upstream's settings popup and Sine preferences), opened by
 - Sidebar settings are stored only in the JSON string preference
   `second-sidebar.settings`; the settings page edits it through
   `SettingsPageController`, and there are no per-setting mirrored prefs or
-  Sine settings controls. Web panel settings and state are JSON files in the profile's
+  Sine settings controls. The empty root `preferences.json` exists only to
+  make Sine show a gear that is redirected to the settings page. Web panel
+  settings and state are JSON files in the profile's
   `chrome/second-sidebar-data/` (`web-panels.json`, `web-panels-state.json`,
   via `FileSettings` in `settings/settings.mjs`); the older
   `second-sidebar.web-panels`/`second-sidebar.web-panels-state` prefs are only

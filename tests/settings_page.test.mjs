@@ -94,6 +94,8 @@ test("the settings page edits SidebarSettings through the browser API", async ()
   assert.match(pageScript, /sidebar\(\)\?\.setSetting\(field, value\)/);
   assert.match(controller, /setSetting\(field, value\)/);
   assert.match(controller, /isValidSidebarSettingValue\(field, value\)/);
+  assert.match(controller, /\.sineItemConfigureButton/);
+  assert.match(controller, /event\.stopImmediatePropagation\(\)/);
 });
 
 test("the settings page links to the project and its configured sponsor", async () => {

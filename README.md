@@ -60,7 +60,7 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 
 ## Settings
 
-Right-click the sidebar and choose **Sidebar settings** to open the settings page in a tab. It groups the settings in cards with switches and a preview of the sidebar, and applies changes right away, in every window; the sidebar's keyboard shortcuts and [backup](#backup) are there too.
+Right-click the sidebar and choose **Sidebar settings** to open the settings page in a tab. It groups the settings in cards with switches and a preview of the sidebar, and applies changes right away, in every window; the sidebar's keyboard shortcuts and [backup](#backup) are there too. With Sine, its gear button for **Zen Second Sidebar Enhanced** opens this same page instead of a separate Sine preferences dialog.
 
 The settings page's format follows the one [oom333/zen-tab-groups](https://github.com/oom333/zen-tab-groups) made for Tab Groups.
 

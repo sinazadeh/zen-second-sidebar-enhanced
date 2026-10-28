@@ -5,8 +5,9 @@ import { test } from "node:test";
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const theme = JSON.parse(await read("theme.json"));
 
-test("Sine does not expose a separate preferences dialog", () => {
-  assert.equal("preferences" in theme, false);
+test("Sine's preferences marker contains no duplicate controls", async () => {
+  assert.equal(theme.preferences, "preferences.json");
+  assert.deepEqual(JSON.parse(await read(theme.preferences)), []);
 });
 
 test("updatedAt is a full UTC timestamp", () => {

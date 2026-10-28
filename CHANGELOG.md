@@ -6,6 +6,14 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.4] - 2026-10-28
+
+### Added
+
+- Sine shows its gear button for Second Sidebar again, and clicking it opens
+  the dedicated **Sidebar settings** page. The Sine preferences file is an
+  empty marker, so it does not duplicate any settings or mirrored preferences.
+
 ## [1.13.3] - 2026-10-28
 
 ### Added

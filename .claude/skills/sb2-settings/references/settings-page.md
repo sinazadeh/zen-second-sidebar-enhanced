@@ -3,9 +3,10 @@
 Paths are relative to `src/second_sidebar/`.
 
 `settings_page/settings.html` is a chrome:// page opened in a tab by the main
-menu's **Sidebar settings** item; it's the only place the sidebar settings are
-edited (the fork removed upstream's settings popup and does not expose a Sine
-preferences file). `SettingsPageController` offers settings, shortcuts and
+menu's **Sidebar settings** item or Sine's gear; it's the only place the
+sidebar settings are edited (the fork removed upstream's settings popup and
+uses an empty Sine preferences file only to expose that gear).
+`SettingsPageController` offers settings, shortcuts and
 backup methods to the page as `SecondSidebarSettingsPage` on each browser
 window (the page uses its own window's,
 `browsingContext.topChromeWindow`). Setting changes are validated, sent

@@ -1,6 +1,6 @@
 ---
 name: sb2-loader-portability
-description: How Second Sidebar is loaded by fx-autoconfig and Sine - their different chrome:// origins, theme.json, startup ordering, the double-injection guard and popup-window detection. Use when touching theme.json, src/second_sidebar.uc.mjs, the way this addon resolves its own assets or files, or when diagnosing "installed but the sidebar never appears" reports.
+description: How Second Sidebar is loaded by fx-autoconfig and Sine - their different chrome:// origins, theme.json, the Sine preferences marker, startup ordering, the double-injection guard and popup-window detection. Use when touching theme.json, preferences.json, src/second_sidebar.uc.mjs, the way this addon resolves its own assets or files, or when diagnosing "installed but the sidebar never appears" reports.
 ---
 
 # Loaders, startup and injection
@@ -51,9 +51,10 @@ the code.
   fx-autoconfig already restricts `.uc.mjs` loading to); dropping it would
   make Sine dynamically import this script into every chrome window,
   including ones lacking `gBrowser`/the sidebar's expected DOM.
-  This mod deliberately has no `preferences` field: sidebar configuration is
-  edited only through its own **Sidebar settings** page, not Sine's mod
-  settings dialog.
+  Its `preferences` field points to an intentionally empty root
+  `preferences.json`. Sine uses the field's presence to render the mod's gear;
+  `SettingsPageController` intercepts that gear and opens the dedicated
+  **Sidebar settings** page. Do not add duplicate controls to the JSON.
 - **Default branch is `main`** (renamed from `master`; upstream still uses
   `master`). Sine reads a mod added without `/tree/<branch>` from `main`,
   so the plain `<owner>/<repo>` works. Older Sine installs added as
