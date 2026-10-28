@@ -12,6 +12,7 @@
   --border: rgba(20, 18, 30, 0.1);
   --accent: #6f5ff0;
   --accent-text: #ffffff;
+  --warning-text: #c5221f;
   --window: #e9e8ee;
   --window-page: #ffffff;
   --window-line: rgba(0, 0, 0, 0.1);
@@ -28,6 +29,7 @@
     --border: rgba(255, 255, 255, 0.08);
     --accent: #8f82ff;
     --accent-text: #15131f;
+    --warning-text: #ff6b6b;
     --window: #2b2933;
     --window-page: #1f1e25;
     --window-line: rgba(255, 255, 255, 0.1);
@@ -83,8 +85,16 @@ input {
   align-items: center;
   gap: 5px;
   max-width: none;
-  margin-bottom: 28px;
+  margin-bottom: 8px;
   font-size: 13px;
+}
+
+.intro .startup-cache-note {
+  max-width: none;
+  margin-bottom: 28px;
+  color: var(--warning-text);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .support-link {

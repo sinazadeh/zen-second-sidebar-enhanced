@@ -40,6 +40,9 @@ Pick whichever loader you already use (or prefer) — both install the exact sam
 4. Enable `toolkit.legacyUserProfileCustomizations.stylesheets` and `dom.allow_scripts_to_close_windows` in `about:config` if not already enabled.
 5. Restart the browser.
 
+After each Second Sidebar update, clearing the startup cache is recommended so
+Zen does not keep running cached script modules from the previous version.
+
 ### fx-autoconfig (manual)
 
 1. Install [fx-autoconfig](https://github.com/MrOtherGuy/fx-autoconfig).

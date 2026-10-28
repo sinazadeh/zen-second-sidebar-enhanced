@@ -118,6 +118,18 @@ test("the settings page links to the project and its configured sponsor", async 
   assert.match(controller, /browserWindow\.openTrustedLinkIn\(url, "tab"/);
 });
 
+test("the settings page recommends clearing the startup cache after updates", async () => {
+  const [html, css] = await Promise.all([
+    readFile(new URL("settings.html", PAGE_DIR), "utf8"),
+    readFile(new URL("settings.css", PAGE_DIR), "utf8"),
+  ]);
+  assert.match(
+    html,
+    /class="startup-cache-note"[\s\S]*clear the startup cache after each update/,
+  );
+  assert.match(css, /\.intro \.startup-cache-note[\s\S]*--warning-text/);
+});
+
 test("the shortcuts card has each of the sidebar's keyboard shortcuts", () => {
   const fields = SETTINGS_PAGE_SHORTCUTS.map((shortcut) => shortcut.field);
   assert.deepEqual(

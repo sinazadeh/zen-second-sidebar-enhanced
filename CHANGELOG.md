@@ -6,6 +6,13 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.5] - 2026-10-28
+
+### Added
+
+- A red note at the bottom of the settings-page introduction recommends
+  clearing the startup cache after each update.
+
 ## [1.13.4] - 2026-10-28
 
 ### Added
