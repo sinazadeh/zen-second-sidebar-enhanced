@@ -43,21 +43,29 @@ test("Firefox Mobile follows the running browser's version", () => {
     resolveUserAgent(FIREFOX_MOBILE_USER_AGENT, "", "151.0.2"),
     "Mozilla/5.0 (Android 16; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
   );
-  assert.match(
+  assert.equal(
     resolveUserAgent(FIREFOX_MOBILE_USER_AGENT, "", "unknown"),
-    /^Mozilla\/5\.0 \(Android \d+; Mobile; rv:\d+\.0\) Gecko\/\d+\.0 Firefox\/\d+\.0$/,
+    "Mozilla/5.0 (Android 16; Mobile; rv:159.0) Gecko/159.0 Firefox/159.0",
   );
 });
 
-test("the device presets look like their browsers", () => {
+test("the fixed device presets use the current browser versions", () => {
   const phone = resolveUserAgent("galaxy-phone", "", "149.0");
   const tab = resolveUserAgent("galaxy-tab", "", "149.0");
   const iphone = resolveUserAgent("iphone", "", "149.0");
-  assert.match(phone, /SamsungBrowser\/[\d.]+ Chrome\/[\d.]+ Mobile Safari/);
+  assert.equal(
+    phone,
+    "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/31.0 Chrome/148.0.0.0 Mobile Safari/537.36",
+  );
   // Sites tell tablets from phones by the "Mobile" token.
-  assert.match(tab, /SamsungBrowser\/[\d.]+ Chrome\/[\d.]+ Safari/);
-  assert.doesNotMatch(tab, /Mobile/);
-  assert.match(iphone, /^Mozilla\/5\.0 \(iPhone; .* Mobile\/\w+ Safari/);
+  assert.equal(
+    tab,
+    "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/31.0 Chrome/148.0.0.0 Safari/537.36",
+  );
+  assert.equal(
+    iphone,
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
+  );
 });
 
 test("Custom sends the custom string, cleaned up", () => {

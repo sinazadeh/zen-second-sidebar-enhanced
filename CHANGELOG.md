@@ -6,6 +6,28 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.7] - 2026-10-28
+
+### Added
+
+- A weekly GitHub Actions check reads Mozilla and WebKit release feeds plus an
+  observed Samsung Internet user-agent catalog. When a fixed web-panel user
+  agent is stale, it updates the source and exact-version tests, bumps the patch
+  version, and opens or refreshes an automation pull request.
+
+### Changed
+
+- Updated the Galaxy phone and tablet presets to Samsung Internet 31 with
+  Chromium 148.
+
+## [1.13.6] - 2026-10-28
+
+### Changed
+
+- Updated the iPhone user agent to Safari 27.2 and the Firefox Mobile fallback
+  to Firefox 159. Tests now pin every fixed browser version so stale user-agent
+  presets are caught explicitly.
+
 ## [1.13.5] - 2026-10-28
 
 ### Added

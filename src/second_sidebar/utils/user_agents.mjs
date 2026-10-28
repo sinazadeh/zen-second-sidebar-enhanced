@@ -14,7 +14,7 @@ export const FIREFOX_MOBILE_USER_AGENT = "firefox-mobile";
  * reports "Android 10; K" instead of the real Android version and device.
  */
 const SAMSUNG_INTERNET =
-  "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/30.0 Chrome/143.0.0.0";
+  "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/31.0 Chrome/148.0.0.0";
 
 /**
  * Presets in menu order, without "Default" and "Custom". `build` gets the
@@ -43,14 +43,14 @@ const PRESETS = [
   {
     id: "iphone",
     label: "iPhone",
-    // Since Safari 26, iOS reports its version as 18.6 whatever it is.
+    // Safari reduces the iOS version token independently of the real OS.
     build: () =>
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
   },
 ];
 
 // Used if the browser's version can't be read.
-const FALLBACK_GECKO_VERSION = 149;
+const FALLBACK_GECKO_VERSION = 159;
 
 /**
  * Every choice for the "User Agent" setting, in menu order.

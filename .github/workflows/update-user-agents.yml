@@ -1,0 +1,76 @@
+# Checks browser release data weekly. When a fixed web-panel user agent is
+# stale, updates it and opens (or refreshes) one release-ready PR.
+
+name: Update user agents
+
+on:
+  schedule:
+    - cron: "23 12 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-user-agents
+  cancel-in-progress: true
+
+jobs:
+  update:
+    name: Check browser releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Update user agents
+        id: update
+        run: |
+          node scripts/update_user_agents.mjs --write
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Format changed files
+        if: steps.update.outputs.changed == 'true'
+        run: npx --yes prettier@3.9.9 --write src/second_sidebar/utils/user_agents.mjs tests/user_agents.test.mjs CHANGELOG.md theme.json
+
+      - name: Run tests
+        if: steps.update.outputs.changed == 'true'
+        run: node --test "tests/*.test.mjs"
+
+      - name: Commit update
+        if: steps.update.outputs.changed == 'true'
+        env:
+          BRANCH: automation/update-user-agents
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add src/second_sidebar/utils/user_agents.mjs tests/user_agents.test.mjs CHANGELOG.md theme.json
+          git commit -m "Update web-panel user agents"
+          git push --force origin "HEAD:$BRANCH"
+
+      - name: Open or refresh pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: automation/update-user-agents
+        run: |
+          number="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')"
+          body="$(printf '%s\n\n%s\n' 'Updates the fixed web-panel user agents from Mozilla and WebKit release feeds and an observed Samsung Internet UA catalog.' 'Please confirm the Safari and Samsung reduced tokens still match current devices before merging.')"
+          if [ -n "$number" ]; then
+            gh pr edit "$number" --title "Update web-panel user agents" --body "$body"
+          else
+            gh pr create --base main --head "$BRANCH" --title "Update web-panel user agents" --body "$body"
+          fi
