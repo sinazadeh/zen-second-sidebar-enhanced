@@ -6,6 +6,8 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.9] - 2026-11-07
+
 ### Changed
 
 - Refined the settings page with a responsive mobile layout, larger touch
