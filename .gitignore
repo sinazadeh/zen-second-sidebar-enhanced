@@ -1,3 +1,9 @@
 node_modules
 package.json
 package-lock.json
+.agents/skills/
+.agent-tools/
+playwright-report/
+test-results/
+.vscode/
+brag-output/composition/.hyperframes/

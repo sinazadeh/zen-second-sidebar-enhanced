@@ -8,7 +8,8 @@
     <script type="module" src="settings.mjs"></script>
   </head>
   <body>
-    <main class="page">
+    <a class="skip-link" href="#settings-content">Skip to settings</a>
+    <main class="page" id="settings-content">
       <header class="intro">
         <h1>Second Sidebar</h1>
         <p>
@@ -47,10 +48,23 @@
           </a>
           <span>.</span>
         </p>
-        <p class="startup-cache-note">
-          It's recommended to clear the startup cache after each update from
-          <a class="settings-page-link" href="about:support">about:support</a>.
-        </p>
+        <div class="startup-cache-note" role="note">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M8 1.5 15 14H1L8 1.5Zm0 3.4v4.8m0 2.2v.1"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+            />
+          </svg>
+          <p>
+            It's recommended to clear the startup cache after each update from
+            <a class="settings-page-link" href="about:support">about:support</a
+            >.
+          </p>
+        </div>
       </header>
 
       <p id="not-running" class="banner" hidden>
@@ -73,7 +87,7 @@
         <div class="column">
           <div id="sections" class="column"></div>
 
-          <section class="card">
+          <section class="card" id="keyboard-shortcuts">
             <h2>Keyboard shortcuts</h2>
             <p class="muted">
               Click a box and press the keys; Backspace clears it. Shortcuts
@@ -85,7 +99,7 @@
             <p id="shortcut-status" class="status small" role="status"></p>
           </section>
 
-          <section class="card">
+          <section class="card" id="backup">
             <h2>Backup</h2>
             <p class="muted">
               Save your settings and web panels to a file, to restore them later
@@ -112,16 +126,30 @@
 
         <aside class="preview-wrap">
           <div class="preview-label">Preview</div>
-          <div id="preview" class="preview" aria-label="Sidebar preview"></div>
+          <div
+            id="preview"
+            class="preview"
+            role="img"
+            aria-label="Preview of the second sidebar"
+          ></div>
           <p class="muted small">
-            Hover a panel button in the preview to see its tooltip.
+            This preview updates as you change the settings.
           </p>
+          <nav class="settings-nav" aria-label="Settings sections">
+            <div class="preview-label">Jump to</div>
+            <div id="settings-nav-links" class="settings-nav-links"></div>
+          </nav>
         </aside>
       </div>
     </main>
 
     <!-- Asks what to export, or what to restore from a backup. -->
-    <dialog id="backup-dialog" class="dialog">
+    <dialog
+      id="backup-dialog"
+      class="dialog"
+      aria-labelledby="backup-dialog-title"
+      aria-describedby="backup-dialog-text backup-dialog-note"
+    >
       <form method="dialog">
         <h2 id="backup-dialog-title"></h2>
         <p id="backup-dialog-text" class="muted"></p>

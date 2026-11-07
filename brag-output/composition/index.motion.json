@@ -1,0 +1,20 @@
+{
+  "duration": 18.5,
+  "assertions": [
+    { "kind": "appearsBy", "selector": ".hook-copy h1", "bySec": 0.9 },
+    {
+      "kind": "before",
+      "a": ".hook-copy h1",
+      "b": ".callout:first-child"
+    },
+    {
+      "kind": "before",
+      "a": ".callout:first-child",
+      "b": ".feature:first-child"
+    },
+    { "kind": "appearsBy", "selector": ".outro-copy h2", "bySec": 16.2 },
+    { "kind": "staysInFrame", "selector": ".proof-frame" },
+    { "kind": "staysInFrame", "selector": ".settings-window" },
+    { "kind": "keepsMoving", "withinSelector": "#root", "maxStaticSec": 2.5 }
+  ]
+}

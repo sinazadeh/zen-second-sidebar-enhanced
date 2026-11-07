@@ -62,3 +62,7 @@ Record the browser version, operating system and scenarios you actually exercise
 ## Coding agents
 
 `AGENTS.md` is a short map for coding agents. Each area's detailed rules live in a skill under `.claude/skills/`, loaded only when a task touches that area. `.claude/agents/` has single-purpose reviewers and helpers, each on a model suited to its job, and `.claude/commands/` has workflows that combine them (`/sb2-review`, `/sb2-add-setting`, `/sb2-sync-upstream`, `/sb2-prepare-release`, `/sb2-check`). When you learn something an agent should know next time, add it to the matching skill rather than to `AGENTS.md`. `node --test` runs `scripts/lint_agent_config.mjs`, which checks the structure of all of these.
+
+Optional third-party design skills and Playwright browser checks are documented
+in [`AGENT_TOOLS.md`](AGENT_TOOLS.md). They are pinned by
+`agent-tools.json` and install into ignored, repository-local directories.

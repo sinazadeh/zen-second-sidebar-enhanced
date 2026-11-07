@@ -54,3 +54,14 @@ targets** (weekly, and on PRs touching patchers: runs
 The **Sync upstream** workflow is covered in
 [sb2-upstream-sync](../sb2-upstream-sync/SKILL.md), and the **Release**
 workflow in [sb2-release](../sb2-release/SKILL.md).
+
+## Optional agent tooling
+
+Third-party design skills, the design-reference library and Playwright are
+declared in `agent-tools.json` and installed by
+`scripts/setup_agent_tools.mjs`. Their generated files stay in ignored
+directories (Playwright has its own isolated runtime), preserving the
+no-manifest runtime model and avoiding changes to other ad-hoc development
+packages. See `AGENT_TOOLS.md` for setup and the settings-page browser audit.
+Treat that Chromium audit as a supplement to, not a replacement for, privileged
+Firefox and Zen validation.

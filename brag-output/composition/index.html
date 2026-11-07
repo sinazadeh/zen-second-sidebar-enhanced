@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #18171d;
+        --card: #222129;
+        --raised: #2a2932;
+        --text: #ecebf2;
+        --muted: #aaa8b7;
+        --accent: #8f82ff;
+        --line: rgba(255, 255, 255, 0.12);
+        --shadow: 0 30px 90px rgba(0, 0, 0, 0.46);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      body::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          radial-gradient(
+            circle at 84% 20%,
+            rgba(143, 130, 255, 0.18),
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at 12% 84%,
+            rgba(83, 186, 220, 0.08),
+            transparent 28%
+          );
+      }
+      #root,
+      .scene,
+      .clip {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+      h1 {
+        max-width: 690px;
+        font-size: 94px;
+        font-weight: 740;
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+      }
+      h2 {
+        max-width: 980px;
+        font-size: 70px;
+        font-weight: 720;
+        line-height: 1.02;
+        letter-spacing: -0.045em;
+      }
+      .eyebrow {
+        margin-bottom: 22px;
+        color: var(--accent);
+        font-size: 28px;
+        font-weight: 760;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .subhead {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 32px;
+        line-height: 1.35;
+      }
+      .accent {
+        color: var(--accent);
+      }
+      .product-frame {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: #101015;
+        box-shadow:
+          var(--shadow),
+          0 0 0 1px rgba(143, 130, 255, 0.12);
+      }
+      .product-frame::before {
+        position: absolute;
+        z-index: 3;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+        content: "";
+        pointer-events: none;
+      }
+      .video-shade {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(24, 23, 29, 0.96) 0%,
+          rgba(24, 23, 29, 0.77) 29%,
+          rgba(24, 23, 29, 0.1) 58%,
+          transparent 100%
+        );
+      }
+      .hook-video {
+        top: 132px;
+        right: 82px;
+        bottom: auto;
+        left: auto;
+        width: 1120px;
+        height: 790px;
+        border-radius: 26px;
+        object-fit: cover;
+        object-position: left center;
+        box-shadow: var(--shadow);
+      }
+      .hook-frame {
+        position: absolute;
+        top: 132px;
+        right: 82px;
+        width: 1120px;
+        height: 790px;
+      }
+      .hook-copy {
+        position: absolute;
+        z-index: 4;
+        top: 232px;
+        left: 112px;
+        width: 690px;
+      }
+      .hook-copy .subhead {
+        max-width: 540px;
+      }
+      .proof-video {
+        top: 146px;
+        right: 110px;
+        bottom: auto;
+        left: auto;
+        width: 1440px;
+        height: 810px;
+        border-radius: 28px;
+        object-fit: cover;
+        object-position: left center;
+        box-shadow: var(--shadow);
+      }
+      .proof-frame {
+        position: absolute;
+        top: 146px;
+        right: 110px;
+        width: 1440px;
+        height: 810px;
+      }
+      .proof-title {
+        position: absolute;
+        z-index: 5;
+        top: 84px;
+        left: 110px;
+      }
+      .callouts {
+        position: absolute;
+        z-index: 5;
+        right: 138px;
+        bottom: 76px;
+        display: flex;
+        gap: 14px;
+      }
+      .callout {
+        padding: 14px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+        background: rgba(26, 25, 32, 0.91);
+        color: #fff;
+        font-size: 28px;
+        font-weight: 670;
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+      }
+      .modes-title {
+        position: absolute;
+        top: 76px;
+        left: 112px;
+      }
+      .mode-video {
+        top: 318px;
+        bottom: auto;
+        width: 790px;
+        height: 530px;
+        border-radius: 24px;
+        object-fit: cover;
+        object-position: left center;
+        box-shadow: var(--shadow);
+      }
+      .mode-video.pinned {
+        right: auto;
+        left: 112px;
+      }
+      .mode-video.floating {
+        right: 112px;
+        left: auto;
+      }
+      .mode-frame {
+        position: absolute;
+        top: 318px;
+        width: 790px;
+        height: 530px;
+      }
+      .mode-frame.pinned {
+        left: 112px;
+      }
+      .mode-frame.floating {
+        right: 112px;
+      }
+      .mode-label {
+        position: absolute;
+        z-index: 4;
+        top: 338px;
+        padding: 11px 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(24, 23, 29, 0.9);
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .mode-label.pinned {
+        left: 134px;
+      }
+      .mode-label.floating {
+        right: 134px;
+      }
+      .mode-note {
+        position: absolute;
+        bottom: 106px;
+        color: var(--muted);
+        font-size: 28px;
+      }
+      .mode-note.pinned {
+        left: 112px;
+      }
+      .mode-note.floating {
+        right: 112px;
+        text-align: right;
+      }
+      .control-title {
+        position: absolute;
+        top: 88px;
+        left: 112px;
+      }
+      .settings-window {
+        position: absolute;
+        top: 210px;
+        right: 110px;
+        width: 1320px;
+        height: 770px;
+        overflow: hidden;
+      }
+      .settings-shot {
+        width: 100%;
+        height: auto;
+      }
+      .feature-list {
+        position: absolute;
+        z-index: 4;
+        top: 332px;
+        left: 106px;
+        display: grid;
+        gap: 14px;
+        width: 410px;
+      }
+      .feature {
+        display: flex;
+        min-height: 74px;
+        align-items: center;
+        gap: 15px;
+        padding: 0 20px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(42, 41, 50, 0.94);
+        font-size: 28px;
+        font-weight: 670;
+        box-shadow: 0 16px 42px rgba(0, 0, 0, 0.24);
+      }
+      .feature::before {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        content: "";
+      }
+      .outro-video {
+        top: 120px;
+        right: 82px;
+        bottom: auto;
+        left: auto;
+        width: 1240px;
+        height: 840px;
+        border-radius: 28px;
+        object-fit: cover;
+        object-position: left center;
+        box-shadow: var(--shadow);
+      }
+      .outro-frame {
+        position: absolute;
+        top: 120px;
+        right: 82px;
+        width: 1240px;
+        height: 840px;
+      }
+      .outro-copy {
+        position: absolute;
+        z-index: 5;
+        top: 250px;
+        left: 106px;
+        width: 790px;
+      }
+      .outro-copy h2 {
+        font-size: 80px;
+      }
+      .repo {
+        display: inline-flex;
+        margin-top: 38px;
+        padding: 15px 22px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--accent);
+        color: #15131f;
+        font-size: 28px;
+        font-weight: 760;
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="18.5"
+      data-width="1920"
+      data-height="1080"
+      data-fps="30"
+    >
+      <video
+        id="hook-video"
+        class="hook-video clip"
+        src="assets/demo.mp4"
+        data-start="0"
+        data-duration="3.4"
+        data-media-start="0"
+        data-track-index="1"
+        muted
+        playsinline
+      ></video>
+      <section
+        id="hook"
+        class="scene clip"
+        data-start="0"
+        data-duration="3.4"
+        data-track-index="0"
+      >
+        <div class="hook-frame product-frame"></div>
+        <div class="video-shade"></div>
+        <div class="hook-copy">
+          <div class="eyebrow">Second Sidebar</div>
+          <h1>Web panels beside <span class="accent">every tab.</span></h1>
+        </div>
+      </section>
+
+      <video
+        id="proof-video"
+        class="proof-video clip"
+        src="assets/demo.mp4"
+        data-start="3.4"
+        data-duration="4.8"
+        data-media-start="2.5"
+        data-track-index="1"
+        muted
+        playsinline
+      ></video>
+      <section
+        id="proof"
+        class="scene clip"
+        data-start="3.4"
+        data-duration="4.8"
+        data-track-index="0"
+      >
+        <div class="proof-frame product-frame"></div>
+        <div class="proof-title">
+          <div class="eyebrow">One rail, any site</div>
+          <h2>Switch panels. <span class="accent">Keep browsing.</span></h2>
+        </div>
+        <div class="callouts">
+          <div class="callout">Pinned or floating</div>
+          <div class="callout">Middle-click → tab</div>
+          <div class="callout">Containers & spaces</div>
+        </div>
+      </section>
+
+      <video
+        id="pinned-video"
+        class="mode-video pinned clip"
+        src="assets/demo.mp4"
+        data-start="8.2"
+        data-duration="3.99"
+        data-media-start="7"
+        data-track-index="1"
+        muted
+        playsinline
+      ></video>
+      <video
+        id="floating-video"
+        class="mode-video floating clip"
+        src="assets/demo.mp4"
+        data-start="8.2"
+        data-duration="4"
+        data-media-start="13"
+        data-track-index="2"
+        muted
+        playsinline
+      ></video>
+      <section
+        id="modes"
+        class="scene clip"
+        data-start="8.2"
+        data-duration="4"
+        data-track-index="0"
+      >
+        <div class="modes-title">
+          <div class="eyebrow">Fits the way you browse</div>
+          <h2>
+            Make room—or <span class="accent">float above the page.</span>
+          </h2>
+        </div>
+        <div class="mode-frame pinned product-frame"></div>
+        <div class="mode-frame floating product-frame"></div>
+        <div class="mode-label pinned">Pinned</div>
+        <div class="mode-label floating">Floating</div>
+        <p class="mode-note pinned">Part of your browser layout.</p>
+        <p class="mode-note floating">There when you need it.</p>
+      </section>
+
+      <section
+        id="control"
+        class="scene clip"
+        data-start="12.2"
+        data-duration="3.1"
+        data-track-index="0"
+      >
+        <div class="control-title">
+          <div class="eyebrow">Actual settings, applied live</div>
+          <h2>Make the sidebar <span class="accent">yours.</span></h2>
+        </div>
+        <div class="settings-window product-frame" data-layout-allow-overflow>
+          <img
+            class="settings-shot"
+            src="assets/settings-page.png"
+            width="1440"
+            height="3144"
+            alt=""
+          />
+        </div>
+        <div class="feature-list">
+          <div class="feature">Auto-hide & edge clearance</div>
+          <div class="feature">Panel position & size</div>
+          <div class="feature">Shortcuts & backup</div>
+        </div>
+      </section>
+
+      <video
+        id="outro-video"
+        class="outro-video clip"
+        src="assets/demo.mp4"
+        data-start="15.3"
+        data-duration="3.2"
+        data-media-start="17"
+        data-track-index="1"
+        muted
+        playsinline
+      ></video>
+      <section
+        id="outro"
+        class="scene clip"
+        data-start="15.3"
+        data-duration="3.2"
+        data-track-index="0"
+      >
+        <div class="outro-frame product-frame"></div>
+        <div class="video-shade"></div>
+        <div class="outro-copy">
+          <div class="eyebrow">Second Sidebar</div>
+          <h2>Web beside <span class="accent">every tab.</span></h2>
+          <div class="repo">GitHub →</div>
+        </div>
+      </section>
+
+      <audio
+        id="music"
+        src="assets/music.mp3"
+        data-start="0"
+        data-duration="18.5"
+        data-volume="0.2"
+        data-fade-in="0.35"
+        data-fade-out="1.2"
+        data-track-index="10"
+      ></audio>
+      <audio
+        id="impact-hook"
+        src="assets/impact.ogg"
+        data-start="0.56"
+        data-duration="0.18"
+        data-volume="0.5"
+        data-track-index="11"
+      ></audio>
+      <audio
+        id="click-proof"
+        src="assets/click.ogg"
+        data-start="4.45"
+        data-duration="0.02"
+        data-volume="0.65"
+        data-track-index="12"
+      ></audio>
+      <audio
+        id="impact-modes"
+        src="assets/impact.ogg"
+        data-start="8.2"
+        data-duration="0.18"
+        data-volume="0.55"
+        data-track-index="13"
+      ></audio>
+      <audio
+        id="impact-control"
+        src="assets/impact.ogg"
+        data-start="12.2"
+        data-duration="0.18"
+        data-volume="0.48"
+        data-track-index="14"
+      ></audio>
+      <audio
+        id="impact-outro"
+        src="assets/impact.ogg"
+        data-start="15.3"
+        data-duration="0.18"
+        data-volume="0.6"
+        data-track-index="15"
+      ></audio>
+    </main>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const timeline = gsap.timeline({ paused: true });
+
+      timeline
+        .fromTo(
+          ".hook-video, .hook-frame",
+          { opacity: 0.45, x: 130, scale: 0.96 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.9, ease: "power4.out" },
+          0.12,
+        )
+        .fromTo(
+          ".hook-copy .eyebrow",
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" },
+          0.12,
+        )
+        .fromTo(
+          ".hook-copy h1",
+          { opacity: 0.65, y: 18 },
+          { opacity: 1, y: 0, duration: 0.62, ease: "power4.out" },
+          0.28,
+        );
+
+      timeline
+        .fromTo(
+          ".proof-video, .proof-frame",
+          { opacity: 0, y: 46, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.72, ease: "power4.out" },
+          3.42,
+        )
+        .fromTo(
+          ".proof-title",
+          { opacity: 0, x: -34 },
+          { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" },
+          3.55,
+        )
+        .fromTo(
+          ".callout",
+          { opacity: 0, y: 20, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.36,
+            stagger: 0.22,
+            ease: "back.out(1.4)",
+          },
+          4.35,
+        );
+
+      timeline
+        .fromTo(
+          ".modes-title",
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" },
+          8.24,
+        )
+        .fromTo(
+          ".mode-video.pinned, .mode-frame.pinned",
+          { opacity: 0, x: -70, scale: 0.96 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.66, ease: "power4.out" },
+          8.58,
+        )
+        .fromTo(
+          ".mode-video.floating, .mode-frame.floating",
+          { opacity: 0, x: 70, scale: 0.96 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.66, ease: "power4.out" },
+          8.76,
+        )
+        .fromTo(
+          ".mode-label, .mode-note",
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.34, stagger: 0.1 },
+          9.16,
+        );
+
+      timeline
+        .fromTo(
+          ".control-title",
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.48, ease: "power4.out" },
+          12.24,
+        )
+        .fromTo(
+          ".settings-window",
+          { opacity: 0, x: 80, scale: 0.97 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.68, ease: "power4.out" },
+          12.36,
+        )
+        .fromTo(
+          ".feature",
+          { opacity: 0, x: -45 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.36,
+            stagger: 0.2,
+            ease: "power3.out",
+          },
+          12.82,
+        )
+        .to(
+          ".settings-shot",
+          { y: -410, duration: 2, ease: "power1.inOut" },
+          13.15,
+        );
+
+      timeline
+        .fromTo(
+          ".outro-video, .outro-frame",
+          { opacity: 0, x: 100, scale: 0.96 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.72, ease: "power4.out" },
+          15.32,
+        )
+        .fromTo(
+          ".outro-copy .eyebrow",
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.32 },
+          15.4,
+        )
+        .fromTo(
+          ".outro-copy h2",
+          { opacity: 0, y: 28 },
+          { opacity: 1, y: 0, duration: 0.52, ease: "power4.out" },
+          15.52,
+        )
+        .fromTo(
+          ".repo",
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.36 },
+          15.72,
+        );
+
+      window.__timelines.main = timeline;
+      timeline.seek(0);
+    </script>
+  </body>
+</html>

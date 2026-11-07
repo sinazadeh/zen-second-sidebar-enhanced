@@ -4,6 +4,11 @@ import pluginJs from "@eslint/js";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
+    // Downloaded skills and generated media are dependencies/artifacts, not
+    // repository source governed by this lint config.
+    ignores: [".agent-tools/**", ".agents/skills/**", "brag-output/**"],
+  },
+  {
     languageOptions: {
       globals: {
         ...globals.browser,

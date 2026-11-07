@@ -6,6 +6,12 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Changed
+
+- Refined the settings page with a responsive mobile layout, larger touch
+  targets, a desktop section navigator, clearer startup-cache notice, and
+  improved keyboard, dialog, preview and reduced-motion accessibility.
+
 ## [1.13.8] - 2026-10-28
 
 ### Added

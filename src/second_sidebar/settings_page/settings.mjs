@@ -158,6 +158,25 @@ function renderControl(control) {
   );
 }
 
+function sectionId(title) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
+
+function renderSectionNavigation() {
+  const links = SETTINGS_PAGE_SECTIONS.map((section) => [
+    sectionId(section.title),
+    section.title,
+  ]).concat([
+    ["keyboard-shortcuts", "Keyboard shortcuts"],
+    ["backup", "Backup"],
+  ]);
+  document
+    .getElementById("settings-nav-links")
+    .replaceChildren(
+      ...links.map(([id, title]) => h("a", { href: `#${id}` }, title)),
+    );
+}
+
 function renderSections() {
   const focused = document.activeElement;
   const focusKey = focused?.closest?.(".option")?.dataset.field;
@@ -165,7 +184,7 @@ function renderSections() {
     ...SETTINGS_PAGE_SECTIONS.map((section) =>
       h(
         "section",
-        { class: "card" },
+        { class: "card", id: sectionId(section.title) },
         h("h2", {}, section.title),
         section.hint ? h("p", { class: "muted" }, section.hint) : null,
         h(
@@ -222,6 +241,10 @@ function renderPreview() {
 
   const preview = document.getElementById("preview");
   preview.className = `preview ${position}`;
+  preview.setAttribute(
+    "aria-label",
+    `Preview of the second sidebar on the ${position}, with a floating web panel`,
+  );
   const button = 30;
   preview.style.setProperty("--pad", `${pad}px`);
   preview.style.setProperty("--button", `${button}px`);
@@ -725,3 +748,4 @@ if (inBrowser && sidebar()) {
 }
 
 render();
+renderSectionNavigation();
