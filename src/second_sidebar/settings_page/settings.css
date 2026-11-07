@@ -117,12 +117,11 @@ input {
   max-width: none;
   margin-bottom: 28px;
   padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--warning-text) 25%, transparent);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--warning-text) 7%, transparent);
-  color: var(--warning-text);
+  background: var(--raised);
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 600;
 }
 .intro .startup-cache-note p {
   margin: 0;
@@ -135,7 +134,8 @@ input {
   margin-top: 1px;
 }
 .startup-cache-note a {
-  color: inherit;
+  color: var(--text);
+  font-weight: 600;
   text-decoration: underline;
 }
 

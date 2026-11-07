@@ -6,6 +6,14 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.10] - 2026-11-07
+
+### Changed
+
+- The settings page's support links read as two matching buttons (**Star the
+  project**, **Sponsor development**), and the startup-cache reminder uses a
+  neutral info style instead of an error-red one.
+
 ## [1.13.9] - 2026-11-07
 
 ### Changed

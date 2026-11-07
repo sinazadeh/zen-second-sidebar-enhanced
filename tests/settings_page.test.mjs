@@ -136,7 +136,8 @@ test("the settings page recommends clearing the startup cache after updates", as
   );
   assert.match(html, /href="about:support"/);
   assert.match(controller, /SUPPORT_URLS = new Set\(\[\s*"about:support"/);
-  assert.match(css, /\.intro \.startup-cache-note[\s\S]*--warning-text/);
+  const note = css.match(/\.intro \.startup-cache-note \{[^}]*\}/)?.[0] ?? "";
+  assert.doesNotMatch(note, /--warning-text/);
 });
 
 test("the shortcuts card has each of the sidebar's keyboard shortcuts", () => {
