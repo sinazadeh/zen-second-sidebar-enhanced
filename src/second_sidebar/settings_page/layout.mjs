@@ -24,6 +24,10 @@ const OPTIONAL_SIZES = [["off", "Off"], ...SIZES];
  *   its values with a short label (and a longer one for the tooltip). A
  *   control without choices is a switch.
  * @property {boolean} [zenOnly] Only does something in Zen.
+ * @property {Array<[string, string | boolean]>} [requires] Field and value
+ *   pairs that must all hold for it to have an effect; the page dims it
+ *   otherwise.
+ * @property {string} [requiresText] What to turn on for it to have an effect.
  */
 
 /**
@@ -61,7 +65,7 @@ export const SETTINGS_PAGE_SECTIONS = [
       {
         field: "autoHideSidebar",
         title: "Auto-hide sidebar",
-        text: "Hide the sidebar until you move the mouse to its edge of the window.",
+        text: "Hide the sidebar until you move the mouse to the edge of the page where it sits.",
       },
       {
         field: "autoHideSidebarBehavior",
@@ -71,12 +75,19 @@ export const SETTINGS_PAGE_SECTIONS = [
           ["inline", "Inline"],
           ["overlay", "Overlay"],
         ],
+        requires: [["autoHideSidebar", true]],
+        requiresText: "Turn on auto-hide.",
       },
       {
         field: "autoHideEdgeGap",
         title: "Keep page gap at window edge",
         text: "With overlay, keep Zen's gap around the page so its outer border stays visible.",
         zenOnly: true,
+        requires: [
+          ["autoHideSidebar", true],
+          ["autoHideSidebarBehavior", "overlay"],
+        ],
+        requiresText: "Turn on auto-hide with the overlay behavior.",
       },
       {
         field: "autoHideOverlayGap",
@@ -84,11 +95,18 @@ export const SETTINGS_PAGE_SECTIONS = [
         text: "How far an overlay sidebar sits inward, leaving the page edge and scrollbar reachable.",
         choices: OPTIONAL_SIZES,
         zenOnly: true,
+        requires: [
+          ["autoHideSidebar", true],
+          ["autoHideSidebarBehavior", "overlay"],
+        ],
+        requiresText: "Turn on auto-hide with the overlay behavior.",
       },
       {
         field: "sidebarWidgetHideWebPanel",
         title: "Hide web panel when sidebar is hidden",
-        text: "Close the open panel along with the sidebar.",
+        text: "Close the open panel when you hide the sidebar with its toolbar button.",
+        requires: [["autoHideSidebar", false]],
+        requiresText: "Not used with auto-hide, which has no toolbar button.",
       },
     ],
   },

@@ -6,6 +6,21 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.11] - 2026-11-08
+
+### Fixed
+
+- With the sidebar on the left and **Auto-hide sidebar** on, the hidden
+  sidebar couldn't be shown in Zen when its own sidebar was visible: the hover
+  area was at the window edge, over Zen's sidebar. It's now at the edge of the
+  page, where the sidebar appears, on either side.
+
+### Changed
+
+- The settings page dims the visibility settings that don't apply to the
+  current choice (for example the overlay options without auto-hide) and says
+  what to turn on.
+
 ## [1.13.10] - 2026-11-07
 
 ### Changed

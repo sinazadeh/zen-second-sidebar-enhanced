@@ -110,6 +110,12 @@ function write(field, value) {
 
 function renderControl(control) {
   const value = read(control.field);
+  const unavailable = (control.requires ?? []).some(([field, expected]) => {
+    const actual = read(field);
+    return typeof expected === "boolean"
+      ? Boolean(actual) !== expected
+      : actual !== expected;
+  });
   const text = h(
     "span",
     { class: "option-text" },
@@ -120,11 +126,15 @@ function renderControl(control) {
       control.zenOnly ? h("span", { class: "tag" }, "Zen") : null,
     ),
     h("span", { class: "muted" }, control.text),
+    unavailable
+      ? h("span", { class: "muted requires" }, control.requiresText)
+      : null,
   );
+  const optionClass = unavailable ? "option unavailable" : "option";
   if (!control.choices) {
     return h(
       "label",
-      { class: "option" },
+      { class: optionClass },
       text,
       h("input", {
         type: "checkbox",
@@ -136,7 +146,7 @@ function renderControl(control) {
   }
   return h(
     "div",
-    { class: "option" },
+    { class: optionClass },
     text,
     h(
       "div",

@@ -235,6 +235,14 @@ div.option {
 .option + .option {
   border-top: 1px solid var(--border);
 }
+.option.unavailable .option-title,
+.option.unavailable .switch,
+.option.unavailable .segmented {
+  opacity: 0.55;
+}
+.requires {
+  font-style: italic;
+}
 .option-text {
   flex: 1;
   display: grid;

@@ -51,6 +51,22 @@ test("each control offers exactly the values its setting accepts", () => {
   }
 });
 
+test("a control's requirements name real fields and say what to turn on", () => {
+  const fields = new Set(controls.map((control) => control.field));
+  for (const control of controls.filter((control) => control.requires)) {
+    assert.ok(control.requiresText, `${control.field} needs requiresText`);
+    for (const [field, expected] of control.requires) {
+      assert.ok(fields.has(field), `${control.field} requires ${field}`);
+      const values = SIDEBAR_SETTING_VALUES[field];
+      if (values) {
+        assert.ok(values.includes(expected), `${field}: ${expected}`);
+      } else {
+        assert.equal(typeof expected, "boolean", `${field} is a switch`);
+      }
+    }
+  }
+});
+
 test("every section and control has a title and a description", () => {
   for (const section of SETTINGS_PAGE_SECTIONS) {
     assert.ok(section.title);

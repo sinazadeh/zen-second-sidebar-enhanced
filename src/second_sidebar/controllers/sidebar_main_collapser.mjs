@@ -159,11 +159,17 @@ export class SidebarMainCollapser {
     const leftEdge = window.mozInnerScreenX;
     const rightEdge = leftEdge + rootRect.width;
     const screenX = this.#getScreenX(event, leftEdge);
+    const contentRect = BrowserElements.browser.getBoundingClientRect();
+    const contentLeft = leftEdge + contentRect.left;
+    const contentRight = leftEdge + contentRect.right;
+    // Where the hidden sidebar would be, not the window edge: Zen's own
+    // sidebar can sit between the window edge and the page.
+    const triggerZone = isRight
+      ? [contentRight - TRIGGER_WIDTH, contentRight + TRIGGER_WIDTH]
+      : [contentLeft - TRIGGER_WIDTH, contentLeft + TRIGGER_WIDTH];
 
     const isInUncollapseArea =
-      (collapsed &&
-        ((isRight && screenX > rightEdge - TRIGGER_WIDTH) ||
-          (isLeft && screenX < leftEdge + TRIGGER_WIDTH))) ||
+      (collapsed && screenX > triggerZone[0] && screenX < triggerZone[1]) ||
       (!collapsed &&
         ((isRight && screenX > leftEdge + sidebarRect.left) ||
           (isLeft && screenX < leftEdge + sidebarRect.right)));
@@ -175,6 +181,7 @@ export class SidebarMainCollapser {
       leftEdge,
       rightEdge,
       sidebarRect,
+      triggerZone,
     };
     if (isInUncollapseArea) {
       if (collapsed && !this.showSidebarTimer) {
@@ -228,19 +235,26 @@ export class SidebarMainCollapser {
    * @param {number} hitTest.leftEdge
    * @param {number} hitTest.rightEdge
    * @param {DOMRect} hitTest.sidebarRect
+   * @param {number[]} hitTest.triggerZone
    */
   #logHoverDecision(
     action,
     event,
-    { isRight, collapsed, screenX, leftEdge, rightEdge, sidebarRect },
+    {
+      isRight,
+      collapsed,
+      screenX,
+      leftEdge,
+      rightEdge,
+      sidebarRect,
+      triggerZone,
+    },
   ) {
     if (!Logger.enabled) {
       return;
     }
     const zone = collapsed
-      ? isRight
-        ? [rightEdge - TRIGGER_WIDTH, rightEdge]
-        : [leftEdge, leftEdge + TRIGGER_WIDTH]
+      ? triggerZone
       : isRight
         ? [leftEdge + sidebarRect.left, rightEdge]
         : [leftEdge, leftEdge + sidebarRect.right];
