@@ -4,16 +4,12 @@
 > This is a fork of [aminought/firefox-second-sidebar](https://github.com/aminought/firefox-second-sidebar), adapted for **Zen Browser** on top of Zen compatibility work from [Ezo-mas/zen-second-sidebar-fix](https://github.com/Ezo-mas/zen-second-sidebar-fix). Compared to upstream, this fork additionally provides:
 >
 > - Full Zen Browser layout support (vertical tabs, split view, workspaces, compact mode, and both sidebar sides) alongside standard Firefox.
-> - Web panel setting: `Reload when address changes` — reloads the open web panel when the main browser's active tab is switched or navigated to a different site; a closed panel reloads when you next open it, if the site changed in the meantime. For example, with a Bitwarden panel this reloads its vault view as you switch tabs, so it's always showing logins for whichever site you're currently on.
-> - Web panel setting: `User Agent` — choose what a panel identifies itself as: the browser's own, Firefox Mobile, a Galaxy phone or tablet, an iPhone, or a user agent you type in — see [User agent](#user-agent).
-> - Web panel setting: `Spaces` — show a web panel only in the Zen spaces (workspaces) you pick — see [Spaces](#spaces).
-> - Web panel setting: `Unload after inactivity` — automatically unloads a panel that's been in the background for a set time, without relying on Firefox's own background tab unloader (which isn't reliable for panels living in the hidden window that hosts them).
-> - Web panel presets: pick a common site (ChatGPT, WhatsApp, Telegram...) or an installed extension's sidebar (e.g. Bitwarden, 1Password, iCloud Hide My Email) when adding a panel — see [Presets](#presets).
-> - Tabs, bookmarks and History entries can be opened or previewed in the sidebar from their right-click menu, and Alt+Shift+click previews a link or bookmark — see [Links, bookmarks and tabs](#links-bookmarks-and-tabs).
-> - Keyboard shortcuts to open the next or previous web panel — see [Keyboard shortcuts](#keyboard-shortcuts).
-> - Backup: save the sidebar settings, your web panels or both to one JSON file, and choose what to restore from one — see [Backup](#backup).
-> - [Sine](https://github.com/CosmoCreeper/Sine) mod support (`theme.json`) alongside fx-autoconfig, so the script can be installed without manually copying files.
-> - Windows GPU compositing fix so web panels don't render as a blank frame when switching.
+> - Per-panel settings: [Spaces](#spaces), [User Agent](#user-agent), `Reload when address changes` (for panels like Bitwarden that read the current tab), `Unload after inactivity`.
+> - [Presets](#presets) for common sites and installed extensions' sidebars (Bitwarden, 1Password, iCloud Hide My Email).
+> - Open or preview tabs, bookmarks and links in the sidebar — see [Links, bookmarks and tabs](#links-bookmarks-and-tabs).
+> - [Keyboard shortcuts](#keyboard-shortcuts) for panels, including next and previous.
+> - [Backup](#backup) of the sidebar settings and your web panels.
+> - [Sine](https://github.com/CosmoCreeper/Sine) mod support (`theme.json`) alongside fx-autoconfig, and a Windows GPU compositing fix for blank panels.
 
 A Zen userChrome.js script that brings a second sidebar with web panels like in Vivaldi/Edge/Floorp but better.
 
@@ -198,7 +194,9 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 
 ## Troubleshooting
 
-The Browser Console (`Ctrl+Shift+J` / `Cmd+Shift+J`) logs the sidebar's startup sequence and any errors by default. For more detail when reporting a bug (web panel lifecycle, per-setting change events, etc.), set `second-sidebar.debug-logging` to `true` in `about:config` and reproduce the issue again.
+- **Nothing happens after installing or updating:** check that `toolkit.legacyUserProfileCustomizations.stylesheets` is `true` in `about:config`, then clear the startup cache (with fx-autoconfig, see [its instructions](https://github.com/MrOtherGuY/fx-autoconfig?tab=readme-ov-file#deleting-startup-cache); with Sine, restart after the update) so the browser doesn't keep running cached modules of the old version.
+
+The Browser Console (`Ctrl+Shift+J` / `Cmd+Shift+J`) logs the sidebar's startup sequence and any errors by default. For more detail when reporting a bug (web panel lifecycle, per-setting change events, etc.), set `second-sidebar.debug-logging` to `true` in `about:config` and reproduce the issue again. When you open an issue, attach the Browser Console output, your browser name and version, your OS and which loader you use.
 
 - **Installed with Sine, but the sidebar never appears and the console shows nothing about it:** check that `sine.allow-unsafe-js` is `true` in `about:config` (see [Installation](#sine)). Without it, Sine silently never loads scripts from mods added by repository.
 - **It stopped working after installing Sine on another profile:** Sine and fx-autoconfig each replace a single bootstrap file shared by every profile of the same browser installation, so setting up one of them can turn off the other for all profiles. Use the same loader on every profile of that installation (for example, install Second Sidebar through Sine here too).

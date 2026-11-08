@@ -8,7 +8,8 @@
 //
 // It checks structure, not wording: frontmatter and names, a trigger phrase
 // in each description (what an agent decides by whether to load it), size
-// budgets, that relative links resolve, that the map links every skill,
+// budgets, that relative links resolve, that source paths named in inline
+// code still exist, that the map links every skill,
 // agent and command, and that commands frame $ARGUMENTS as data.
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -30,6 +31,20 @@ const SKILLS_DIR = ".claude/skills";
 const AGENTS_DIR = ".claude/agents";
 const COMMANDS_DIR = ".claude/commands";
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// Files the docs name that aren't in this repository: a user's profile or
+// another project (Sine, npm), or upstream files the fork deleted.
+const STALE_PATH_ALLOWLIST = new Set([
+  "web-panels.json",
+  "web-panels-state.json",
+  "engine.json",
+  "mods.json",
+  "chrome/sine-mods/mods.json",
+  "core/utils.sys.mjs",
+  "package.json",
+  "package-lock.json",
+  "xul/sidebar_main_popup_settings.mjs",
+  "controllers/sidebar_main_settings.mjs",
+]);
 const TRIGGER_PATTERN =
   /\b(Use (PROACTIVELY )?(when|after|before)|Use this (skill|agent) when|Trigger when)\b/;
 
@@ -124,6 +139,45 @@ export function hasUnframedArguments(body) {
     "",
   );
   return /\$ARGUMENTS\b/.test(unframed);
+}
+
+/**
+ * Source-file paths written as inline code, such as `utils/files.mjs`.
+ * Patterns with a wildcard or placeholder are left out.
+ *
+ * @param {string} markdown
+ * @returns {string[]}
+ */
+export function findCodePaths(markdown) {
+  const withoutFences = markdown.replace(
+    /^(```|~~~)[^\n]*\n[\s\S]*?^\1[^\n]*$/gm,
+    "",
+  );
+  return [
+    ...new Set(
+      [...withoutFences.matchAll(/`([\w][\w./-]*\.(?:mjs|json|ya?ml))`/g)].map(
+        (match) => match[1],
+      ),
+    ),
+  ];
+}
+
+/**
+ * @param {string} root
+ * @returns {string[]} the repository's tracked-style files, as `/`-prefixed
+ *   relative paths, so a bare file name or a partial path can be matched
+ */
+function listRepoFiles(root) {
+  const files = [];
+  for (const dir of ["src", "tests", "scripts", ".github", ".claude"]) {
+    files.push(...listFiles(join(root, dir)));
+  }
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    if (entry.isFile()) {
+      files.push(join(root, entry.name));
+    }
+  }
+  return files.map((file) => `/${relative(root, file).split("\\").join("/")}`);
 }
 
 /**
@@ -313,10 +367,20 @@ export function lintAgentConfig(root) {
     mapFile,
     ...listFiles(join(root, ".claude")).filter((f) => f.endsWith(".md")),
   ].filter((file) => existsSync(file));
+  const repoFiles = listRepoFiles(root);
   for (const file of docs) {
-    for (const target of findRelativeLinks(readText(file))) {
+    const text = readText(file);
+    for (const target of findRelativeLinks(text)) {
       if (!existsSync(resolve(dirname(file), target))) {
         report(file, `broken link: ${target}`);
+      }
+    }
+    for (const path of findCodePaths(text)) {
+      if (
+        !repoFiles.some((repoFile) => repoFile.endsWith(`/${path}`)) &&
+        !STALE_PATH_ALLOWLIST.has(path)
+      ) {
+        report(file, `refers to \`${path}\`, which isn't in the repository`);
       }
     }
   }

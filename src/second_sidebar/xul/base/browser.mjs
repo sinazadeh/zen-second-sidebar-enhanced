@@ -1,3 +1,4 @@
+import { Logger } from "../../utils/logger.mjs";
 import { NetUtilWrapper } from "../../wrappers/net_utils.mjs";
 import { ScriptSecurityManagerWrapper } from "../../wrappers/script_security_manager.mjs";
 import { XULElement } from "./xul_element.mjs";
@@ -52,7 +53,7 @@ export class Browser extends XULElement {
     try {
       return this.element.canGoBack;
     } catch (error) {
-      console.log("Failed to get canGoBack:", error);
+      Logger.debug("Failed to get canGoBack:", error);
       return false;
     }
   }
@@ -74,7 +75,7 @@ export class Browser extends XULElement {
     try {
       return this.element.canGoForward;
     } catch (error) {
-      console.log("Failed to get canForward:", error);
+      Logger.debug("Failed to get canGoForward:", error);
       return false;
     }
   }

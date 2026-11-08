@@ -19,63 +19,12 @@
       "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
       "skills": [
         {
-          "path": "skills/composition-patterns",
-          "name": "vercel-composition-patterns"
-        },
-        {
-          "path": "skills/deploy-to-vercel",
-          "name": "deploy-to-vercel"
-        },
-        {
-          "path": "skills/react-best-practices",
-          "name": "vercel-react-best-practices"
-        },
-        {
-          "path": "skills/react-native-skills",
-          "name": "vercel-react-native-skills"
-        },
-        {
-          "path": "skills/react-view-transitions",
-          "name": "vercel-react-view-transitions"
-        },
-        {
-          "path": "skills/vercel-cli-with-tokens",
-          "name": "vercel-cli-with-tokens"
-        },
-        {
-          "path": "skills/vercel-optimize",
-          "name": "vercel-optimize"
-        },
-        {
           "path": "skills/web-design-guidelines",
           "name": "web-design-guidelines"
         },
         {
           "path": "skills/writing-guidelines",
           "name": "writing-guidelines"
-        }
-      ]
-    },
-    {
-      "id": "imagegen-skills",
-      "repository": "https://github.com/Leonxlnx/imagegen-skills.git",
-      "commit": "beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e",
-      "skills": [
-        {
-          "path": "skills/brandkit",
-          "name": "brandkit"
-        },
-        {
-          "path": "skills/image-to-code",
-          "name": "image-to-code"
-        },
-        {
-          "path": "skills/imagegen-frontend-mobile",
-          "name": "imagegen-frontend-mobile"
-        },
-        {
-          "path": "skills/imagegen-frontend-web",
-          "name": "imagegen-frontend-web"
         }
       ]
     }

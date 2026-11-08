@@ -6,4 +6,4 @@ package-lock.json
 playwright-report/
 test-results/
 .vscode/
-brag-output/composition/.hyperframes/
+brag-output/

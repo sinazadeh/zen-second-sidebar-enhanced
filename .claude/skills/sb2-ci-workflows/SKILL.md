@@ -23,7 +23,9 @@ Node's built-in test runner, so they need no install.
 matching their files, an `sb2-` prefix, a trigger phrase in each
 description, a known model), `SKILL.md` under 8 KB, `AGENTS.md` within 150
 lines and linking every skill, agent and command, working relative links,
-and `$ARGUMENTS` framed as data in commands.
+source paths named in inline code that exist in the repository (add files
+from outside it to `STALE_PATH_ALLOWLIST`), and `$ARGUMENTS` framed as data
+in commands.
 
 ## Workflows
 

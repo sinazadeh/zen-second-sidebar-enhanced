@@ -10,9 +10,10 @@ both Zen Browser and standard Firefox, with the sidebar on either side.
 
 ## Conventions
 
-- Support both Zen Browser and standard Firefox layout hierarchies. Avoid hardcoding
-  `#browser` when attaching or sizing wrappers; use `requireBrowserContainerElement()`
-  or selectors targeting `#zen-tabbox-wrapper, #browser`.
+- Support both Zen Browser and standard Firefox layout hierarchies. Never use
+  `#browser` alone when attaching or sizing wrappers; use `requireBrowserContainerElement()`
+  or selectors targeting `#zen-tabbox-wrapper, #browser` (CSS selectors that
+  list both, as in `css/common.mjs`, are correct).
 - Use existing `sb2-` IDs/classes and `--sb2-` CSS variables for new sidebar
   styles. In Zen Browser, adhere to `--sb2-zen-*` theme variables, `--zen-border-radius`,
   `--zen-element-separation`, and `--zen-colors-*`. Preserve `:root:has(#zen-tabbox-wrapper)`
@@ -87,7 +88,8 @@ Before committing any change to source files, verify:
 - [ ] New `--sb2-*` CSS variables have Zen-aware fallbacks using `--sb2-zen-*` tokens.
 - [ ] Both `[zen-right-side="true"]` sidebar positions work correctly.
 - [ ] `WebPanelsBrowser.forceRepaint()` is called after tab switches on Windows.
-- [ ] `npx prettier --write`, `npx eslint` and `node --test "tests/*.test.mjs"` pass.
+- [ ] `npx eslint`, `npx prettier --check` on the changed files, and
+      `node --test "tests/*.test.mjs"` pass.
 
 ## References
 

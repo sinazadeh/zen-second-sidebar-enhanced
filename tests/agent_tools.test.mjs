@@ -13,10 +13,10 @@ const manifest = JSON.parse(
 
 test("agent tool sources are pinned and valid", () => {
   assert.deepEqual(validateAgentToolsManifest(manifest), []);
-  assert.equal(manifest.skillSources.length, 3);
+  assert.equal(manifest.skillSources.length, 2);
   assert.equal(
     manifest.skillSources.flatMap((source) => source.skills).length,
-    14,
+    3,
   );
 });
 

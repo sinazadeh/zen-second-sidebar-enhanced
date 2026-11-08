@@ -44,6 +44,7 @@ All paths below are relative to `src/second_sidebar/`, except the entry point.
 | `utils/`, `icons/`                             | Shared helpers and SVG assets.                                                            |
 | `tests/` (repo root)                           | Node unit tests for pure logic, and the agent-config lint.                                |
 | `scripts/` (repo root)                         | Development scripts, e.g. `check_patch_targets.mjs` (see "Static checks").                |
+| `DESIGN.md`, `AGENT_TOOLS.md` (repo root)      | Visual contract for the settings page and chrome; optional design skills and Playwright.  |
 
 ## Skills: where the detail lives
 

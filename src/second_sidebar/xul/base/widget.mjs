@@ -1,4 +1,5 @@
 import { CustomizableUIWrapper } from "../../wrappers/customizable_ui.mjs";
+import { Logger } from "../../utils/logger.mjs";
 import { ToolbarButton } from "./toolbar_button.mjs";
 import { XULElement } from "./xul_element.mjs"; // eslint-disable-line no-unused-vars
 
@@ -54,7 +55,7 @@ export class Widget {
       this.wrapper = CustomizableUIWrapper.createWidget({
         id,
         onCreated: async (element) => {
-          console.log(`Widget ${id} was created`);
+          Logger.debug(`Widget ${id} was created`);
           this.#setup(new ToolbarButton({ element, classList }));
         },
         onClick: async (event) => {
@@ -64,7 +65,7 @@ export class Widget {
         },
       });
     } catch {
-      console.log(`Widget ${id} is already created`);
+      Logger.debug(`Widget ${id} is already created`);
       this.#setup(this.button);
     }
     if (position) {

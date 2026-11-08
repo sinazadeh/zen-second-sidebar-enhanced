@@ -75,3 +75,16 @@ test("CI installs the versions the local setup command pins", () => {
   );
   assert.equal(prettier?.[1], local.prettier, "prettier.yml");
 });
+
+test("the Prettier check command is the same wherever it's written", () => {
+  const command = /npx prettier --check [^`\n]+/;
+  const expected = read("AGENTS.md").match(command)?.[0];
+  assert.ok(expected, "AGENTS.md has the command");
+  for (const path of [
+    "CONTRIBUTING.md",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".claude/agents/sb2-checks-runner.md",
+  ]) {
+    assert.equal(read(path).match(command)?.[0], expected, path);
+  }
+});

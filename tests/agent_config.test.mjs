@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const {
   MAX_MAP_LINES,
   MAX_SKILL_BYTES,
+  findCodePaths,
   findRelativeLinks,
   hasUnframedArguments,
   lintAgentConfig,
@@ -138,6 +139,29 @@ test("finds relative links outside code, without their fragment", () => {
     ".claude/skills/x/SKILL.md",
     "my file.md",
   ]);
+});
+
+test("finds source paths written as inline code", () => {
+  const markdown = [
+    "See `utils/files.mjs` and `theme.json`, not `controllers/web_panel*.mjs`.",
+    "```js",
+    'import "fenced.mjs"; // `fenced.mjs`',
+    "```",
+  ].join("\n");
+  assert.deepEqual(findCodePaths(markdown), ["utils/files.mjs", "theme.json"]);
+});
+
+test("reports a skill that names a file the repository doesn't have", () => {
+  const skill = SKILL + "\nSee `utils/gone.mjs` and `utils/here.mjs`.\n";
+  assert.deepEqual(
+    lint({
+      ".claude/skills/sb2-example/SKILL.md": skill,
+      "src/second_sidebar/utils/here.mjs": "",
+    }),
+    [
+      ".claude/skills/sb2-example/SKILL.md: refers to `utils/gone.mjs`, which isn't in the repository",
+    ],
+  );
 });
 
 test("$ARGUMENTS must be framed as data in commands", () => {

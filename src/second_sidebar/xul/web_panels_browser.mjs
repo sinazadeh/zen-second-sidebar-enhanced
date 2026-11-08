@@ -152,7 +152,7 @@ export class WebPanelsBrowser extends Browser {
     if (this.window.name !== subj.name) {
       return;
     }
-    console.log(`${this.window.name}: got event ${topic}`);
+    Logger.debug(`${this.window.name}: got event ${topic}`);
     if (topic === BEFORE_SHOW_EVENT) {
       markZenWindowUnsynced(subj);
       this.#unobserve(BEFORE_SHOW_EVENT);

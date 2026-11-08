@@ -35,12 +35,9 @@ node scripts/setup_agent_tools.mjs --check
 ## What is included
 
 - `design-taste-frontend` from Taste Skill for frontend critique and polish.
-- Vercel's reusable React, composition, web-design, writing, optimization,
-  deployment, and CLI skills. Most are references for adjacent work: Second
-  Sidebar itself is not a React or Vercel application.
-- Image generation skills for brand kits, image-to-code, mobile screens, and web
-  compositions. Generated assets still need license, accessibility, size, and
-  browser-chrome review before being committed.
+- Vercel's `web-design-guidelines` and `writing-guidelines`, for UI and prose
+  review. Second Sidebar is not a React or Vercel application, so the rest of
+  that repository is deliberately not installed.
 - Awesome Design MD's reference library, alongside the repository-specific
   [`DESIGN.md`](DESIGN.md). The local file is authoritative for this project.
 - Playwright for a Chromium smoke test of the settings page outside privileged
