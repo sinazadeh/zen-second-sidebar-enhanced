@@ -6,6 +6,11 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+### Fixed
+
+- In Zen's compact mode with the toolbar hidden, showing the toolbar no longer
+  shifts the page up by a few pixels.
+
 ## [1.13.11] - 2026-11-08
 
 ### Fixed

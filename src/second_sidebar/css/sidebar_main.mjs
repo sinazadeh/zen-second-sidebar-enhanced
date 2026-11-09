@@ -221,22 +221,23 @@ export const SIDEBAR_MAIN_CSS = `
 
   /* Zen expands the compact toolbar by increasing its layout height, which
      shrinks #zen-tabbox-wrapper and the second-sidebar launcher. Keep its
-     expanded state above the page instead. */
+     expanded state above the page instead: the negative margin cancels the
+     extra height, so the page stays where it is, whereas taking the toolbar
+     out of the flow would also drop the --zen-element-separation strip it
+     keeps there when collapsed, and shift the page up by that much. */
   @media -moz-pref("zen.view.compact.hide-toolbar") {
     :root[zen-compact-mode="true"]:not([zen-single-toolbar="true"]):has(#zen-tabbox-wrapper) {
-      #zen-appcontent-wrapper {
-        position: relative;
-      }
-
       #zen-appcontent-navbar-wrapper:is(
         [zen-has-hover],
         [has-popup-menu],
         [zen-compact-mode-active]
       ) {
-        position: absolute;
+        position: relative;
         z-index: 4 !important;
-        inset-inline: 0;
-        top: 0;
+        margin-bottom: calc(
+          var(--zen-element-separation, 6px) -
+            var(--zen-toolbar-height-with-bookmarks)
+        );
       }
     }
   }
