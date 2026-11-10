@@ -18,7 +18,10 @@ export const COMMON_CSS = `
     --sb2-zen-floating-acrylic-surface: light-dark(rgba(240, 240, 244, 0.6), rgba(23, 23, 26, 0.6));
     --sb2-zen-toolbar-surface: var(--zen-colors-tertiary, var(--toolbar-bgcolor));
     --sb2-zen-surface-hover: var(--zen-colors-secondary, color-mix(in srgb, currentColor 10%, transparent));
-    --sb2-zen-overlay-surface: light-dark(color-mix(in oklab, white 15%, var(--zen-primary-color) 10%, transparent), color-mix(in oklab, black 15%, var(--zen-primary-color) 25%, transparent));
+    /* An overlay sidebar sits over the page, so it is opaque like Zen's own
+       floating sidebar; the page shows through only with its acrylic option. */
+    --sb2-zen-overlay-surface: var(--sb2-zen-floating-surface);
+    --sb2-zen-overlay-acrylic-surface: light-dark(rgb(233 233 233 / 80%), rgb(19 19 19 / 80%));
     --sb2-zen-surface-active: var(--toolbarbutton-active-background, color-mix(in srgb, currentColor 14%, transparent));
     --sb2-zen-border: none;
     --sb2-zen-shadow: var(--content-area-shadow);

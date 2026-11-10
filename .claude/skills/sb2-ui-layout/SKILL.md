@@ -59,6 +59,11 @@ both Zen Browser and standard Firefox, with the sidebar on either side.
   transparent, leaving the blur nothing to show. Don't rely on
   `--zen-colors-*` alone for a surface over the page: transparency themes and
   mods clear them.
+- An overlay sidebar (`#sb2-main[overlay="true"]`) is opaque too, and
+  translucent only with `zen.theme.acrylic-sidebar`, like Zen's floating
+  sidebar. Don't restyle Zen's own toolbars (`#zen-appcontent-navbar-wrapper`
+  in compact mode): an override there made the toolbar translucent and
+  shifted the page.
 
 ## Popups
 

@@ -199,6 +199,12 @@ export const SIDEBAR_MAIN_CSS = `
       box-shadow:
         0 0 0 1px color-mix(in srgb, var(--toolbox-textcolor, currentColor) 12%, transparent),
         var(--sb2-zen-shadow);
+
+      /* Zen's own floating sidebar is translucent only with this option. */
+      @media -moz-pref("zen.theme.acrylic-sidebar") {
+        background: var(--sb2-zen-overlay-acrylic-surface);
+        backdrop-filter: blur(42px);
+      }
     }
 
     .sb2-main-button {
@@ -216,29 +222,6 @@ export const SIDEBAR_MAIN_CSS = `
     .sb2-main-button[open] > stack.toolbarbutton-badge-stack,
     .sb2-main-button[checked] > stack.toolbarbutton-badge-stack {
       background: var(--sb2-zen-surface-active) !important;
-    }
-  }
-
-  /* Zen expands the compact toolbar by increasing its layout height, which
-     shrinks #zen-tabbox-wrapper and the second-sidebar launcher. Keep its
-     expanded state above the page instead: the negative margin cancels the
-     extra height, so the page stays where it is, whereas taking the toolbar
-     out of the flow would also drop the --zen-element-separation strip it
-     keeps there when collapsed, and shift the page up by that much. */
-  @media -moz-pref("zen.view.compact.hide-toolbar") {
-    :root[zen-compact-mode="true"]:not([zen-single-toolbar="true"]):has(#zen-tabbox-wrapper) {
-      #zen-appcontent-navbar-wrapper:is(
-        [zen-has-hover],
-        [has-popup-menu],
-        [zen-compact-mode-active]
-      ) {
-        position: relative;
-        z-index: 4 !important;
-        margin-bottom: calc(
-          var(--zen-element-separation, 6px) -
-            var(--zen-toolbar-height-with-bookmarks)
-        );
-      }
     }
   }
 

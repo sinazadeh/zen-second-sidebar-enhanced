@@ -6,10 +6,16 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.12] - 2026-11-10
+
 ### Fixed
 
-- In Zen's compact mode with the toolbar hidden, showing the toolbar no longer
-  shifts the page up by a few pixels.
+- In Zen's compact mode with the toolbar hidden, the toolbar slid over the
+  page as a translucent bar and shifted the page up when shown. The sidebar no
+  longer overrides Zen's compact toolbar.
+- An auto-hide sidebar in overlay mode was translucent in Zen. It's opaque
+  now, like Zen's own floating sidebar, and translucent only with Zen's
+  **Acrylic sidebar** option.
 
 ## [1.13.11] - 2026-11-08
 
