@@ -6,6 +6,12 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.13] - 2026-11-16
+
+### Changed
+
+- Updated the fixed web-panel user agents: Firefox 159 → 160.
+
 ## [1.13.12] - 2026-11-10
 
 ### Fixed

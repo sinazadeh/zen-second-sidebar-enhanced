@@ -45,7 +45,7 @@ test("Firefox Mobile follows the running browser's version", () => {
   );
   assert.equal(
     resolveUserAgent(FIREFOX_MOBILE_USER_AGENT, "", "unknown"),
-    "Mozilla/5.0 (Android 16; Mobile; rv:159.0) Gecko/159.0 Firefox/159.0",
+    "Mozilla/5.0 (Android 16; Mobile; rv:160.0) Gecko/160.0 Firefox/160.0",
   );
 });
 

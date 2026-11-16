@@ -50,7 +50,7 @@ const PRESETS = [
 ];
 
 // Used if the browser's version can't be read.
-const FALLBACK_GECKO_VERSION = 159;
+const FALLBACK_GECKO_VERSION = 160;
 
 /**
  * Every choice for the "User Agent" setting, in menu order.
