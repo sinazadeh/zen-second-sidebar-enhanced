@@ -6,6 +6,13 @@ below (see `.github/workflows/release.yml`).
 
 ## [Unreleased]
 
+## [1.13.13] - 2026-11-26
+
+### Fixed
+
+- A web panel's keyboard shortcut now closes it normally when focus is inside
+  the panel, instead of briefly closing and immediately reopening it.
+
 ## [1.13.12] - 2026-11-10
 
 ### Fixed

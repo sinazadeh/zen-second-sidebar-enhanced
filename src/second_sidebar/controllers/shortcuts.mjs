@@ -23,10 +23,17 @@ export class Shortcuts {
   #onKeypress(event) {
     if (!this.enabled) return;
     if (event.key === "Escape" && this.#isEscapeTaken(event)) return;
-    if (this.trySidebarWidgetShortcut(event)) return;
-    if (this.tryLastWebPanelShortcut(event)) return;
-    if (this.tryAdjacentWebPanelShortcuts(event)) return;
-    this.tryWebPanelShortcuts(event);
+    const handled =
+      this.trySidebarWidgetShortcut(event) ||
+      this.tryLastWebPanelShortcut(event) ||
+      this.tryAdjacentWebPanelShortcuts(event) ||
+      this.tryWebPanelShortcuts(event);
+
+    // A keypress from the nested panels window bubbles into the main browser
+    // window too. Both windows listen for shortcuts, so without stopping a
+    // handled event here, the outer listener runs the same action again (for
+    // a panel toggle, closing it and immediately reopening it).
+    if (handled) event.stopPropagation();
   }
 
   /**

@@ -14,6 +14,11 @@ boundary in ways that are easy to break. Paths are relative to
   `<command>` instead: otherwise Zen opens its new-tab address bar in the
   hidden window, and reopening a closed tab can restore a panel's own tab.
   Page commands (find, reload, zoom, print) stay in the panel.
+- `Shortcuts` listens in both the panels' window and the main window so the
+  same shortcuts work in either focus context. A handled panel-window
+  `keypress` bubbles into the main window, so its handler must stop propagation
+  after running one shortcut; otherwise the outer listener runs it again (a
+  panel toggle closes and immediately reopens).
 - The panels' window is a full browser window, so Firefox's
   `BrowserWindowTracker` registers it too (the `browser-window-domcontentloaded`
   category), after the main window. That made it the "top window" that links
